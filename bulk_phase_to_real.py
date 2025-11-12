@@ -151,6 +151,13 @@ def H_matrix_2by2(k_x, k_y, t, a_0):
 
 #t = T/6 * i + T/12 (T/12 is for if there is any confusion in the boundary points of the six stages)
 
+
+# run a small test for the future 2N 2N matrix
+H_test_for_entrices = H_matrix_2by2(np.pi/2, np.pi/2, 5/12, 1)
+a_11 = H_test_for_entrices[0][0]
+a_12 = H_test_for_entrices[0][1]
+#(1.413716694115407-1.413716694115407j) (1.413716694115407-1.413716694115407j)
+#%%
 def H_list_6_matrices(k_x, k_y, N):
     
     H_list_6_matrices =[]
@@ -164,8 +171,9 @@ def H_list_6_matrices(k_x, k_y, N):
     return H_list_6_matrices
 
 
-#H_6 = H_list_6_matrices(np.pi/3, np.pi/4, 6)
-#print('here is H', H_6, 'end')
+H_6 = H_list_6_matrices(np.pi/3, np.pi/4, 6)
+print('check')
+print('here is H as a whole', H_6)
 
 #%%
 
@@ -371,11 +379,7 @@ plt.grid()
 plt.show()
 
 
-#%% for special value of k_y:
-    
-#plot_phase_vs_kx(k_x_list, np.pi/2)
-#plot_phase_vs_kx(k_x_list, np.pi)
-#plot_phase_vs_kx(k_x_list, 0)
+
 #%%check equation (29)
 
 particle_hole_symmetry = []
@@ -389,26 +393,148 @@ for i in range (len(k_y_test)):
     
         particle_hole_symmetry.append(eqn_29_check)
         
+#%% 
+# plot new matrix H for grouped k_y:
 
+# for real k_y: (set dimension N)
+
+
+
+def real_construction_1(N):
+    """
+    Constructs an N x N complex matrix M where
+    M[y-1, y'-1] = sum_{z=1}^{N} exp(i * 2π/N * z * (y - y'))
+
+    Parameters:
+    - N: size of the matrix and upper limit of summation
+
+    Returns:
+    - M: complex-valued NumPy array of shape (N, N)
+    """
+    y = np.arange(1, N + 1).reshape(-1, 1)     # shape (N, 1)
+    y_prime = np.arange(1, N + 1).reshape(1, -1)  # shape (1, N)
+    delta = y - y_prime                        # shape (N, N)
+
+    z = np.arange(1, N + 1).reshape(-1, 1, 1)   # shape (N, 1, 1)
+    exponent = 2j * np.pi * z * delta / N      # shape (N, N, N)
+
+    M = np.sum(np.exp(exponent), axis=0)       # shape (N, N)
+    return M
+    
+M = real_construction_1(4)
+
+
+#%%
+
+def real_construction____(N):
+    
+    M = np.zeros((N, N), dtype =complex)
+    
+    for i in range (N):
+        
+        for j in range (N):
+            
+            row_list = []
+            
+            for z in range (1, N+1):
+                
+                M_i_j = (1/N) * np.sum (np.exp(1j* 2 * (np.pi/N)* z* (i - j)))
+                                        
+            M[i, j] = M_i_j
+                
+    return M
+                
+
+                                        
+#%% test for transform from k_spectrum matrix(diagonalised)
+# (1d SSH model with equal neighbouring hopping as 1)
+def real_construction_1dSSH(N):
+    
+    M = np.zeros((N, N), dtype =complex)
+    
+    for i in range (N):
+        
+        for j in range (N):
+            
+            #row_list = []
+            
+            M_i_j = 0
+            
+            for z in range (1, N+1):
+                
+                M_i_j += (1/N) * (np.exp(1j* 2 * (np.pi/N)* z* (i - j))) * 2 * np.cos(2* (np.pi/ N) * z)
+                                        
+            M[i, j] = M_i_j
+                
+    return M
+
+M_1dSSH_100 = real_construction_1dSSH(100)
+M_1dSSH_5 = real_construction_1dSSH(5)
+
+#%%
+#actually try this with sublattices
+
+#for fixed kx, H_yy'
+#it will be : for i in range '...' subbing k_x_list[i] into the below function to produce corresponding H_yy'
+# here we firstly only try to print one of the six Hamiltonians H1,H2,...,H6
+
+def real_Hyy_fix_k_x(N, k_x, t): # t can be any from [  t_i = T/N * i + T/(N * 2)  ]
+    
+    M = np.zeros((2*N, 2*N), dtype =complex)
+    
+    a_0 = 1 # here is the lattices length
     
     
+    for i in range (N):
+        
+        for j in range (N): 
+            
+            #row_list = []
+            
+            M_2i_2j = 0
+            M_2i_2j_1 = 0
+            M_2i_1_2j = 0
+            M_2i_1_2j_1 = 0
+            
+            for z in range (1, N+1):
+                
+                k_y = 2* (np.pi/ N) * z
+                
+                H_ky = H_matrix_2by2(k_x, k_y, t, a_0)
+              #  H_ky = np.array([[1, 2], [3, 4]])
+                
+                M_2i_2j += (1/N) * (np.exp(1j* 2 * (np.pi/N)* z* ((i+1) - (j+1)))) * 2 * H_ky[0][0]
+                
+                M_2i_2j_1 += (1/N) * (np.exp(1j* 2 * (np.pi/N)* z* ((i+1) - (j+1)))) * 2 * H_ky[0][1]
+                
+                M_2i_1_2j += (1/N) * (np.exp(1j* 2 * (np.pi/N)* z* ((i+1) - (j+1)))) * 2 * H_ky[1][0]
+                
+                M_2i_1_2j_1 += (1/N) * (np.exp(1j* k_y * ((i+1) - (j+1)))) * 2 * H_ky[1][1]
+                
+                
+# i is for row and j for column
+            M[2*i, 2*j] = M_2i_2j
+            
+            M[2*i, 2*j+ 1 ] =  M_2i_2j_1
+            
+            M[2*i+ 1, 2*j ] =  M_2i_1_2j
+            
+            M[2*i + 1, 2*j + 1 ] =  M_2i_1_2j_1
+            
+            print (2*i, 2*i +1, 2*j, 2*j +1)
+                
+    return M
 
+test_M_H1 = real_Hyy_fix_k_x(8, np.pi/4, (T/6) * 5+T/12)
 
+# seems only when this J_z isn't turned off, there is the periodic term? (which is corresponding to cos(x))
 
+# 1. Check if it works for calculating k value 
+#-- diagonal this real matrix should get the same eigen values with if we don't transform,
+# which means if we just subbing the value of k_y on dioganal 2x2 blocks 1-2. -- double check here
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+# 3. can we add up from H1 to H6 as a whole then turn off corners? or do we only do the part of one stage in 6
+# 3-1. should we also do for the U operator? 
 
 
 

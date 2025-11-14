@@ -17,8 +17,8 @@ a0 = 1.0
 T = 2*np.pi
 t_step = T / 6
 J0 =  0.45   # Trust me this works   
-kx = np.linspace(0, 2* np.pi, 100, endpoint=False)
-ky = np.linspace(0, 2* np.pi, 100, endpoint=False)  # Doesnt matter that much but 0 = 2pi here 
+kx = np.linspace(0, 2* np.pi, 100)
+ky = np.linspace(0, 2* np.pi, 100)
 
 # 6 pulses per period 
 pulse = [

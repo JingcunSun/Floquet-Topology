@@ -41,7 +41,6 @@ for i, kx_val in enumerate(kx):
             U_total = U @ U_total
         eigvals[i, j, :] = np.linalg.eigvals(U_total)
 epsilon_T = -np.angle(eigvals)  # as eigenvalues are exp(-i*epsilon*T)
-epsilon_T_kyslice = epsilon_T[:, 0, :]  # Eigenvalues for fixed ky, ky = 0 
 
 # Full 2D plot of bands
 for i in range(len(ky)):

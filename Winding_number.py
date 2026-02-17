@@ -64,14 +64,12 @@ for i, kx_val in enumerate(kx):
             U_t[i, j, n] = U
 
 
-# Effective Floquet Hamiltonian H_eff = (i/T) log U_T with logarithm branch centered at quasienergy epsilon.
+# Effective Floquet Hamiltonian H_eff with logarithm branch centered at epsilon.
 def Heff_k(U_T, eps, T):
     evals, evecs = np.linalg.eig(U_T)
 
-    # raw quasienergies in (-pi/T, pi/T]
     eps_raw = -np.angle(evals) / T
 
-    # shift into interval centered at eps
     shift = np.round((eps_raw - eps) * T / (2 * np.pi))
     eps_br = eps_raw - 2 * np.pi * shift / T
 
@@ -107,7 +105,7 @@ def build_U_eps(kx, ky, U_t, T, eps):
 
 # Computes 3D winding number W from U_eps(kx,ky,t) using discrete version of the formula in Rudner et al 2013
 # Forward differece scheme estimates derivatives 
-# W = (1 / 24 pi^2) ∫ d^3x ε^{μνλ} Tr[(U^{-1}∂_μU)(U^{-1}∂_νU)(U^{-1}∂_λU)] on the torus (kx, ky, t).
+# Used W = (1 / 24 pi^2) ∫ d^3x ε^{μνλ} Tr[(U^{-1}∂_μU)(U^{-1}∂_νU)(U^{-1}∂_λU)] on the torus (kx, ky, t).
 def winding_number(U_grid, kx, ky, T):
     Nkx, Nky, Nt = len(kx), len(ky), U_grid.shape[2]
     dkx = (kx[-1] - kx[0]) / (Nkx - 1)

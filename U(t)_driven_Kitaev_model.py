@@ -1,4 +1,5 @@
 # Code written to compute the total Unitary evolution operator for the periodically driven Kitaev honeycomb model in 2D 
+# Code produces plots for the bulk states 
 import numpy as np
 from scipy.linalg import expm
 import matplotlib.pyplot as plt
@@ -15,10 +16,10 @@ def kitaev_hamiltonian(kx, ky, Jx, Jy, Jz, a0):
 
 a0 = 1.0
 T = 2*np.pi
-t_step = T / 6
+t_step = T / 6 # For the pulse protocall, this is NOT delta_T
 J0 =  0.45   # Trust me this works   
-kx = np.linspace(0, 2* np.pi, 100, endpoint=False)
-ky = np.linspace(0, 2* np.pi, 100, endpoint=False)  # Doesnt matter that much but 0 = 2pi here 
+kx = np.linspace(0, 2* np.pi, 100)
+ky = np.linspace(0, 2* np.pi, 100)
 
 # 6 pulses per period 
 pulse = [
@@ -40,23 +41,6 @@ for i, kx_val in enumerate(kx):
             U_total = U @ U_total
         eigvals[i, j, :] = np.linalg.eigvals(U_total)
 epsilon_T = -np.angle(eigvals)  # as eigenvalues are exp(-i*epsilon*T)
-
-ky_index = 0  # fix ky to plot epsilon * T vs kx
-epsilon_T_kyslice = epsilon_T[:, ky_index, :]  # Eigenvalues for fixed ky, ky = 0 
-
-
-# cont ky = 0 slice plot
-bands_sorted = np.sort(epsilon_T_kyslice, axis=1)
-plt.plot(kx, bands_sorted[:, 0], label='Band 1')
-plt.plot(kx, bands_sorted[:, 1],  label='Band 2')
-plt.title('Floquet Quasi-energy Bands for Periodically Driven Kitaev Model (ky=0)')
-plt.xlabel(r'$k_x a_0$')
-plt.ylabel(r'$\varepsilon T$')
-plt.xlim([0, 2*np.pi])
-#plt.ylim([-np.pi, np.pi])
-plt.legend()
-plt.savefig('Floquet_bands_kitaev_model_kx.png')
-plt.show()
 
 # Full 2D plot of bands
 for i in range(len(ky)):

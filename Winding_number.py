@@ -75,7 +75,6 @@ def Heff_k(U_T, eps, T):
     shift = np.round((eps_raw - eps) * T / (2 * np.pi))
     eps_br = eps_raw - 2 * np.pi * shift / T
 
-    # reconstruct H_eff = sum_a eps_br_a |phi_a><phi_a|
     Heff = np.zeros((2, 2), dtype=complex)
     for a in range(2):
         v = evecs[:, a].reshape(2, 1)
@@ -152,13 +151,10 @@ def winding_number(U_grid, kx, ky, T):
 eps0 = 0.0
 eps_pi = np.pi / T
 
-print("Building U_eps for eps = 0 ...")
 U_eps_0 = build_U_eps(kx, ky, U_t, T, eps0)
 
-print("Building U_eps for eps = pi/T ...")
 U_eps_pi = build_U_eps(kx, ky, U_t, T, eps_pi)
 
-print("Computing winding numbers ...")
 W_0  = winding_number(U_eps_0, kx, ky, T)
 W_pi = winding_number(U_eps_pi, kx, ky, T)
 

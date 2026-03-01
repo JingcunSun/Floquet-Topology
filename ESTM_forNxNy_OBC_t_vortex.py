@@ -12,7 +12,7 @@ from scipy.linalg import expm
 import matplotlib.pyplot as plt
 from matplotlib.colors import PowerNorm
 from collections import Counter
-from collections import Counter
+#from collections import Counter
 #%%
 
  # this function if for checking spectrum of two Hamiltonians -(for example real and k space)
@@ -33,7 +33,8 @@ from collections import Counter
   
 # this J_tilte_a function is based on the paragraph above eqn(16)
 def J_tilte_a(t, t_a, pulse_length, l, T, pulse_amp): # t_a define the START POINT in each period T for pulse a
-    
+    t_p = np.mod (t, T) #for periodic changings, but there's problem for Jz needed to be figured out
+
     t_start_a = l * T + t_a
     
     t_end_a = t_start_a + pulse_length
@@ -45,17 +46,16 @@ def J_tilte_a(t, t_a, pulse_length, l, T, pulse_amp): # t_a define the START POI
 #    else:
 #        return 0 -- this if else is not suitable when t is an array
 
-        return np.where((t >= t_start_a) & (t < t_end_a), pulse_amp, 0)
+        return np.where((t_p >= t_start_a) & (t_p < t_end_a), pulse_amp, 0)
     #np.where(condition, x, y) if condition is true : take x(pulse amp here) ; 
     #                          if condition is false: take y (0)3.+1
     if t_end_a > T:
         
         t_end_a_new = t_end_a - T
         
-        return np.where((t >= t_start_a) & (t <= T) | (t >= 0) & (t < t_end_a_new), pulse_amp, 0)
+        return np.where((t_p >= t_start_a) & (t_p < T) | (t_p >= 0) & (t_p < t_end_a_new), pulse_amp, 0)
     
 #parameter adjustion:
-
 #(here always take T = 1, l = 0, set the numerical platform of time, also unify the y axis as epsilon in fig_1)
 T = 1
 l = 0
@@ -82,6 +82,8 @@ J_a = 2* ((0.9 * np.pi ))/ ((T * 0.5) * 4)#  2* ((0.9 * np.pi ))/ ((T * 0.5) * 4
 #t_a_array = [t_x, t_y, t_z]
 #adjusted by the caption under fig_1:(we unify the t_a, J_a, l, T, delta_t) 
 #laeve the only parameter adjustable in J_tilte_a is t
+
+
 #%%
 
 #write six different Hamiltonians -- Figure out how to order H1 to H6, U1...U6, then finish writing the U_full
@@ -112,7 +114,7 @@ def J_tilte_z(t):
 #%%
 # try plot: t is from 0 to 1, J_tilte_x, y, z 
 
-t_test = np.linspace(0, 1, 100) 
+t_test = np.linspace(-2, 1, 100) 
 # function of J_a need to be adjusted as in that t can be out of range of one period(0,T)
 
 plt.plot(t_test, J_tilte_x(t_test), label='J_tilte_x')
@@ -133,6 +135,7 @@ call_func_J_tilte_x = J_tilte_z(t_specific_time_point_test)
 
 print (call_func_J_tilte_x, ' see if J_tilte_a = x return a scalar multiply the Pauli matrices')
 #plot succeed
+
 #%%
 
 # **a_0 is lattice spacing**, which is the quantity ensures translational invariance(in x direction):
@@ -199,6 +202,35 @@ a_12 = H_test_for_entrices[0][1]
 #                                                                                      J_tilte denoted by x, y and x' y' 
 
 #'dog'
+#%%
+#time discretisation:
+  
+def U_full_discretisation(k_x, k_y, num_time_stages): # which means along lhs to rhs, from (1) earlier/smaller t to (6) later/larger t
+    
+    H_list_6_matrices =[]
+    U_list_N_matrices = []
+    t_desicretisation= T /num_time_stages
+#    time_stage = num_time_stages
+    
+    for i in range (num_time_stages):
+        
+    
+        t_i = T - t_desicretisation * (i + 1)
+    
+        H_i = H_matrix_2by2(k_x, k_y, t_i, a_0)
+#expm(-1j* H_i_test* delta_t_test)
+        
+        U_i = expm(-1j* H_i* (t_desicretisation)) #!!!!! # here using exponential form construct each of U_1 to U_6
+        
+        U_list_N_matrices.append(U_i)
+        
+#        print(U_list_N_matrices)
+        
+    U_full = reduce(np.matmul, U_list_N_matrices) # here adjoint the full time evolution 
+        # here U_list_N_matrices = [e^{-iH(T-dt)}]
+    return U_full   
+
+
 #%%
 # ----- U FROM K BASIS MATRIX H 2X2 (U(T)-H(K))----
 #Here is the 2by2 time evolution matrix: (1 to 6) staged time evolution respectively & full time evolution
@@ -358,6 +390,47 @@ plt.legend(handles=legend_elements, loc='right', bbox_to_anchor=(1, 0.56))
 plt.grid()
 plt.show()
 
+#%% try U_full_discretisation
+def plot_phase_vs_kx(k_x, k_y):
+    Ufull_list =[]
+    eigval_U_asc_T_list = []
+#    eigvec_U_asc_T_list = []
+    phase1_T_asc_list = []
+    phase2_T_asc_list = []
+    quasi1_T_asc_list = []
+    quasi2_T_asc_list = []
+    
+    
+    for i in range (len(k_x)):
+        
+        Ufull_list.append(U_full_discretisation(k_x[i], k_y, 100))
+    #    print(i)
+#        print(Ufull_matrix_asc_list)
+        
+        
+    for i in range (len(k_x)):
+        
+        eigvals, eigvecs = np.linalg.eig(Ufull_list[i])
+    #    print(eigvals,'--eigen value;', eigvecs,'--eigen vector', i,'i') # all these eigen values are complex!!
+
+        eigval_U_asc_T_list.append(eigvals)
+        phase1_T_asc_list.append(- np.angle(eigvals[0])) #these are epsilon_n*T = Phi_n (n here =1, 2) -- which is what we plotted
+        phase2_T_asc_list.append(- np.angle(eigvals[1])) # see above; but anyway we setted T = 1 before, so-- 
+
+    plt.plot(k_x, phase1_T_asc_list,  '.', color='tab:blue', markersize = 3)
+    plt.plot(k_x, phase2_T_asc_list,  '.', color='tab:purple', markersize = 3)
+
+    
+for i in range (len(k_y_list)):
+    
+    plot_phase_vs_kx(k_x_list, k_y_list[i])
+    
+plt.ylim (-np.pi, np.pi)    
+    
+plt.xlabel(r'$k_x a_0\ \mathrm{(PBC)}$', fontsize=13)
+plt.ylabel(r'Phase $\phi_n  = \epsilon_n T$  (T = 1)', fontsize=13)
+
+plt.title(r'Bulk phase - check U(T) time discretisation', fontsize=13)
 
 #%%
 # The loop(PLOT) below is: 
@@ -905,7 +978,7 @@ for i in range(len(k_x_list)):  # Here number of i range corresponding to k_x_li
         
         for y in range (Ny_plot_yOBC_edge): # y is in range 10, because y is from 1 to Ly = 10, given previously (N =10)
             
-            Rho_component_n = (np. abs(Phi_eigvecs_n[2*y]))**2 + (np.abs(Phi_eigvecs_n[2*y + 1]))**2
+            Rho_component_n = (np. abs(Phi_eigvecs_n[2*y]))**2 + (np.abs(Phi_eigvecs_n[2*y + 1]))**2 #Define Rho
             
                        
             # here the Rho correponding to each eigvec n' component's modulus sqaure. But np.abs gives the modulus
@@ -919,8 +992,8 @@ for i in range(len(k_x_list)):  # Here number of i range corresponding to k_x_li
               
  #       try change the def of 'edge'
             
-        Rho_edge_Phi_eigvec_n = Rho_comp_Phi_eigvec_specific_n_list[0]+ Rho_comp_Phi_eigvec_specific_n_list[Ny_plot_yOBC_edge -1] #+ Rho_comp_Phi_eigvec_specific_n_list[2] + Rho_comp_Phi_eigvec_specific_n_list[Ly -3] + Rho_comp_Phi_eigvec_specific_n_list[Ly -2] + Rho_comp_Phi_eigvec_specific_n_list[Ly -1]
-        #total density of edege state
+        Rho_edge_Phi_eigvec_n = Rho_comp_Phi_eigvec_specific_n_list[0]#+ Rho_comp_Phi_eigvec_specific_n_list[Ny_plot_yOBC_edge -1] #+ Rho_comp_Phi_eigvec_specific_n_list[2] + Rho_comp_Phi_eigvec_specific_n_list[Ly -3] + Rho_comp_Phi_eigvec_specific_n_list[Ly -2] + Rho_comp_Phi_eigvec_specific_n_list[Ly -1]
+        #total density of edege state # adjust () state portal
         #total density of edege state
         print('n = ', n, 'edge density(Rho) for all y =', Rho_edge_Phi_eigvec_n)
         # for check 2 
@@ -954,7 +1027,10 @@ for i in range(len(k_x_list)):  # Here number of i range corresponding to k_x_li
     
     Rho_edge_specific_kx = Rho_y_listed_by_y[0] + Rho_y_listed_by_y[Ny_plot_yOBC_edge -1] #+ Rho_y_listed_by_y[Ly -2] + Rho_y_listed_by_y[Ly -3] + Rho_y_listed_by_y[Ly -4] + Rho_y_listed_by_y[Ly -10]# here 19 is Ly -1
     # Q: why increase this can actually increas e the number of Rho_edge_listed_by_sta_n_listed_by_kx
-    
+#    for y_basis in range (Ny_plot_yOBC_edge):
+#        Rho_specific_y_specific_kx = Rho_y_listed_by_y[0]
+#        Rho_sum = + Rho_specific_y_specific_kx
+#    print (Rho_sum) # this is labelled by specific kx and specific 
 #    Rho_edge_listed_by_kx. append(Rho_edge_specific_kx)
     
     Rho_all_y_listed_by_kx.append(Rho_y_listed_by_y)
@@ -1043,10 +1119,6 @@ plt.show()
 
 # spectrum need to be find by H(2NxNy x 2NxNy) append 6 piecewisely(will be changed to time discretisation calculate U(T) - epsilon
 # AIM: to make the specrtum as the same
-
-# try plan A: 
-
-
 
 #   
 #%%
@@ -1153,7 +1225,13 @@ def find_spectrum_NxNy_version2(N_y, N_x, a_0):
     eigvals, eigvecs = np.linalg.eig(Ufull_descending_PBC_realxy_version2(N_y, N_x, a_0))
     epsilon = - np.angle(eigvals)
     return  epsilon
+#%% try to plot a spectrum but not only label the y = 1 or Ny position var of Rho, but for all the Rho 
+# content of plotting: Rho against epsilon_n:
 
+# firstly go back to y OBC x PBC, numerical check - including for Rho (1) + Rho(Ny), are they not inside certain epsilon(eigenvec/eigenval?)
+# check aim 2: If Rho(1) +... Rho(Ny) = 1(I don't think so) -- but can plot them to see if they show something (against epsilon_n) 
+#      Q: Do they show that when time vortex there's no states 
+# plot rho(y = 0) or jearby sites for xy OBC's epsilon 
 
 #%%
 #--------------------------------------------------------------
@@ -1255,12 +1333,14 @@ def H2NyNx_xOBC_only(N_y, N_x, t, a_0):
     
     H_PBC_generated_y_OBC_ONLY[mask] = 0    
        # or whatever values you want
-    print("\nMask (True means 'will be changed'):\n", mask)
+#    print("\nMask (True means 'will be changed'):\n", mask)
 
     return  H_PBC_generated_y_OBC_ONLY
 
 #%% 
-#---------H_2NxNy_OBC_bothx&y, centre of work for inducing time vortex ------------
+#---------*****H_2NxNy_OBC_bothx&y, centre of work for inducing time vortex***** ------------
+
+
 #This H doesn't produce anything we can check from before
 #alternative way to apply a primary check: 
 #                          write H_2Nx_OBC(ky) with fixed ky and append all ky's spectrum
@@ -1285,7 +1365,7 @@ def H2NyNx_xyOBC(N_y, N_x, t, a_0):
     
     H_NyNx_generated_both_OBC [mask] = 0    
        # or whatever values you want
-    print("\nMask (True means 'will be changed'):\n", mask)
+#    print("\nMask (True means 'will be changed'):\n", mask)
 
     return H_NyNx_generated_both_OBC
 
@@ -1306,47 +1386,58 @@ def H2NyNx_xyOBC_time_vortex(N_y, N_x, t, a_0):  # here this t is the t got samp
 #                                          Plan B: at middle of all unit cells Nx, Ny plane
 
     
-    H_generated_both_OBC_no_vor = H2NyNx_xOBC_only(N_y, N_x, t, a_0)
+#    H_generated_both_OBC_no_vor = H2NyNx_xOBC_only(N_y, N_x, t, a_0) # this create an Ham object as input goes into func
     
     # begin to write the vortex Ham
     H_generated_both_OBC_vor = np.zeros((2*N_y*N_x, 2*N_y*N_x), dtype =complex)
     
     for i in range(N_x* N_y):
         for j in range(N_x* N_y):
-            x = (i )% N_x  #double check later (?) -- x & x' are from 0, to Nx -1
-            x_1 = (j )% N_x 
-            delta_x = (x - x_1) % N_x #this gives [the smallest integer which near the (x-x1) and can be divided by N_x]'s difference with (x-x_1)
-            y = (i) // N_x #double check later (?) -- y & y' are from 0, to Ny -1
-            y_1 = (j) // N_x  # y'
-            delta_y = (y - y_1) % N_y
-            #here this loops i and j are fine since there isn't sum over them
-            
-            # 4 is indexed
-              #H_ele_sum_over_k [y, y_1, x, x_1] 
+            x = (i + 1 )% N_x  #double check later (?) -- x & x' are from 0, to Nx -1
+            x_1 = (j + 1 )% N_x 
+          #  delta_x = (x - x_1) % N_x #this gives [the smallest integer which near the (x-x1) and can be divided by N_x]'s difference with (x-x_1)
+            y = ((i) // N_x) + 1 #double check later (?) -- y & y' are from 0, to Ny -1
+            y_1 =( (j) // N_x ) + 1 # y'
+
+           # print (i, j, 'test ij in time vortex matrix')
 
             arv_y = (y + y_1)/2 # here is a question: should we do this way from 0 for all x, x', y, y'?
             arv_x = (x + x_1)/2    
 #-----------------------------------------------------------    
-            vortex_theta = np.arctan2(arv_y/ arv_x)
+            vortex_theta = np.arctan2(arv_y, arv_x)
             
     # how should we apply theta belongs to [0, 2pi) if we want 
-    
             #theta = np.arctan2(y, x)          # (-pi, pi]
             #theta_0_2pi = np.mod(theta, 2*np.pi)  # [0, 2pi)
-
             # continuous (no jump) if points are ordered around the circle:
             #theta_cont = np.unwrap(theta)
 #------------------------------------------------------------
             t_phase_delayed = t - vortex_theta * T/(2 * np.pi)
             
-            H_generated_both_OBC_vor[2*i:2*i+2, 2*j:2*j+2] = H2NyNx_xOBC_only(N_y, N_x, t_phase_delayed, a_0)
-        
-        
+#            H_generated_both_OBC_vor[2*i:2*i+2, 2*j:2*j+2] = H_generated_both_OBC_no_vor[2*i:2*i+2, 2*j:2*j+2]
+            # lhs extract 2x2 little blocks in zero martix (preparted for writing time vortexed Ham), at each loop*(NxNy)
+            # rhs rewrite as H - worng: H_generated_both_OBC_no_vor is written outside the loop(labels xx' and yy' - time phase)
+            # each loop should assign 2x2 extracted blocks from lhs a different time phase [H_generated_both_OBC_no_vor] with corresponding part of matrix
+            # Problem: here this func[H2NyNx_xOBC_only] is a func of whole matrix, is it fine if it's large we call it again and again? 
+            
+            H_generated_both_OBC_vor[2*i:2*i+2, 2*j:2*j+2] = H2NyNx_xOBC_only(N_y, N_x, t_phase_delayed, a_0)[2*i:2*i+2, 2*j:2*j+2]
+            
+            
+            
     return H_generated_both_OBC_vor
    
-    
-    
-    
+#try one H see if this work -- still define time at T/12 and Ny = 4 Nx =3
+
+H_TEST_time_vortex =  H2NyNx_xyOBC_time_vortex(4, 3, T/12, a_0 =1)
+# a vague test: test that we did add some shit here: 
+#HamNxNy_test = H2NyNx_xyOBC(4, 3, T/12, 1)   
+
+def Ham_same(a, b, rtol=1e-8, atol=1e-10):
+    a = np.asarray(a)
+    b = np.asarray(b)
+    return a.shape == b.shape and np.allclose(a, b, rtol=rtol, atol=atol, equal_nan=True)
+print(Ham_same(H_TEST_time_vortex, HamNxNy_test))
+print(Ham_same(HamNxNy_test, HamNxNy_test))
 #%% CHECK IF XPBC Y OBC MAKE SENSE
 def H2NyNx_yOBC_for_check(N_y, N_x, t, a_0): 
     

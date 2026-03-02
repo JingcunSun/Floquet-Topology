@@ -12,6 +12,7 @@ from scipy.linalg import expm
 import matplotlib.pyplot as plt
 from matplotlib.colors import PowerNorm
 from collections import Counter
+import pandas as pd
 #from collections import Counter
 #%%
 
@@ -1383,7 +1384,41 @@ HamNxNy_test = H2NyNx_xyOBC(4, 3, T/12, 1)
 
 
 #print( HamNxNy_test, 'test see what OBC hamiltonian we wrote is like')
+#%% go through the way did before for H_6 U_full, no time vortex as fast run
+def U2NyNx_xy_OBC(N_y, N_x, a_0): 
+    def H_6_2NyNx_OBC_append(N_y, N_x, a_0): #here this function should have same spectrum(EIGEN_yVALS)as the [K BASIS H2x2]
+                        #6 refers as list of 6 piecewise H 
+        
+        H2NyNx_OBC_6_matrices = []
+        
+        for t_x in range (6): #x refers index for t
+        
+            t_piecewise = T/6 *  t_x + T/(6 * 2)   # here this x is equivalent to i in the 2x2 H list func
+            
+            H2NyNx_OBC_piecewise =  H2NyNx_xyOBC(N_y, N_x, t_piecewise, a_0)
+            
+            H2NyNx_OBC_6_matrices.append(H2NyNx_OBC_piecewise) # generate 6 2N_y real H
+            
+        return H2NyNx_OBC_6_matrices
 
+    U_list_new = []
+    #reference :
+    #    H_list_6_2N_y_edge = H_6_2N_y_OBC(N, k_x)
+    H_6_2NyNx_new_OBC_list =  H_6_2NyNx_OBC_append(N_y, N_x, a_0)
+        
+    for i in range (6):
+
+        U_i = expm(-1j* (H_6_2NyNx_new_OBC_list[i])* (T/6))
+            
+        U_list_new.append(U_i) # append should be in the loop scope, 
+                                # one grid inside the for loop title if you want to append the thing produced once loop (per i)
+        
+    U_reverse_new = np.flip(U_list_new)
+        
+    U_full_new = reduce(np.matmul,  U_reverse_new)
+            
+    
+    return  U_full_new
     
 
 
@@ -1475,6 +1510,35 @@ def H2NyNx_xyOBC_time_vor_core(N_y, N_x, t, a_0, x_0, y_0):  # x_0 and y_0 are t
             
     return H_generated_both_OBC_vor_core
 
+#%%
+def H2NyNx_xyOBC_No_Vor(N_y, N_x, t, a_0): # H for OBC but no timevortex, exact written in same way with time vor, but no delay 
+    
+    H_generated_both_OBC_vor_core = np.zeros((2*N_y*N_x, 2*N_y*N_x), dtype =complex)
+    
+    
+    for i in range(N_x* N_y):
+        for j in range(N_x* N_y):
+            x = (i + 1 )% N_x  #double check later (?) -- x & x' are from 0, to Nx -1
+            x_1 = (j + 1 )% N_x 
+          #  delta_x = (x - x_1) % N_x #this gives [the smallest integer which near the (x-x1) and can be divided by N_x]'s difference with (x-x_1)
+            y = ((i) // N_x) + 1 #double check later (?) -- y & y' are from 0, to Ny -1
+            y_1 =( (j) // N_x ) + 1 # y'
+
+           # print (i, j, 'test ij in time vortex matrix')
+
+            arv_y = ((y + y_1)/2)  # here is a question: should we do this way from 0 for all x, x', y, y'? Ans: no. We do from 1
+            arv_x = ((x + x_1)/2)  # 
+#-----------------------------------------------------------    
+            vortex_theta = np.arctan2(arv_y, arv_x)
+#------------------------------------------------------------
+ #           t_phase_delayed = t - vortex_theta * T/(2 * np.pi)
+          
+#-----------------------------------MOST IMPORTANT DIFFERENCE HERE!!!----------------------------
+            H_generated_both_OBC_vor_core[2*i:2*i+2, 2*j:2*j+2] = H2NyNx_xOBC_only(N_y, N_x, t, a_0)[2*i:2*i+2, 2*j:2*j+2]
+            
+            
+            
+    return H_generated_both_OBC_vor_core
 
 
 
@@ -1521,6 +1585,7 @@ def U_full_time_vor_core(N_x, N_y, num_time_stages, a_0, x_0, y_0): # which mean
     U_full = reduce(np.matmul, U_list_matrices) # here adjoint the full time evolution 
         # here U_list_N_matrices = [e^{-iH(T-dt)}]
     return U_full   
+#%%
 
 def U_full_time_vor_midpoint(N_x, N_y, num_time_stages, a_0):
     x_mid = (1+ N_x)/2
@@ -1531,6 +1596,31 @@ def U_full_time_vor_midpoint(N_x, N_y, num_time_stages, a_0):
     
 Test_U_with_time_vor = U_full_time_vor_midpoint(3, 4, 50, 1) # make time steps to be 12 
 
+#%%
+def U_full_time_no_vor(N_x, N_y, num_time_stages, a_0): # Recall xyOBC but no vortex
+    U_list_matrices = []
+    t_desicretisation= T /num_time_stages
+#    time_stage = num_time_stages
+    
+    for i in range (num_time_stages):
+        
+    
+        t_i = T - t_desicretisation * (i + 1)
+    
+        H_i =  H2NyNx_xyOBC_No_Vor(N_x, N_y, t_i, a_0)
+#expm(-1j* H_i_test* delta_t_test)
+        
+        U_i = expm(-1j* H_i* (t_desicretisation)) #!!!!! # here using exponential form construct each of U_1 to U_6
+        
+        U_list_matrices.append(U_i)
+        
+        print(U_i[1,2]) # why are you doing this bro? 
+        
+    print(np.array(U_list_matrices)[:][1,2])
+        
+    U_full = reduce(np.matmul, U_list_matrices) # here adjoint the full time evolution 
+        # here U_list_N_matrices = [e^{-iH(T-dt)}]
+    return U_full
 #%%
 #Function of plot epsilon and density of states  -- which has problem here is that do we need to have greens func calculation?
 
@@ -1669,6 +1759,78 @@ def Rho_sites_all_epsilons(N_x, N_y, num_time_stages, a_0, list_of_sites_needed)
         Rho_certain_sites_all_n.append(Rho_n) # this is Rho_sites for all epsilon
         
     return Rho_certain_sites_all_n, epsilon_n_list #should be in order of epsilon_n_list from np.linalg.eig
+
+#%%
+def Rho_sites_all_epsilons_noVor(N_x, N_y, num_time_stages, a_0, list_of_sites_needed): # this will return a list in order of epsilon_n
+    U_5 = U_full_time_no_vor(N_x, N_y, num_time_stages, a_0)   # var: sites summed over
+                                                                     # var: epsilon( from NxNy num_time_sites, a_0>>U)    
+    eigvals_U_5, eigvecs_U_5 = np.linalg.eig(U_5)
+    
+    epsilon_n_list = - np.angle(eigvals_U_5) #ARRAY
+    
+    
+    get_eigen_vecs = []
+    for m in range(len(epsilon_n_list)):
+        eigen_vec_extract = eigvecs_U_5[:, m]
+        get_eigen_vecs. append (eigen_vec_extract)
+    eigen_vec_list = get_eigen_vecs
+    
+    # decompose list_of_sites_needed
+    
+    Rho_certain_sites_all_n = []
+    for eigen_vec_n in eigen_vec_list:
+        # for a certain x, y, alpha 
+        Rho_n_all_sites = 0
+        for site_i in list_of_sites_needed:
+            
+            x, y, alpha = site_i
+            
+            comp_index = (y - 1)* 2 * N_x + (x - 1) * 2 + alpha - 1 # -1 is to fit coding regime 
+        #ref: Rho_component_y = (np. abs(Phi_eigvecs_n[2*y]))**2 + (np.abs(Phi_eigvecs_n[2*y + 1]))**2
+            Rho_n_site_i = (np.abs(eigen_vec_n[comp_index])) ** 2 
+            
+            Rho_n_all_sites += Rho_n_site_i 
+        
+        Rho_n = Rho_n_all_sites
+        
+        Rho_certain_sites_all_n.append(Rho_n) # this is Rho_sites for all epsilon
+        
+    return Rho_certain_sites_all_n, epsilon_n_list #should be in order of epsilon_n_list from np.linalg.eig
+#%%
+def Rho_sites_all_epsilons_noVor_FAST(N_x, N_y, num_time_stages, a_0, list_of_sites_needed): # this will return a list in order of epsilon_n
+    U_5 = U_full_time_no_vor(N_x, N_y, num_time_stages, a_0)    
+    eigvals_U_5, eigvecs_U_5 = np.linalg.eig(U_5)
+    
+    epsilon_n_list = - np.angle(eigvals_U_5) #ARRAY
+    
+    
+    get_eigen_vecs = []
+    for m in range(len(epsilon_n_list)):
+        eigen_vec_extract = eigvecs_U_5[:, m]
+        get_eigen_vecs. append (eigen_vec_extract)
+    eigen_vec_list = get_eigen_vecs
+    
+    # decompose list_of_sites_needed
+    
+    Rho_certain_sites_all_n = []
+    for eigen_vec_n in eigen_vec_list:
+        # for a certain x, y, alpha 
+        Rho_n_all_sites = 0
+        for site_i in list_of_sites_needed:
+            
+            x, y, alpha = site_i
+            
+            comp_index = (y - 1)* 2 * N_x + (x - 1) * 2 + alpha - 1 # -1 is to fit coding regime 
+        #ref: Rho_component_y = (np. abs(Phi_eigvecs_n[2*y]))**2 + (np.abs(Phi_eigvecs_n[2*y + 1]))**2
+            Rho_n_site_i = (np.abs(eigen_vec_n[comp_index])) ** 2 
+            
+            Rho_n_all_sites += Rho_n_site_i 
+        
+        Rho_n = Rho_n_all_sites
+        
+        Rho_certain_sites_all_n.append(Rho_n) # this is Rho_sites for all epsilon
+        
+    return Rho_certain_sites_all_n, epsilon_n_list #should be in order of epsilon_n_list from np.linalg.eig
 #%% check func indentation1 
 #    def test_eigenpair_alignment(rtol=1e-7, atol=1e-9):
 #        check_eigenpair =[]
@@ -1684,21 +1846,100 @@ def Rho_sites_all_epsilons(N_x, N_y, num_time_stages, a_0, list_of_sites_needed)
 #            check_eigenpair.append((passed, residual_norm))
 #        return check_eigenpair # this should return 'true', if not, go back to check     epsilon_n_list & eigen_vec_list
 
-#%% plot try scatter # easier to read
-Rho, Epsilon = Rho_sites_all_epsilons(8, 8, 50, 1, list_of_sites_around_mid_8) # it seems the more time sampled, the larger the bulk structure(that range of Epsilon)'s Rho
+#%% T sample for time discretisation adjusting portal 
+
+t_sampling = 70
+
+
+#%% plot try scatter # easier to read --WITH TIME VOR
+Rho, Epsilon = Rho_sites_all_epsilons(8, 8, t_sampling, 1, list_of_sites_around_mid_8) # it seems the more time sampled, the larger the bulk structure(that range of Epsilon)'s Rho
 #print (Rho, type(Rho), 'Rho') # Rho is list
 #print (Epsilon, type(Epsilon), 'Epsilon') # Epsilon is array 
-
-idx = np.argsort(Epsilon)
+idx = np.argsort(Epsilon) # sorted all against the small/large of Epsilon
 
 Eps_sorted = Epsilon[idx]
 Rho_sorted = np.array(Rho)[idx]
 
+#%%
+#%%
 plt.figure()
 plt.plot(Eps_sorted, Rho_sorted, 'o-', markersize=3)#linestyle='-', linewidth=1)   # or add marker='.'
-plt.xlabel(r'$\epsilon$')
+plt.xlabel(r'$\epsilon_n T$')
 plt.ylabel(r'$\rho$')
-plt.title(r'$\rho$ vs $\epsilon$ (sorted)')
+plt.title(r'$\rho_n for site around vortex core$ vs $\epsilon_n$ ')
+plt.grid(True)
+plt.show()
+#%% for fast plot [[1]]
+
+df = pd.read_excel(r"D:\OneDrive - Imperial College London\Desktop\master project\if I am lucky\Next-step work\Rho_Eps_more_or_lessdetail.xlsx", header=None, skiprows=1)
+
+Rho_readout = df.iloc[:, 0]
+Epsilon_readout = df.iloc[:, 1]
+
+plt.figure()
+plt.plot(Epsilon_readout, Rho_readout, 'o-', markersize=3)#linestyle='-', linewidth=1)   # or add marker='.'
+plt.xlabel(r'$\epsilon_n T$ ')
+plt.ylabel(r'$\rho$')
+plt.title(r'$\rho_n$ for site around vortex core vs $\epsilon_n$ ')
+plt.grid(True)
+plt.show()
+
+#%% WITH OUT TIME VOR
+Rho_0, Epsilon_0 = Rho_sites_all_epsilons_noVor(8, 8, t_sampling, 1, list_of_sites_around_mid_8) 
+
+#%%  #[[2]]
+idx = np.argsort(Epsilon_0)
+
+Eps_sorted_0 = Epsilon_0[idx]
+Rho_sorted_0 = np.array(Rho_0)[idx]
+
+plt.figure()
+#plt.plot(Eps_sorted_0, Rho_sorted_0, 'o-', markersize=3)#linestyle='-', linewidth=1)   # or add marker='.'
+plt.xlabel(r'$\epsilon_n T$ ')
+plt.ylabel(r'$\rho$')
+plt.title(r'$\rho_n$  for sites around vortex core vs $\epsilon_n$ ')
+plt.grid(True)
+plt.show()
+
+#%% plot difference between Rho_0 & Rho [[2]] T dis 50
+
+Rho_difference = Rho_readout - Rho_sorted_0 # as in Rho with vortex minus Rho without vortex #readout file has T discretisation 50 
+
+peak_extraction = np.asarray(Rho_difference)
+i_max = np.argmax(peak_extraction)
+x_peak, y_peak = Epsilon_readout[i_max], Rho_difference[i_max]
+
+print('peak', (x_peak, y_peak))
+
+
+plt.figure()
+
+plt.plot(Epsilon_readout, Rho_difference, 'o-', markersize=3, color = 'tab:blue')#linestyle='-', linewidth=1)   # or add marker='.'
+plt.plot(x_peak, y_peak, marker='x', markersize=10, mew=2,
+         color='tab:red', label='peak')
+plt.xlabel(r'$\epsilon_n T$ ')
+plt.ylabel(r'$\rho$') 
+plt.title(r'$\rho_n$ difference for sites around vortex core  vs $\epsilon_n$ ')
+plt.grid(True)
+plt.show()
+#%%[[3]] T dis 70 --------------final plot -------------------
+Rho_difference_adjusting = Rho_sorted - Rho_sorted_0 # as in Rho with vortex minus Rho without vortex 
+
+peak_extraction = np.asarray(Rho_difference_adjusting)
+i_max = np.argmax(peak_extraction)
+x_peak, y_peak = Epsilon_readout[i_max], Rho_difference_adjusting[i_max]
+
+print('peak', (x_peak, y_peak))
+
+
+plt.figure()
+
+plt.plot(Eps_sorted, Rho_difference_adjusting, 'o-', markersize=3, color = 'tab:blue')#linestyle='-', linewidth=1)   # or add marker='.'
+plt.plot(x_peak, y_peak, marker='x', markersize=10, mew=2,
+         color='tab:red', label='peak')
+plt.xlabel(r'$\epsilon_n T$ ')
+plt.ylabel(r'$\rho$') 
+plt.title(rf'$\rho_n$ difference for sites around vortex core vs $\epsilon_n$, $T discretisation = {t_sampling}$') #rf"Phase bands with edge state density diagnosis, y OBC, $L_y = {Ny_plot_yOBC_edge}$
 plt.grid(True)
 plt.show()
 
@@ -1723,6 +1964,7 @@ which = np.digitize(Epsilon, edges) - 1
 rho_binned = np.array([Rho[which == i].mean() if np.any(which == i) else np.nan
                        for i in range(bins)])
 # -------------------------------------------------------------
+
 plt.figure()
 plt.plot(centers, rho_binned, linestyle='-', linewidth=1)
 plt.xlabel(r'$\epsilon$')

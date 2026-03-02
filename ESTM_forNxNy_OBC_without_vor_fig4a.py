@@ -1683,7 +1683,41 @@ def Rho_sites_all_epsilons(N_x, N_y, num_time_stages, a_0, list_of_sites_needed)
 #            
 #            check_eigenpair.append((passed, residual_norm))
 #        return check_eigenpair # this should return 'true', if not, go back to check     epsilon_n_list & eigen_vec_list
-
+def Rho_sites_all_epsilons_no_vortex(N_x, N_y, num_time_stages, a_0, list_of_sites_needed): # this will return a list in order of epsilon_n
+    U_4 = U_full_time_vor_midpoint(N_x, N_y, num_time_stages, a_0)   # var: sites summed over
+                                                                     # var: epsilon( from NxNy num_time_sites, a_0>>U)    
+    eigvals_U_4, eigvecs_U_4 = np.linalg.eig(U_4)
+    
+    epsilon_n_list = - np.angle(eigvals_U_4) 
+    
+    
+    get_eigen_vecs = []
+    for m in range(len(epsilon_n_list)):
+        eigen_vec_extract = eigvecs_U_4[:, m]
+        get_eigen_vecs. append (eigen_vec_extract)
+    eigen_vec_list = get_eigen_vecs
+    
+    # decompose list_of_sites_needed
+    
+    Rho_certain_sites_all_n = []
+    for eigen_vec_n in eigen_vec_list:
+        # for a certain x, y, alpha 
+        Rho_n_all_sites = 0
+        for site_i in list_of_sites_needed:
+            
+            x, y, alpha = site_i
+            
+            comp_index = (y - 1)* 2 * N_x + (x - 1) * 2 + alpha - 1 # -1 is to fit coding regime 
+        #ref: Rho_component_y = (np. abs(Phi_eigvecs_n[2*y]))**2 + (np.abs(Phi_eigvecs_n[2*y + 1]))**2
+            Rho_n_site_i = (np.abs(eigen_vec_n[comp_index])) ** 2 
+            
+            Rho_n_all_sites += Rho_n_site_i 
+        
+        Rho_n = Rho_n_all_sites
+        
+        Rho_certain_sites_all_n.append(Rho_n) # this is Rho_sites for all epsilon
+        
+    return Rho_certain_sites_all_n, epsilon_n_list #should be in order of epsilon_n_list from np.linalg.eig
 #%% plot try scatter # easier to read
 Rho, Epsilon = Rho_sites_all_epsilons(8, 8, 50, 1, list_of_sites_around_mid_8) # it seems the more time sampled, the larger the bulk structure(that range of Epsilon)'s Rho
 #print (Rho, type(Rho), 'Rho') # Rho is list

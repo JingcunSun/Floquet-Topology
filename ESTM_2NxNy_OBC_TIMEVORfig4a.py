@@ -1693,12 +1693,12 @@ idx = np.argsort(Epsilon)
 
 Eps_sorted = Epsilon[idx]
 Rho_sorted = np.array(Rho)[idx]
-
+#%%
 plt.figure()
 plt.plot(Eps_sorted, Rho_sorted, 'o-', markersize=3)#linestyle='-', linewidth=1)   # or add marker='.'
-plt.xlabel(r'$\epsilon$')
+plt.xlabel(r'$\epsilon_n$')
 plt.ylabel(r'$\rho$')
-plt.title(r'$\rho$ vs $\epsilon$ (sorted)')
+plt.title(r'$\rho_n for site around vortex core$ vs $\epsilon_n$ (sorted)')
 plt.grid(True)
 plt.show()
 

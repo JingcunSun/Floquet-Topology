@@ -1683,7 +1683,7 @@ def find_Phi_n_vec_vs_kx_for_ref(k_x, N_y): # here k_x is a list  N is number of
     return eigen_vec_listed_by_kx
 #Phi_n_vec_list = find_Phi_n_vec_vs_kx(k_x_list, Ny_plot_yOBC_edge ) # there are 20 eigvecs for 2N x 2N (20) matrix 
 
-#%%
+#%% # this function will be for the hexagon plot
 def Rho_site_epsilon(N_x, N_y, num_time_stages, a_0, list_of_sites_needed, eps_min, eps_max): # later you will need Rho_{epsilon}_{xy}
     
     # var index within this func: U_4
@@ -1844,11 +1844,11 @@ def Rho_sites_all_epsilons_noVor_FAST(N_x, N_y, num_time_stages, a_0, list_of_si
 #            passed = np.allclose(U_4 @ v, lam * v, rtol=rtol, atol=atol)
 #            
 #            check_eigenpair.append((passed, residual_norm))
-#        return check_eigenpair # this should return 'true', if not, go back to check     epsilon_n_list & eigen_vec_list
+#        return check_eigenpair # this should return 'true', if not, go back to check   epsilon_n_list & eigen_vec_list
 
 #%% T sample for time discretisation adjusting portal 
 
-t_sampling = 70
+t_sampling = 60
 
 
 #%% plot try scatter # easier to read --WITH TIME VOR
@@ -1860,13 +1860,28 @@ idx = np.argsort(Epsilon) # sorted all against the small/large of Epsilon
 Eps_sorted = Epsilon[idx]
 Rho_sorted = np.array(Rho)[idx]
 
+#%% extract peak in the t sampling 60 data 
+
+peak_extraction_time_vor_only = np.asarray(Rho_sorted)
+i_max_time_vor_only = np.argmax(peak_extraction_time_vor_only)
+x_peak_time_vor_only, y_peak_time_vor_only= Eps_sorted[i_max_time_vor_only], Rho_sorted[i_max_time_vor_only]
+
+print('peak', (x_peak_time_vor_only, y_peak_time_vor_only))
+
+#******** IMPORTANT: PROBLEM GENERATED HERE: why this epsilon peak is never pi? Because of scale of sites?
+# (because there is this chiral edge modes generate also pi mode; and they might mixed together)
+# And when the system isn't large enough, we cannot separate chiral edge mode completely by choose central site? 
+
 #%%
-#%%
+
+
 plt.figure()
 plt.plot(Eps_sorted, Rho_sorted, 'o-', markersize=3)#linestyle='-', linewidth=1)   # or add marker='.'
+plt.plot(x_peak_time_vor_only, y_peak_time_vor_only, marker='x', markersize=10, mew=2,
+         color='tab:red', label='peak')
 plt.xlabel(r'$\epsilon_n T$')
 plt.ylabel(r'$\rho$')
-plt.title(r'$\rho_n for site around vortex core$ vs $\epsilon_n$ ')
+plt.title(r'$\rho_n$ for site around vortex core vs $\epsilon_n$ ')
 plt.grid(True)
 plt.show()
 #%% for fast plot [[1]]
@@ -1888,54 +1903,33 @@ plt.show()
 Rho_0, Epsilon_0 = Rho_sites_all_epsilons_noVor(8, 8, t_sampling, 1, list_of_sites_around_mid_8) 
 
 #%%  #[[2]]
-idx = np.argsort(Epsilon_0)
+idx_0 = np.argsort(Epsilon_0)
 
-Eps_sorted_0 = Epsilon_0[idx]
-Rho_sorted_0 = np.array(Rho_0)[idx]
+Eps_sorted_0 = Epsilon_0[idx_0]
+Rho_sorted_0 = np.array(Rho_0)[idx_0]
 
 plt.figure()
-#plt.plot(Eps_sorted_0, Rho_sorted_0, 'o-', markersize=3)#linestyle='-', linewidth=1)   # or add marker='.'
+plt.plot(Eps_sorted_0, Rho_sorted_0, 'o-', markersize=3)#linestyle='-', linewidth=1)   # or add marker='.'
 plt.xlabel(r'$\epsilon_n T$ ')
 plt.ylabel(r'$\rho$')
 plt.title(r'$\rho_n$  for sites around vortex core vs $\epsilon_n$ ')
 plt.grid(True)
 plt.show()
 
-#%% plot difference between Rho_0 & Rho [[2]] T dis 50
-
-Rho_difference = Rho_readout - Rho_sorted_0 # as in Rho with vortex minus Rho without vortex #readout file has T discretisation 50 
-
-peak_extraction = np.asarray(Rho_difference)
-i_max = np.argmax(peak_extraction)
-x_peak, y_peak = Epsilon_readout[i_max], Rho_difference[i_max]
-
-print('peak', (x_peak, y_peak))
-
-
-plt.figure()
-
-plt.plot(Epsilon_readout, Rho_difference, 'o-', markersize=3, color = 'tab:blue')#linestyle='-', linewidth=1)   # or add marker='.'
-plt.plot(x_peak, y_peak, marker='x', markersize=10, mew=2,
-         color='tab:red', label='peak')
-plt.xlabel(r'$\epsilon_n T$ ')
-plt.ylabel(r'$\rho$') 
-plt.title(r'$\rho_n$ difference for sites around vortex core  vs $\epsilon_n$ ')
-plt.grid(True)
-plt.show()
 #%%[[3]] T dis 70 --------------final plot -------------------
 Rho_difference_adjusting = Rho_sorted - Rho_sorted_0 # as in Rho with vortex minus Rho without vortex 
 
-peak_extraction = np.asarray(Rho_difference_adjusting)
-i_max = np.argmax(peak_extraction)
-x_peak, y_peak = Epsilon_readout[i_max], Rho_difference_adjusting[i_max]
+peak_extraction_diff = np.asarray(Rho_difference_adjusting)
+i_max_diff = np.argmax(peak_extraction_diff)
+x_peak_diff, y_peak_diff = Eps_sorted[i_max_diff], Rho_difference_adjusting[i_max_diff]
 
-print('peak', (x_peak, y_peak))
+print('peak for difference ', (x_peak_diff, y_peak_diff))
 
 
 plt.figure()
 
 plt.plot(Eps_sorted, Rho_difference_adjusting, 'o-', markersize=3, color = 'tab:blue')#linestyle='-', linewidth=1)   # or add marker='.'
-plt.plot(x_peak, y_peak, marker='x', markersize=10, mew=2,
+plt.plot(x_peak_diff, y_peak_diff, marker='x', markersize=10, mew=2,
          color='tab:red', label='peak')
 plt.xlabel(r'$\epsilon_n T$ ')
 plt.ylabel(r'$\rho$') 

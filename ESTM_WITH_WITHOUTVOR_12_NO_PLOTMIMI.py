@@ -118,16 +118,16 @@ def J_tilte_z(t):
 t_test = np.linspace(-2, 1, 100) 
 # function of J_a need to be adjusted as in that t can be out of range of one period(0,T)
 
-plt.plot(t_test, J_tilte_x(t_test), label='J_tilte_x')
-plt.plot(t_test, J_tilte_y(t_test), label='J_tilte_y')
-plt.plot(t_test, J_tilte_z(t_test), label='J_tilte_z')
+#plt.plot(t_test, J_tilte_x(t_test), label='J_tilte_x')
+#plt.plot(t_test, J_tilte_y(t_test), label='J_tilte_y')
+#plt.plot(t_test, J_tilte_z(t_test), label='J_tilte_z')
 
-plt.xlabel('t')
-plt.ylabel('J_tilte_a')
-plt.title('Plot of J_tilta_a(pulse of hopping amp) vs t')
-plt.legend()
-plt.grid(True)
-plt.show()
+#plt.xlabel('t')
+#plt.ylabel('J_tilte_a')
+#plt.title('Plot of J_tilta_a(pulse of hopping amp) vs t')
+#plt.legend()
+#plt.grid(True)
+#plt.show()
 
 #%% some test try figure properties of J func
 t_specific_time_point_test = np.pi - 3
@@ -360,20 +360,20 @@ def plot_phase_vs_kx(k_x, k_y):
 
 # -- Does here to use a list A filled in by last i loop, it needed to have another new i loop to distribute A[i]?
 
-    plt.plot(k_x, phase1_T_asc_list,  '.', color='tab:blue', markersize = 3)
-    plt.plot(k_x, phase2_T_asc_list,  '.', color='tab:purple', markersize = 3)
+#    plt.plot(k_x, phase1_T_asc_list,  '.', color='tab:blue', markersize = 3)
+#    plt.plot(k_x, phase2_T_asc_list,  '.', color='tab:purple', markersize = 3)
 
     
 for i in range (len(k_y_list)):
     
     plot_phase_vs_kx(k_x_list, k_y_list[i])
     
-plt.ylim (-np.pi, np.pi)    
+#plt.ylim (-np.pi, np.pi)    
     
-plt.xlabel(r'$k_x a_0\ \mathrm{(PBC)}$', fontsize=13)
-plt.ylabel(r'Phase $\phi_n  = \epsilon_n T$  (T = 1)', fontsize=13)
+#plt.xlabel(r'$k_x a_0\ \mathrm{(PBC)}$', fontsize=13)
+#plt.ylabel(r'Phase $\phi_n  = \epsilon_n T$  (T = 1)', fontsize=13)
 
-plt.title(r'Bulk phase band plot vs $k_x$ (PBC in $x,y$)', fontsize=13)
+#plt.title(r'Bulk phase band plot vs $k_x$ (PBC in $x,y$)', fontsize=13)
 
 
 from matplotlib.lines import Line2D # This is purely for plot legend 
@@ -387,9 +387,9 @@ legend_elements = [
            label='Phase band 2 (2nd eigenvalue)')
 ]
 
-plt.legend(handles=legend_elements, loc='right', bbox_to_anchor=(1, 0.56))
-plt.grid()
-plt.show()
+#plt.legend(handles=legend_elements, loc='right', bbox_to_anchor=(1, 0.56))
+#plt.grid()
+#plt.show()
 
 #%% try U_full_discretisation
 def plot_phase_vs_kx(k_x, k_y):
@@ -418,20 +418,20 @@ def plot_phase_vs_kx(k_x, k_y):
         phase1_T_asc_list.append(- np.angle(eigvals[0])) #these are epsilon_n*T = Phi_n (n here =1, 2) -- which is what we plotted
         phase2_T_asc_list.append(- np.angle(eigvals[1])) # see above; but anyway we setted T = 1 before, so-- 
 
-    plt.plot(k_x, phase1_T_asc_list,  '.', color='tab:blue', markersize = 3)
-    plt.plot(k_x, phase2_T_asc_list,  '.', color='tab:purple', markersize = 3)
+#    plt.plot(k_x, phase1_T_asc_list,  '.', color='tab:blue', markersize = 3)
+#    plt.plot(k_x, phase2_T_asc_list,  '.', color='tab:purple', markersize = 3)
 
     
 for i in range (len(k_y_list)):
     
     plot_phase_vs_kx(k_x_list, k_y_list[i])
     
-plt.ylim (-np.pi, np.pi)    
+#plt.ylim (-np.pi, np.pi)    
     
-plt.xlabel(r'$k_x a_0\ \mathrm{(PBC)}$', fontsize=13)
-plt.ylabel(r'Phase $\phi_n  = \epsilon_n T$  (T = 1)', fontsize=13)
+#plt.xlabel(r'$k_x a_0\ \mathrm{(PBC)}$', fontsize=13)
+#plt.ylabel(r'Phase $\phi_n  = \epsilon_n T$  (T = 1)', fontsize=13)
 
-plt.title(r'Bulk phase - check U(T) time discretisation', fontsize=13)
+#plt.title(r'Bulk phase - check U(T) time discretisation', fontsize=13)
 
 #%%
 # The loop(PLOT) below is: 
@@ -444,14 +444,14 @@ plt.title(r'Bulk phase - check U(T) time discretisation', fontsize=13)
     
 #    plot_phase_vs_kx(k_x_list, k_y_test_list_no_including_2pi[i])
     
-plt.xlabel(r'$k_x\ \mathrm{(PBC)}$', fontsize=12)
-plt.ylabel(r'Phase $\phi_n$  (T = 1)', fontsize=12)
+#.xlabel(r'$k_x\ \mathrm{(PBC)}$', fontsize=12)
+#plt.ylabel(r'Phase $\phi_n$  (T = 1)', fontsize=12)
 
-plt.title(r'Bulk phase band plot vs $k_x$ (PBC in $x,y$), NO y = 2pi**', fontsize=13)
+#plt.title(r'Bulk phase band plot vs $k_x$ (PBC in $x,y$), NO y = 2pi**', fontsize=13)
 
-plt.legend()
-plt.grid()
-plt.close()
+#plt.legend()
+#plt.grid()
+#plt.close()
 # here if change plt.close to plt.show can get the plot
 
 # well, alright - there's almost no difference here.
@@ -574,7 +574,7 @@ def plot_check_phase_vs_kx(k_x, N): # here in this function you can choose N_y (
         kx_list_for_plot.append([k_x[i] * len(phi_n_fixed_kx)])
 #        print(len(phi_n_fixed_kx))
     
-    plt.plot(kx_list_for_plot, phi_n_list_of_kx_list, '.', markersize=3)
+#    plt.plot(kx_list_for_plot, phi_n_list_of_kx_list, '.', markersize=3)
 #%%    
 #    print (len(kx_list_for_plot))
 #    print(len(phi_n_list_of_kx_list))
@@ -584,17 +584,17 @@ Ny_check = 10 # this is the Ly = N*a0 before Ly defined
               # if choose same number as len(k_y_list) --> num of y here = initial N_y generate ky list 
               # this replot (plot_check) of phase band will be same as the initial plotfunc [plot_phase_vs_kx]
 
-test_phi_along_kx = plot_check_phase_vs_kx(k_x_list, Ny_check)
+#test_phi_along_kx = plot_check_phase_vs_kx(k_x_list, Ny_check)
 #plt.xlim(1.7, 1.8)
-plt.ylim(-np.pi, np.pi)
+#plt.ylim(-np.pi, np.pi)
 #plt.ylim(-1.75, -0.8)
-plt.xlabel('$k_x a_0$')
-plt.ylabel('Phase at time T ($\epsilon(k, T)T$)')
-plt.grid()
-plt.title('Bulk band double check for real basis H2Nx2N, N = 10')
+#plt.xlabel('$k_x a_0$')
+#plt.ylabel('Phase at time T ($\epsilon(k, T)T$)')
+#plt.grid()
+#plt.title('Bulk band double check for real basis H2Nx2N, N = 10')
 #plt.legend()
-plt.tight_layout()
-plt.show()
+#plt.tight_layout()
+#plt.show()
 #%%
 
 #Followed by: def real_basis_H2N_fix_k_x(N, k_x, t): # t can be any from [  t_i = T/N * i + T/(N * 2)  ]
@@ -747,7 +747,7 @@ def plot_edge_vs_kx(k_x, N_y): # here k_x is a list(taken from  # here the plot 
 #    plt.figure(figsize=(8, 5))
 #    print (len(kx_list_for_plot))
 #    print(len( phase_list_of_list))
-    plt.plot(kx_list_for_plot, phase_list_of_list, '.', markersize=3)
+#    plt.plot(kx_list_for_plot, phase_list_of_list, '.', markersize=3)
             
   #  plt.plot(k_x, phase_list_of_list,  'o', label='edge phase')
             
@@ -775,17 +775,17 @@ def plot_edge_vs_kx(k_x, N_y): # here k_x is a list(taken from  # here the plot 
 
 #CHIRAL EDGE STATE PLOT
     
-plot_edge_vs_kx(k_x_list, Ny_plot_yOBC_edge)
+#plot_edge_vs_kx(k_x_list, Ny_plot_yOBC_edge)
 #plt.xlim(1.7, 1.8)
-plt.ylim(-np.pi, np.pi)
+#plt.ylim(-np.pi, np.pi)
 #plt.ylim(-1.75, -0.8)
-plt.xlabel('$k_x a_0$')
-plt.ylabel('Phase at time T ($\epsilon(k, T)T$)')
-plt.grid()
-plt.title(rf'Bulk and Edge Phases vs $k_x a_0$, y direction unit cell number $Ly  = {Ny_plot_yOBC_edge}$')
+#plt.xlabel('$k_x a_0$')
+#plt.ylabel('Phase at time T ($\epsilon(k, T)T$)')
+#plt.grid()
+#plt.title(rf'Bulk and Edge Phases vs $k_x a_0$, y direction unit cell number $Ly  = {Ny_plot_yOBC_edge}$')
 #plt.legend()
-plt.tight_layout()
-plt.show()
+#plt.tight_layout()
+#plt.show()
 
 #%%
 #now try eigen vectors --
@@ -997,9 +997,9 @@ for i in range(len(k_x_list)):  # Here number of i range corresponding to k_x_li
               
  #       try change the def of 'edge'
             
-        Rho_edge_Phi_eigvec_n = Rho_comp_Phi_eigvec_specific_n_list[0]+ Rho_comp_Phi_eigvec_specific_n_list[Ny_plot_yOBC_edge -1] #+ Rho_comp_Phi_eigvec_specific_n_list[2] + Rho_comp_Phi_eigvec_specific_n_list[Ly -3] + Rho_comp_Phi_eigvec_specific_n_list[Ly -2] + Rho_comp_Phi_eigvec_specific_n_list[Ly -1]
+        Rho_edge_Phi_eigvec_n = Rho_comp_Phi_eigvec_specific_n_list[0]#+ Rho_comp_Phi_eigvec_specific_n_list[Ny_plot_yOBC_edge -1] #+ Rho_comp_Phi_eigvec_specific_n_list[2] + Rho_comp_Phi_eigvec_specific_n_list[Ly -3] + Rho_comp_Phi_eigvec_specific_n_list[Ly -2] + Rho_comp_Phi_eigvec_specific_n_list[Ly -1]
         #total density of edege state #  From those components(1,...y_some, Ny) of each eigenvec_n(also 2Ny num of),
-                                      #  identify that of edges; or that of [any position's] -- we ADJUST here
+                                      #  identify that of edges; or that of [any position's] -- we adjust here
         #total density of edege state
         print('n = ', n, 'edge density(Rho) for all y =', Rho_edge_Phi_eigvec_n)
         # for check 2 
@@ -1066,7 +1066,7 @@ print("len(Rho_edge_listed_by_sta_n_listed_by_kx) =",
 
 # which need to be corrected 
     
-plt.figure()
+#plt.figure()
 
 kx_temperoally_in_p_loop =[]
 rho_edge_ns_specific_kx = [] 
@@ -1103,19 +1103,19 @@ for p in range(len(k_x_list)):  # Here number of i range corresponding to k_x_li
 #        print (epsilon_n, 'epsilon_n;', rho_edge_n, 'rho_edge_n, for state', state)
         
         
-    plt.scatter([kx_in_p_loop]*len(rho_edge_ns_specific_kx), epsilon_ns_specific_kx, c=rho_edge_ns_specific_kx, cmap='inferno_r', s=1, vmin = 0, vmax = 1)
+#    plt.scatter([kx_in_p_loop]*len(rho_edge_ns_specific_kx), epsilon_ns_specific_kx, c=rho_edge_ns_specific_kx, cmap='inferno_r', s=1, vmin = 0, vmax = 1)
 
     #plt.scatter([kx_in_p_loop]*len(rho_edge_ns_specific_kx), epsilon_ns_specific_kx, c=rho_edge_ns_specific_kx, cmap='magma_r', s=1, vmin=vmin, vmax=vmax)
 
-plt.colorbar()
+#plt.colorbar()
 #plt.xlim(-0.4, 0.17)      # x-axis range if want to see full picture please include 0, coz there is a group of epsi_n at 0
 #plt.ylim(-2.2, -1)     # y-axis range
-plt.xlabel(r'$k_x a_0$')
-plt.ylabel(r'$\epsilon_\alpha(k_x) T$')
+#plt.xlabel(r'$k_x a_0$')
+#plt.ylabel(r'$\epsilon_\alpha(k_x) T$')
 #plt.legend()
-plt.title(rf"Phase bands with edge state density diagnosis, y OBC, $L_y = {Ny_plot_yOBC_edge}$")
-plt.grid()
-plt.show()
+#plt.title(rf"Phase bands with edge state density diagnosis, y OBC, $L_y = {Ny_plot_yOBC_edge}$")
+#plt.grid()
+#plt.show()
 
 
 #%% real basis x, y PBC, check spectrum
@@ -1192,7 +1192,7 @@ H_test_version2 = H2NyNx_PBC_version2(10, 15, T/12, a_0)
 #%%
 Dog = 16
 Dog_dong = (Dog % 5)
-print(Dog_dong, 'dingdong')
+#print(Dog_dong, 'dingdong')
 #%%
 def H_6_2NyNx_PBC_version2(N_y, N_x, a_0): #here this function should have same spectrum(EIGEN_yVALS)as the [K BASIS H2x2]
                     #6 refers as list of 6 piecewise H 
@@ -1306,7 +1306,7 @@ spectrum_test_realy = find_spectrum_realy(N_y_TEST, k_x_TEST)
 
 #%%
 spectrum_test_realxy_version2 = find_spectrum_NxNy_version2(N_y_TEST, N_x_TEST, a_0)
-print('spectrum_test_realxy:', spectrum_test_realxy_version2, 'spectrum_test_realy', spectrum_test_realy)
+#print('spectrum_test_realxy:', spectrum_test_realxy_version2, 'spectrum_test_realy', spectrum_test_realy)
 import numpy as np
 
 def same_values_ndp_yes_no(a, b, ndp):
@@ -1315,7 +1315,7 @@ def same_values_ndp_yes_no(a, b, ndp):
     return "yes" if np.allclose(sorted(a_rounded), sorted(b_rounded)) else "no"
 
 if_sepctrum_are_the_same = same_values_ndp_yes_no(spectrum_test_realxy_version2, spectrum_test_realy,3)
-print('if_sepctrum_are_the_same', if_sepctrum_are_the_same)
+#print('if_sepctrum_are_the_same', if_sepctrum_are_the_same)
 
 
 #%% write function of turn off x and y PBC terms, gain OBCs
@@ -1555,8 +1555,8 @@ def Ham_same(a, b, rtol=1e-8, atol=1e-10):
     a = np.asarray(a)
     b = np.asarray(b)
     return a.shape == b.shape and np.allclose(a, b, rtol=rtol, atol=atol, equal_nan=True)
-print(Ham_same(H_TEST_time_vortex, HamNxNy_test))
-print(Ham_same(HamNxNy_test, HamNxNy_test))
+#print(Ham_same(H_TEST_time_vortex, HamNxNy_test))
+#print(Ham_same(HamNxNy_test, HamNxNy_test))
 # Here they shouldn't be the same 
 #%% # here insead of U_full operator for time vor core at origin, U is time vor at any point(x_0,y_0) input
     # (also can be 0 :)
@@ -1578,23 +1578,85 @@ def U_full_time_vor_core(N_x, N_y, num_time_stages, a_0, x_0, y_0): # which mean
         
         U_list_matrices.append(U_i)
         
-        print(U_i[1,2]) # why are you doing this bro? 
+    #    print(U_i[1,2]) # why are you doing this bro? 
         
-    print(np.array(U_list_matrices)[:][1,2])
+   # print(np.array(U_list_matrices)[:][1,2])
         
     U_full = reduce(np.matmul, U_list_matrices) # here adjoint the full time evolution 
         # here U_list_N_matrices = [e^{-iH(T-dt)}]
     return U_full   
-#%%
+#%%-----**** IMPORTANT: THIS DICIDE THE LOCATION OF y_0!!!
 
 def U_full_time_vor_midpoint(N_x, N_y, num_time_stages, a_0):
     x_mid = (1+ N_x)/2
-    y_mid = (1+ N_y)/2
+    y_mid = (N_y + 1)/2
     U_full_for_mid_point = U_full_time_vor_core(N_x, N_y, num_time_stages, a_0, x_mid, y_mid)
     
     return U_full_for_mid_point
     
-Test_U_with_time_vor = U_full_time_vor_midpoint(3, 4, 50, 1) # make time steps to be 12 
+#Test_U_with_time_vor = U_full_time_vor_midpoint(3, 4, 50, 1) # make time steps to be 12 
+
+#%%Check for PHS:
+
+def Up_operator_tau_y(Nx, Ny, dtype=complex):
+    """
+    Build the block-diagonal matrix I_(Nx*Ny) ⊗ tau_y.
+
+    The output dimension is (2*Nx*Ny, 2*Nx*Ny), with one 2x2 tau_y block
+    for each site.
+
+    Parameters
+    ----------
+    Nx : int
+        Number of unit cells in x direction.
+    Ny : int
+        Number of unit cells in y direction.
+    dtype : data-type, optional
+        Matrix dtype. Default is complex.
+
+    Returns
+    -------
+    np.ndarray
+        The matrix I_(Nx*Ny) ⊗ tau_y of shape (2*Nx*Ny, 2*Nx*Ny).
+
+    Raises
+    ------
+    ValueError
+        If Nx or Ny is not a positive integer.
+    """
+    if not isinstance(Nx, int) or not isinstance(Ny, int) or Nx <= 0 or Ny <= 0:
+        raise ValueError("Nx and Ny must be positive integers.")
+
+    N = Nx * Ny
+
+    tau_y = np.array([[0, -1j],
+                      [1j,  0]], dtype=dtype)
+
+    return np.kron(np.eye(N, dtype=dtype), tau_y)
+
+test_Up = Up_operator_tau_y(4, 4)
+print(test_Up)
+#%%
+t_sampling_check = 20
+
+Test_U_with_time_vor = U_full_time_vor_midpoint(3, 4, t_sampling_check, 1)  #Nx = 3, Ny = 4, num of time stages = 20 as above 
+
+CheckPHS_multi = test_Up @ Test_U_with_time_vor.conj() @ np.linalg.inv(test_Up) - Test_U_with_time_vor
+
+norm_checkU = np.linalg.norm(CheckPHS_multi)
+    
+print ('if norm is 0?', norm_checkU)
+
+#%%
+#t_sampling_check = 20
+
+Test_U = Ufull_descending_PBC_realxy_version2(4, 4, 1)#(3, 4, t_sampling_check, 1)  #Nx = 3, Ny = 4, num of time stages = 20 as above 
+
+CheckPHS_multi = test_Up @ Test_U_with_time_vor.conj() @ np.linalg.inv(test_Up) - Test_U_with_time_vor
+
+norm_checkU = np.linalg.norm(CheckPHS_multi)
+    
+print ('if norm is 0?', norm_checkU)
 
 #%%
 def U_full_time_no_vor(N_x, N_y, num_time_stages, a_0): # Recall xyOBC but no vortex
@@ -1614,9 +1676,9 @@ def U_full_time_no_vor(N_x, N_y, num_time_stages, a_0): # Recall xyOBC but no vo
         
         U_list_matrices.append(U_i)
         
-        print(U_i[1,2]) # why are you doing this bro? 
+     #   print(U_i[1,2]) # why are you doing this bro? 
         
-    print(np.array(U_list_matrices)[:][1,2])
+  #  print(np.array(U_list_matrices)[:][1,2])
         
     U_full = reduce(np.matmul, U_list_matrices) # here adjoint the full time evolution 
         # here U_list_N_matrices = [e^{-iH(T-dt)}]
@@ -1678,8 +1740,8 @@ def find_Phi_n_vec_vs_kx_for_ref(k_x, N_y): # here k_x is a list  N is number of
     #    print(eigvals,'--eigen value;', eigvecs,'--eigen vector', i,'i') # all these eigen values are complex!!
         eigen_vec_listed_by_kx.append(eigvecs_edge)
         
-        print(i, 'eigen vectors shape:', eigvecs_edge.shape)
-        print(i, 'eigen vectors shape:', U_full_ascending_edge(N_y, k_x[i]).shape)
+#        print(i, 'eigen vectors shape:', eigvecs_edge.shape)
+#        print(i, 'eigen vectors shape:', U_full_ascending_edge(N_y, k_x[i]).shape)
     return eigen_vec_listed_by_kx
 #Phi_n_vec_list = find_Phi_n_vec_vs_kx(k_x_list, Ny_plot_yOBC_edge ) # there are 20 eigvecs for 2N x 2N (20) matrix 
 
@@ -1716,9 +1778,10 @@ def Rho_site_epsilon(N_x, N_y, num_time_stages, a_0, list_of_sites_needed, eps_m
 #%%
 # -------which sites got summed over --------
 
-list_of_sites_around_mid_4 = [[4, 1, 1], [2, 2, 1], [2, 2, 2], [3, 2, 1], [3, 2, 2], [2, 3, 2]] #each site labelled as [x,y,alpha]
+list_of_sites_around_mid_4 = [[3, 1, 1], [2, 2, 1], [2, 2, 2], [3, 2, 1], [3, 2, 2], [2, 3, 2]] #each site labelled as [x,y,alpha]
 list_of_sites_around_mid_8 = [[5, 3, 1], [4, 4, 1], [4, 4, 2], [5, 4, 1], [5, 4, 2], [4, 5, 2]]                                                                                               # as in alpha is A or B>> 1 or 2
-list_of_sites_around_mid_10 = [[6, 4, 1], [5, 5, 1], [5, 5, 2], [6, 5, 1], [6, 5, 2], [5, 6, 2]]                                                                                               # others from 1 to Nx/y
+list_of_sites_around_mid_10 = [[6, 4, 1], [5, 5, 1], [5, 5, 2], [6, 5, 1], [6, 5, 2], [5, 6, 2]]           
+list_of_sites_around_mid_12 = [[7, 5, 1], [6, 6, 1], [6, 6, 2], [7, 6, 1], [7, 6, 2], [6, 7, 2]]                                                                                    # others from 1 to Nx/y
 #print(list_of_sites_around_core[1][1])
 
 #%%
@@ -1847,12 +1910,12 @@ def Rho_sites_all_epsilons_noVor_FAST(N_x, N_y, num_time_stages, a_0, list_of_si
 #        return check_eigenpair # this should return 'true', if not, go back to check   epsilon_n_list & eigen_vec_list
 
 #%% T sample for time discretisation adjusting portal 
-
-t_sampling = 65
+print('plot check')
+t_sampling = 50
 
 
 #%% plot try scatter # easier to read --WITH TIME VOR
-Rho, Epsilon = Rho_sites_all_epsilons(10, 10, t_sampling, 1, list_of_sites_around_mid_10) # it seems the more time sampled, the larger the bulk structure(that range of Epsilon)'s Rho
+Rho, Epsilon = Rho_sites_all_epsilons(12, 12, t_sampling, 1, list_of_sites_around_mid_12) # it seems the more time sampled, the larger the bulk structure(that range of Epsilon)'s Rho
 #print (Rho, type(Rho), 'Rho') # Rho is list
 #print (Epsilon, type(Epsilon), 'Epsilon') # Epsilon is array 
 idx = np.argsort(Epsilon) # sorted all against the small/large of Epsilon
@@ -1860,7 +1923,10 @@ idx = np.argsort(Epsilon) # sorted all against the small/large of Epsilon
 Eps_sorted = Epsilon[idx]
 Rho_sorted = np.array(Rho)[idx]
 
-#%% extract peak in the t sampling 60 data 
+print('Eps_sorted', Eps_sorted)
+print('Rho_sorted', Rho_sorted)
+
+ #extract peak in the t sampling 60 data 
 
 peak_extraction_time_vor_only = np.asarray(Rho_sorted)
 i_max_time_vor_only = np.argmax(peak_extraction_time_vor_only)
@@ -1871,10 +1937,9 @@ print('peak', (x_peak_time_vor_only, y_peak_time_vor_only))
 #******** IMPORTANT: PROBLEM GENERATED HERE: why this epsilon peak is never pi? Because of scale of sites?
 # (because there is this chiral edge modes generate also pi mode; and they might mixed together)
 # And when the system isn't large enough, we cannot separate chiral edge mode completely by choose central site? 
-print(Eps_sorted, 'Eps_sorted')
-print(Rho_sorted, 'Rho_sorted')
-#%%
 
+#%%
+print('plot check')
 
 plt.figure()
 plt.plot(Eps_sorted, Rho_sorted, 'o-', markersize=3)#linestyle='-', linewidth=1)   # or add marker='.'
@@ -1882,7 +1947,7 @@ plt.plot(x_peak_time_vor_only, y_peak_time_vor_only, marker='x', markersize=10, 
          color='tab:red', label='peak')
 plt.xlabel(r'$\epsilon_n T$')
 plt.ylabel(r'$\rho$')
-plt.title(r'$\rho_n$ for site around vortex core vs $\epsilon_n$ ')
+plt.title(r'$\rho_n$ ($\approx$ LDOS)for 6 sites around vortex core vs quasienergy $\epsilon_n$ ')
 plt.grid(True)
 plt.show()
 
@@ -1891,55 +1956,44 @@ plt.show()
 
 
 
-#%% test np.argsort
-x_tail = [6,2,3,4]
-y_tail = np.array([7,3,4,5])
-dog_tail = np.argsort(y_tail) # returns [in terms of index of elements] smallest to largest; in terms of array  
-print(dog_tail, type(dog_tail), 'dog tail')
-test_tail = y_tail [np.array([0,  3,  2,  1])]
-print(test_tail) #[3] and [1] switched 
+#%% WITH OUT TIME VOR
+Rho_0, Epsilon_0 = Rho_sites_all_epsilons_noVor(12, 12, t_sampling, 1, list_of_sites_around_mid_12) 
 
-#%% ploy try bin- like (still need to figure out what tthey did here)
-Rho, Epsilon = Rho_sites_all_epsilons(4, 4, 50, 1, list_of_sites_around_mid_4)
-#Epsilon = Epsilon
-Rho = np.array(Rho)
+#%%  #[[2]]
+idx_0 = np.argsort(Epsilon_0)
 
-bins = 20
-edges = np.linspace(-np.pi, np.pi, bins+1)
-centers = 0.5*(edges[:-1] + edges[1:])
-
-which = np.digitize(Epsilon, edges) - 1
-rho_binned = np.array([Rho[which == i].mean() if np.any(which == i) else np.nan
-                       for i in range(bins)])
-# -------------------------------------------------------------
+Eps_sorted_0 = Epsilon_0[idx_0]
+Rho_sorted_0 = np.array(Rho_0)[idx_0]
 
 plt.figure()
-plt.plot(centers, rho_binned, linestyle='-', linewidth=1)
-plt.xlabel(r'$\epsilon$')
-plt.ylabel(r'$\langle \rho \rangle_{\mathrm{bin}}$')
-plt.title('Binned (DOS-like) curve')
+plt.plot(Eps_sorted_0, Rho_sorted_0, 'o-', markersize=3)#linestyle='-', linewidth=1)   # or add marker='.'
+plt.xlabel(r'$\epsilon_n T$ ')
+plt.ylabel(r'$\rho$')
+plt.title(r'$\rho_n$  for sites around vortex core vs $\epsilon_n$ ')
 plt.grid(True)
 plt.show()
 
 
-#%% test loop append:
-hog_list = []
-x_test = [1,2,3]
-for x_dog in x_test:
-     x_hog = x_dog + 3
-     hog_list.append(x_hog)  
-#print(hog_list) #----- append is in order of the list 
-    
-            
-            
+#%%[[3]] T dis 70 --------------final plot -------------------
+#Rho_difference_adjusting = Rho_sorted - Rho_sorted_0 # as in Rho with vortex minus Rho without vortex 
 
-    
+#peak_extraction_diff = np.asarray(Rho_difference_adjusting)
+#i_max_diff = np.argmax(peak_extraction_diff)
+#x_peak_diff, y_peak_diff = Eps_sorted[i_max_diff], Rho_difference_adjusting[i_max_diff]
+
+#print('peak for difference ', (x_peak_diff, y_peak_diff))
 
 
+#plt.figure()
 
-
-
-
+#plt.plot(Eps_sorted, Rho_difference_adjusting, 'o-', markersize=3, color = 'tab:blue')#linestyle='-', linewidth=1)   # or add marker='.'
+#plt.plot(x_peak_diff, y_peak_diff, marker='x', markersize=10, mew=2,
+#         color='tab:red', label='peak')
+#plt.xlabel(r'$\epsilon_n T$ ')
+#plt.ylabel(r'$\rho$') 
+#plt.title(rf'$\rho_n$ difference for sites around vortex core vs $\epsilon_n$, $T discretisation = {t_sampling}$') #rf"Phase bands with edge state density diagnosis, y OBC, $L_y = {Ny_plot_yOBC_edge}$
+#plt.grid(True)
+#plt.show()
 
 
 
@@ -1965,7 +2019,7 @@ def H2NyNx_yOBC_for_check(N_y, N_x, t, a_0):
     
     H_PBC_generated_y_OBC [mask] = 0    
        # or whatever values you want
-    print("\nMask (True means 'will be changed'):\n", mask)
+#    print("\nMask (True means 'will be changed'):\n", mask)
 
     return H_PBC_generated_y_OBC
 
@@ -2060,7 +2114,7 @@ k_x_TEST = generate_k_x_list(0, 2*np.pi, N_x_TEST)
 spectrum_test_realy_yOBC =  find_spectrum_realy_OBC(N_y_TEST, k_x_TEST)
 spectrum_yOBC_NyNxCheck = find_spectrum_for_yOBC_check(N_y_TEST, N_x_TEST, a_0) #dim: 2NxNy
 
-print('BEGIN: spectrum_test_realxy:',spectrum_yOBC_NyNxCheck, 'spectrum_test_realy', spectrum_test_realy_yOBC, 'END')
+#print('BEGIN: spectrum_test_realxy:',spectrum_yOBC_NyNxCheck, 'spectrum_test_realy', spectrum_test_realy_yOBC, 'END')
 #%%
 
 
@@ -2074,7 +2128,7 @@ def same_values_ndp_yes_no(a, b, ndp):
     return "yes" if np.allclose(np.sort(a_rounded), np.sort(b_rounded)) else "no"
 
 if_sepctrum_are_the_same_y0BC = same_values_ndp_yes_no(spectrum_test_realy_yOBC, spectrum_yOBC_NyNxCheck,5)
-print('if_sepctrum_are_the_same', if_sepctrum_are_the_same)
+#print('if_sepctrum_are_the_same', if_sepctrum_are_the_same)
 
 
                            

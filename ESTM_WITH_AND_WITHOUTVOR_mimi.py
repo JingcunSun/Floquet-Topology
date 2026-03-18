@@ -997,9 +997,9 @@ for i in range(len(k_x_list)):  # Here number of i range corresponding to k_x_li
               
  #       try change the def of 'edge'
             
-        Rho_edge_Phi_eigvec_n = Rho_comp_Phi_eigvec_specific_n_list[0]+ Rho_comp_Phi_eigvec_specific_n_list[Ny_plot_yOBC_edge -1] #+ Rho_comp_Phi_eigvec_specific_n_list[2] + Rho_comp_Phi_eigvec_specific_n_list[Ly -3] + Rho_comp_Phi_eigvec_specific_n_list[Ly -2] + Rho_comp_Phi_eigvec_specific_n_list[Ly -1]
+        Rho_edge_Phi_eigvec_n = Rho_comp_Phi_eigvec_specific_n_list[0]#+ Rho_comp_Phi_eigvec_specific_n_list[Ny_plot_yOBC_edge -1] #+ Rho_comp_Phi_eigvec_specific_n_list[2] + Rho_comp_Phi_eigvec_specific_n_list[Ly -3] + Rho_comp_Phi_eigvec_specific_n_list[Ly -2] + Rho_comp_Phi_eigvec_specific_n_list[Ly -1]
         #total density of edege state #  From those components(1,...y_some, Ny) of each eigenvec_n(also 2Ny num of),
-                                      #  identify that of edges; or that of [any position's] -- we ADJUST here
+                                      #  identify that of edges; or that of [any position's] -- we adjust here
         #total density of edege state
         print('n = ', n, 'edge density(Rho) for all y =', Rho_edge_Phi_eigvec_n)
         # for check 2 

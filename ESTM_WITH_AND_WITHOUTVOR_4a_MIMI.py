@@ -997,9 +997,9 @@ for i in range(len(k_x_list)):  # Here number of i range corresponding to k_x_li
               
  #       try change the def of 'edge'
             
-        Rho_edge_Phi_eigvec_n = Rho_comp_Phi_eigvec_specific_n_list[0]+ Rho_comp_Phi_eigvec_specific_n_list[Ny_plot_yOBC_edge -1] #+ Rho_comp_Phi_eigvec_specific_n_list[2] + Rho_comp_Phi_eigvec_specific_n_list[Ly -3] + Rho_comp_Phi_eigvec_specific_n_list[Ly -2] + Rho_comp_Phi_eigvec_specific_n_list[Ly -1]
+        Rho_edge_Phi_eigvec_n = Rho_comp_Phi_eigvec_specific_n_list[0]#+ Rho_comp_Phi_eigvec_specific_n_list[Ny_plot_yOBC_edge -1] #+ Rho_comp_Phi_eigvec_specific_n_list[2] + Rho_comp_Phi_eigvec_specific_n_list[Ly -3] + Rho_comp_Phi_eigvec_specific_n_list[Ly -2] + Rho_comp_Phi_eigvec_specific_n_list[Ly -1]
         #total density of edege state #  From those components(1,...y_some, Ny) of each eigenvec_n(also 2Ny num of),
-                                      #  identify that of edges; or that of [any position's] -- we ADJUST here
+                                      #  identify that of edges; or that of [any position's] -- we adjust here
         #total density of edege state
         print('n = ', n, 'edge density(Rho) for all y =', Rho_edge_Phi_eigvec_n)
         # for check 2 
@@ -1192,7 +1192,7 @@ H_test_version2 = H2NyNx_PBC_version2(10, 15, T/12, a_0)
 #%%
 Dog = 16
 Dog_dong = (Dog % 5)
-print(Dog_dong, 'dingdong')
+#print(Dog_dong, 'dingdong')
 #%%
 def H_6_2NyNx_PBC_version2(N_y, N_x, a_0): #here this function should have same spectrum(EIGEN_yVALS)as the [K BASIS H2x2]
                     #6 refers as list of 6 piecewise H 
@@ -1306,7 +1306,7 @@ spectrum_test_realy = find_spectrum_realy(N_y_TEST, k_x_TEST)
 
 #%%
 spectrum_test_realxy_version2 = find_spectrum_NxNy_version2(N_y_TEST, N_x_TEST, a_0)
-print('spectrum_test_realxy:', spectrum_test_realxy_version2, 'spectrum_test_realy', spectrum_test_realy)
+#print('spectrum_test_realxy:', spectrum_test_realxy_version2, 'spectrum_test_realy', spectrum_test_realy)
 import numpy as np
 
 def same_values_ndp_yes_no(a, b, ndp):
@@ -1315,7 +1315,7 @@ def same_values_ndp_yes_no(a, b, ndp):
     return "yes" if np.allclose(sorted(a_rounded), sorted(b_rounded)) else "no"
 
 if_sepctrum_are_the_same = same_values_ndp_yes_no(spectrum_test_realxy_version2, spectrum_test_realy,3)
-print('if_sepctrum_are_the_same', if_sepctrum_are_the_same)
+#print('if_sepctrum_are_the_same', if_sepctrum_are_the_same)
 
 
 #%% write function of turn off x and y PBC terms, gain OBCs
@@ -1555,8 +1555,8 @@ def Ham_same(a, b, rtol=1e-8, atol=1e-10):
     a = np.asarray(a)
     b = np.asarray(b)
     return a.shape == b.shape and np.allclose(a, b, rtol=rtol, atol=atol, equal_nan=True)
-print(Ham_same(H_TEST_time_vortex, HamNxNy_test))
-print(Ham_same(HamNxNy_test, HamNxNy_test))
+#print(Ham_same(H_TEST_time_vortex, HamNxNy_test))
+#print(Ham_same(HamNxNy_test, HamNxNy_test))
 # Here they shouldn't be the same 
 #%% # here insead of U_full operator for time vor core at origin, U is time vor at any point(x_0,y_0) input
     # (also can be 0 :)
@@ -1578,23 +1578,23 @@ def U_full_time_vor_core(N_x, N_y, num_time_stages, a_0, x_0, y_0): # which mean
         
         U_list_matrices.append(U_i)
         
-        print(U_i[1,2]) # why are you doing this bro? 
+    #    print(U_i[1,2]) # why are you doing this bro? 
         
-    print(np.array(U_list_matrices)[:][1,2])
+   # print(np.array(U_list_matrices)[:][1,2])
         
     U_full = reduce(np.matmul, U_list_matrices) # here adjoint the full time evolution 
         # here U_list_N_matrices = [e^{-iH(T-dt)}]
     return U_full   
-#%%
+#%%-----**** IMPORTANT: THIS DICIDE THE LOCATION OF y_0!!!
 
 def U_full_time_vor_midpoint(N_x, N_y, num_time_stages, a_0):
     x_mid = (1+ N_x)/2
-    y_mid = (1+ N_y)/2
+    y_mid = (N_y + 1)/2
     U_full_for_mid_point = U_full_time_vor_core(N_x, N_y, num_time_stages, a_0, x_mid, y_mid)
     
     return U_full_for_mid_point
     
-Test_U_with_time_vor = U_full_time_vor_midpoint(3, 4, 50, 1) # make time steps to be 12 
+#Test_U_with_time_vor = U_full_time_vor_midpoint(3, 4, 50, 1) # make time steps to be 12 
 
 #%%
 def U_full_time_no_vor(N_x, N_y, num_time_stages, a_0): # Recall xyOBC but no vortex
@@ -1614,9 +1614,9 @@ def U_full_time_no_vor(N_x, N_y, num_time_stages, a_0): # Recall xyOBC but no vo
         
         U_list_matrices.append(U_i)
         
-        print(U_i[1,2]) # why are you doing this bro? 
+     #   print(U_i[1,2]) # why are you doing this bro? 
         
-    print(np.array(U_list_matrices)[:][1,2])
+  #  print(np.array(U_list_matrices)[:][1,2])
         
     U_full = reduce(np.matmul, U_list_matrices) # here adjoint the full time evolution 
         # here U_list_N_matrices = [e^{-iH(T-dt)}]
@@ -1678,8 +1678,8 @@ def find_Phi_n_vec_vs_kx_for_ref(k_x, N_y): # here k_x is a list  N is number of
     #    print(eigvals,'--eigen value;', eigvecs,'--eigen vector', i,'i') # all these eigen values are complex!!
         eigen_vec_listed_by_kx.append(eigvecs_edge)
         
-        print(i, 'eigen vectors shape:', eigvecs_edge.shape)
-        print(i, 'eigen vectors shape:', U_full_ascending_edge(N_y, k_x[i]).shape)
+#        print(i, 'eigen vectors shape:', eigvecs_edge.shape)
+#        print(i, 'eigen vectors shape:', U_full_ascending_edge(N_y, k_x[i]).shape)
     return eigen_vec_listed_by_kx
 #Phi_n_vec_list = find_Phi_n_vec_vs_kx(k_x_list, Ny_plot_yOBC_edge ) # there are 20 eigvecs for 2N x 2N (20) matrix 
 
@@ -1716,9 +1716,10 @@ def Rho_site_epsilon(N_x, N_y, num_time_stages, a_0, list_of_sites_needed, eps_m
 #%%
 # -------which sites got summed over --------
 
-list_of_sites_around_mid_4 = [[4, 1, 1], [2, 2, 1], [2, 2, 2], [3, 2, 1], [3, 2, 2], [2, 3, 2]] #each site labelled as [x,y,alpha]
+list_of_sites_around_mid_4 = [[3, 1, 1], [2, 2, 1], [2, 2, 2], [3, 2, 1], [3, 2, 2], [2, 3, 2]] #each site labelled as [x,y,alpha]
 list_of_sites_around_mid_8 = [[5, 3, 1], [4, 4, 1], [4, 4, 2], [5, 4, 1], [5, 4, 2], [4, 5, 2]]                                                                                               # as in alpha is A or B>> 1 or 2
-list_of_sites_around_mid_10 = [[6, 4, 1], [5, 5, 1], [5, 5, 2], [6, 5, 1], [6, 5, 2], [5, 6, 2]]                                                                                               # others from 1 to Nx/y
+list_of_sites_around_mid_10 = [[6, 4, 1], [5, 5, 1], [5, 5, 2], [6, 5, 1], [6, 5, 2], [5, 6, 2]]           
+list_of_sites_around_mid_12 = [[7, 5, 1], [6, 6, 1], [6, 6, 2], [7, 6, 1], [7, 6, 2], [6, 7, 2]]                                                                                    # others from 1 to Nx/y
 #print(list_of_sites_around_core[1][1])
 
 #%%
@@ -1848,11 +1849,11 @@ def Rho_sites_all_epsilons_noVor_FAST(N_x, N_y, num_time_stages, a_0, list_of_si
 
 #%% T sample for time discretisation adjusting portal 
 
-t_sampling = 65
+t_sampling = 50
 
 
 #%% plot try scatter # easier to read --WITH TIME VOR
-Rho, Epsilon = Rho_sites_all_epsilons(10, 10, t_sampling, 1, list_of_sites_around_mid_10) # it seems the more time sampled, the larger the bulk structure(that range of Epsilon)'s Rho
+Rho, Epsilon = Rho_sites_all_epsilons(12, 12, t_sampling, 1, list_of_sites_around_mid_12) # it seems the more time sampled, the larger the bulk structure(that range of Epsilon)'s Rho
 #print (Rho, type(Rho), 'Rho') # Rho is list
 #print (Epsilon, type(Epsilon), 'Epsilon') # Epsilon is array 
 idx = np.argsort(Epsilon) # sorted all against the small/large of Epsilon
@@ -1860,7 +1861,10 @@ idx = np.argsort(Epsilon) # sorted all against the small/large of Epsilon
 Eps_sorted = Epsilon[idx]
 Rho_sorted = np.array(Rho)[idx]
 
-#%% extract peak in the t sampling 60 data 
+print('Eps_sorted', Eps_sorted)
+print('Rho_sorted', Rho_sorted)
+
+ #extract peak in the t sampling 60 data 
 
 peak_extraction_time_vor_only = np.asarray(Rho_sorted)
 i_max_time_vor_only = np.argmax(peak_extraction_time_vor_only)
@@ -1871,8 +1875,7 @@ print('peak', (x_peak_time_vor_only, y_peak_time_vor_only))
 #******** IMPORTANT: PROBLEM GENERATED HERE: why this epsilon peak is never pi? Because of scale of sites?
 # (because there is this chiral edge modes generate also pi mode; and they might mixed together)
 # And when the system isn't large enough, we cannot separate chiral edge mode completely by choose central site? 
-print(Eps_sorted, 'Eps_sorted')
-print(Rho_sorted, 'Rho_sorted')
+
 #%%
 
 
@@ -1882,64 +1885,92 @@ plt.plot(x_peak_time_vor_only, y_peak_time_vor_only, marker='x', markersize=10, 
          color='tab:red', label='peak')
 plt.xlabel(r'$\epsilon_n T$')
 plt.ylabel(r'$\rho$')
-plt.title(r'$\rho_n$ for site around vortex core vs $\epsilon_n$ ')
+plt.title(r'$\rho_n$ ($\approx$ LDOS)for 6 sites around vortex core vs quasienergy $\epsilon_n$ ')
 plt.grid(True)
 plt.show()
+#%% NICER PLOT ACTUALLY USELESS
 
+fig, ax = plt.subplots(figsize=(7, 4.5), dpi=150)
 
+ax.plot(Eps_sorted, Rho_sorted,
+        marker='o', markersize=4, linewidth=1.3,
+        label=r'$\rho_n$')
 
+ax.plot(x_peak_time_vor_only, y_peak_time_vor_only,
+        linestyle='none', marker='x', markersize=10, mew=2,
+        color='tab:red', label='peak')
 
+ax.set_xlabel(r'Quasienergy $\epsilon_n T$', fontsize=12)
+ax.set_ylabel(r'$\rho$', fontsize=12)
+ax.set_title(r'$\rho_n \approx \mathrm{LDOS}$ for 6 sites around vortex core vs quasienergy $\epsilon_n$, with time vortex in mid-plaquette',
+             fontsize=12, pad=10)
 
+ax.grid(True, which='both', alpha=0.3)
+ax.minorticks_on()
+ax.legend(frameon=False, loc='best')
 
-#%% test np.argsort
-x_tail = [6,2,3,4]
-y_tail = np.array([7,3,4,5])
-dog_tail = np.argsort(y_tail) # returns [in terms of index of elements] smallest to largest; in terms of array  
-print(dog_tail, type(dog_tail), 'dog tail')
-test_tail = y_tail [np.array([0,  3,  2,  1])]
-print(test_tail) #[3] and [1] switched 
+fig.tight_layout()
+plt.show()
+#%% WITH OUT TIME VOR
+Rho_0, Epsilon_0 = Rho_sites_all_epsilons_noVor(10, 10, t_sampling, 1, list_of_sites_around_mid_10) 
 
-#%% ploy try bin- like (still need to figure out what tthey did here)
-Rho, Epsilon = Rho_sites_all_epsilons(4, 4, 50, 1, list_of_sites_around_mid_4)
-#Epsilon = Epsilon
-Rho = np.array(Rho)
+#%%  #[[2]]
+idx_0 = np.argsort(Epsilon_0)
 
-bins = 20
-edges = np.linspace(-np.pi, np.pi, bins+1)
-centers = 0.5*(edges[:-1] + edges[1:])
-
-which = np.digitize(Epsilon, edges) - 1
-rho_binned = np.array([Rho[which == i].mean() if np.any(which == i) else np.nan
-                       for i in range(bins)])
-# -------------------------------------------------------------
+Eps_sorted_0 = Epsilon_0[idx_0]
+Rho_sorted_0 = np.array(Rho_0)[idx_0]
 
 plt.figure()
-plt.plot(centers, rho_binned, linestyle='-', linewidth=1)
-plt.xlabel(r'$\epsilon$')
-plt.ylabel(r'$\langle \rho \rangle_{\mathrm{bin}}$')
-plt.title('Binned (DOS-like) curve')
+plt.plot(Eps_sorted_0, Rho_sorted_0, 'o-', markersize=3)#linestyle='-', linewidth=1)   # or add marker='.'
+plt.xlabel(r'$\epsilon_n T$ ')
+plt.ylabel(r'$\rho$')
+plt.title(r'$\rho_n$  for sites around vortex core vs $\epsilon_n$ ')
 plt.grid(True)
 plt.show()
 
+#%% NICER PLOT ACTUALLY USELESS
 
-#%% test loop append:
-hog_list = []
-x_test = [1,2,3]
-for x_dog in x_test:
-     x_hog = x_dog + 3
-     hog_list.append(x_hog)  
-#print(hog_list) #----- append is in order of the list 
-    
-            
-            
+fig, ax = plt.subplots(figsize=(7, 4.5), dpi=150)
 
-    
+ax.plot(Eps_sorted_0, Rho_sorted_0,
+        marker='o', markersize=4, linewidth=1.3,
+        label=r'$\rho_n$')
+
+#ax.plot(x_peak_time_vor_only, y_peak_time_vor_only,
+#        linestyle='none', marker='x', markersize=10, mew=2,
+#        color='tab:red', label='peak')
+
+ax.set_xlabel(r'Quasienergy $\epsilon_n T$', fontsize=12)
+ax.set_ylabel(r'$\rho$', fontsize=12)
+ax.set_title(r'$\rho_n \approx \mathrm{LDOS}$ for 6 sites around vortex core vs quasienergy $\epsilon_n$, without time vortex',
+             fontsize=15, pad=10)
+
+ax.grid(True, which='both', alpha=0.3)
+ax.minorticks_on()
+ax.legend(frameon=False, loc='best')
+
+fig.tight_layout()
+plt.show()
+#%%[[3]] T dis 70 --------------final plot -------------------
+#Rho_difference_adjusting = Rho_sorted - Rho_sorted_0 # as in Rho with vortex minus Rho without vortex 
+
+#peak_extraction_diff = np.asarray(Rho_difference_adjusting)
+#i_max_diff = np.argmax(peak_extraction_diff)
+#x_peak_diff, y_peak_diff = Eps_sorted[i_max_diff], Rho_difference_adjusting[i_max_diff]
+
+#print('peak for difference ', (x_peak_diff, y_peak_diff))
 
 
+#plt.figure()
 
-
-
-
+#plt.plot(Eps_sorted, Rho_difference_adjusting, 'o-', markersize=3, color = 'tab:blue')#linestyle='-', linewidth=1)   # or add marker='.'
+#plt.plot(x_peak_diff, y_peak_diff, marker='x', markersize=10, mew=2,
+#         color='tab:red', label='peak')
+#plt.xlabel(r'$\epsilon_n T$ ')
+#plt.ylabel(r'$\rho$') 
+#plt.title(rf'$\rho_n$ difference for sites around vortex core vs $\epsilon_n$, $T discretisation = {t_sampling}$') #rf"Phase bands with edge state density diagnosis, y OBC, $L_y = {Ny_plot_yOBC_edge}$
+#plt.grid(True)
+#plt.show()
 
 
 
@@ -1965,7 +1996,7 @@ def H2NyNx_yOBC_for_check(N_y, N_x, t, a_0):
     
     H_PBC_generated_y_OBC [mask] = 0    
        # or whatever values you want
-    print("\nMask (True means 'will be changed'):\n", mask)
+#    print("\nMask (True means 'will be changed'):\n", mask)
 
     return H_PBC_generated_y_OBC
 
@@ -2060,7 +2091,7 @@ k_x_TEST = generate_k_x_list(0, 2*np.pi, N_x_TEST)
 spectrum_test_realy_yOBC =  find_spectrum_realy_OBC(N_y_TEST, k_x_TEST)
 spectrum_yOBC_NyNxCheck = find_spectrum_for_yOBC_check(N_y_TEST, N_x_TEST, a_0) #dim: 2NxNy
 
-print('BEGIN: spectrum_test_realxy:',spectrum_yOBC_NyNxCheck, 'spectrum_test_realy', spectrum_test_realy_yOBC, 'END')
+#print('BEGIN: spectrum_test_realxy:',spectrum_yOBC_NyNxCheck, 'spectrum_test_realy', spectrum_test_realy_yOBC, 'END')
 #%%
 
 
@@ -2074,7 +2105,7 @@ def same_values_ndp_yes_no(a, b, ndp):
     return "yes" if np.allclose(np.sort(a_rounded), np.sort(b_rounded)) else "no"
 
 if_sepctrum_are_the_same_y0BC = same_values_ndp_yes_no(spectrum_test_realy_yOBC, spectrum_yOBC_NyNxCheck,5)
-print('if_sepctrum_are_the_same', if_sepctrum_are_the_same)
+#print('if_sepctrum_are_the_same', if_sepctrum_are_the_same)
 
 
                            

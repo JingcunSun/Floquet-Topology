@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Mar 18 21:41:10 2026
-
-@author: DELL
-"""
-
 
 
 # few general summary of the codes for my CV
@@ -86,6 +79,25 @@ J_a = 2* ((0.9 * np.pi ))/ ((T * 0.5) * 4)#  2* ((0.9 * np.pi ))/ ((T * 0.5) * 4
 
 
 
+#J_x = J_a
+#J_y = J_a
+#J_z = J_a
+
+#t_a_array = [t_x, t_y, t_z]
+#adjusted by the caption under fig_1:(we unify the t_a, J_a, l, T, delta_t) 
+#laeve the only parameter adjustable in J_tilte_a is t
+
+
+#%%
+
+#write six different Hamiltonians -- Figure out how to order H1 to H6, U1...U6, then finish writing the U_full
+#H_1 to H_6, here arrange them from latest time to earliest time. 
+
+#J_tilte_x = J_tilte_a(t, t_x, delta_t, l, T, J_x)
+#J_tilte_y = J_tilte_a(t, t_y, delta_t, l, T, J_x)
+#J_tilte_z = J_tilte_a(t, t_z, delta_t, l, T, J_z)
+
+# these J needed to be written at their corresponding time. 
 
 #%% (here change H_test to real H, which is parameterised by k:
 #(firstly try to use the [H] build a list of 6 H; 
@@ -109,24 +121,12 @@ def J_tilte_z(t):
 t_test = np.linspace(-2, 1, 100) 
 # function of J_a need to be adjusted as in that t can be out of range of one period(0,T)
 
-plt.plot(t_test, J_tilte_x(t_test), label='J_tilte_x')
-plt.plot(t_test, J_tilte_y(t_test), label='J_tilte_y')
-plt.plot(t_test, J_tilte_z(t_test), label='J_tilte_z')
-
-plt.xlabel('t')
-plt.ylabel('J_tilte_a')
-plt.title('Plot of J_tilta_a(pulse of hopping amp) vs t')
-plt.legend()
-plt.grid(True)
-plt.show()
 
 #%% some test try figure properties of J func
 t_specific_time_point_test = np.pi - 3
 
 call_func_J_tilte_x = J_tilte_z(t_specific_time_point_test)
 
-print (call_func_J_tilte_x, ' see if J_tilte_a = x return a scalar multiply the Pauli matrices')
-#plot succeed
 
 #%%
 
@@ -191,7 +191,9 @@ a_12 = H_test_for_entrices[0][1]
 # here (H_m_n)x(') or y(') denotes the relationship between {the entrices in the Hamiltonian mth row, nth column (which corresponding to x - x' and y- y')}
 # and {the x, y, x', y' unit cells they corresponding to}
 # Or saying in another way H now is corresponding to both x, x', y, y', and the H_kx_ky(2x2) as in terms of summations of kxky 
-#
+#                                                                                      J_tilte denoted by x, y and x' y' 
+
+#'dog'
 #%%
 #time discretisation:
   
@@ -349,20 +351,7 @@ def plot_phase_vs_kx(k_x, k_y):
 
 # -- Does here to use a list A filled in by last i loop, it needed to have another new i loop to distribute A[i]?
 
-    plt.plot(k_x, phase1_T_asc_list,  '.', color='tab:blue', markersize = 3)
-    plt.plot(k_x, phase2_T_asc_list,  '.', color='tab:purple', markersize = 3)
 
-    
-for i in range (len(k_y_list)):
-    
-    plot_phase_vs_kx(k_x_list, k_y_list[i])
-    
-plt.ylim (-np.pi, np.pi)    
-    
-plt.xlabel(r'$k_x a_0\ \mathrm{(PBC)}$', fontsize=13)
-plt.ylabel(r'Phase $\phi_n  = \epsilon_n T$  (T = 1)', fontsize=13)
-
-plt.title(r'Bulk phase band plot vs $k_x$ (PBC in $x,y$)', fontsize=13)
 
 
 from matplotlib.lines import Line2D # This is purely for plot legend 
@@ -375,10 +364,6 @@ legend_elements = [
            linestyle='None', markersize=6,
            label='Phase band 2 (2nd eigenvalue)')
 ]
-
-plt.legend(handles=legend_elements, loc='right', bbox_to_anchor=(1, 0.56))
-plt.grid()
-plt.show()
 
 #%% try U_full_discretisation
 def plot_phase_vs_kx(k_x, k_y):
@@ -407,20 +392,8 @@ def plot_phase_vs_kx(k_x, k_y):
         phase1_T_asc_list.append(- np.angle(eigvals[0])) #these are epsilon_n*T = Phi_n (n here =1, 2) -- which is what we plotted
         phase2_T_asc_list.append(- np.angle(eigvals[1])) # see above; but anyway we setted T = 1 before, so-- 
 
-    plt.plot(k_x, phase1_T_asc_list,  '.', color='tab:blue', markersize = 3)
-    plt.plot(k_x, phase2_T_asc_list,  '.', color='tab:purple', markersize = 3)
 
     
-for i in range (len(k_y_list)):
-    
-    plot_phase_vs_kx(k_x_list, k_y_list[i])
-    
-plt.ylim (-np.pi, np.pi)    
-    
-plt.xlabel(r'$k_x a_0\ \mathrm{(PBC)}$', fontsize=13)
-plt.ylabel(r'Phase $\phi_n  = \epsilon_n T$  (T = 1)', fontsize=13)
-
-plt.title(r'Bulk phase - check U(T) time discretisation', fontsize=13)
 
 #%%
 # The loop(PLOT) below is: 
@@ -433,17 +406,6 @@ plt.title(r'Bulk phase - check U(T) time discretisation', fontsize=13)
     
 #    plot_phase_vs_kx(k_x_list, k_y_test_list_no_including_2pi[i])
     
-plt.xlabel(r'$k_x\ \mathrm{(PBC)}$', fontsize=12)
-plt.ylabel(r'Phase $\phi_n$  (T = 1)', fontsize=12)
-
-plt.title(r'Bulk phase band plot vs $k_x$ (PBC in $x,y$), NO y = 2pi**', fontsize=13)
-
-plt.legend()
-plt.grid()
-plt.close()
-# here if change plt.close to plt.show can get the plot
-
-# well, alright - there's almost no difference here.
 
 
 #%%
@@ -563,7 +525,7 @@ def plot_check_phase_vs_kx(k_x, N): # here in this function you can choose N_y (
         kx_list_for_plot.append([k_x[i] * len(phi_n_fixed_kx)])
 #        print(len(phi_n_fixed_kx))
     
-    plt.plot(kx_list_for_plot, phi_n_list_of_kx_list, '.', markersize=3)
+
 #%%    
 #    print (len(kx_list_for_plot))
 #    print(len(phi_n_list_of_kx_list))
@@ -574,16 +536,7 @@ Ny_check = 10 # this is the Ly = N*a0 before Ly defined
               # this replot (plot_check) of phase band will be same as the initial plotfunc [plot_phase_vs_kx]
 
 test_phi_along_kx = plot_check_phase_vs_kx(k_x_list, Ny_check)
-#plt.xlim(1.7, 1.8)
-plt.ylim(-np.pi, np.pi)
-#plt.ylim(-1.75, -0.8)
-plt.xlabel('$k_x a_0$')
-plt.ylabel('Phase at time T ($\epsilon(k, T)T$)')
-plt.grid()
-plt.title('Bulk band double check for real basis H2Nx2N, N = 10')
-#plt.legend()
-plt.tight_layout()
-plt.show()
+
 #%%
 
 #Followed by: def real_basis_H2N_fix_k_x(N, k_x, t): # t can be any from [  t_i = T/N * i + T/(N * 2)  ]
@@ -615,7 +568,7 @@ def H_6_2Ny_OBC(N_y, k_x): # here num of stages are fixed to be 6; lattice lengt
         top_right = [(i, j ) for i in range(rows) for j in range(cols) if i < 2 and j >= cols - 2]
         top_right_indices = top_right[:4]
         
-        print(top_right, x)
+ 
 
 # Bottom-left 4 entries
         bottom_left = [(i, j) for i in range(rows) for j in range(cols) if i >= rows - 2 and j < 2]
@@ -736,21 +689,35 @@ def plot_edge_vs_kx(k_x, N_y): # here k_x is a list(taken from  # here the plot 
 #    plt.figure(figsize=(8, 5))
 #    print (len(kx_list_for_plot))
 #    print(len( phase_list_of_list))
-    plt.plot(kx_list_for_plot, phase_list_of_list, '.', markersize=3)
+
+            
+  #  plt.plot(k_x, phase_list_of_list,  'o', label='edge phase')
             
 
+        
+ #   for y in range (len(eigval_kx_2N_list)):
+        
+        
+        
+#        phase_kx_2Ny_list. append (phase_kx_2N)
+        
+#        phase1_T_asc_list.append(- np.angle(eigvals[0]))
+#        phase2_T_asc_list.append(- np.angle(eigvals[1]))
+
+# -- Does here to use a list A filled in by last i loop, it needed to have another new i loop to distribute A[i]?
+
+#    plt.plot(k_x, phase1_T_asc_list,  'o', label='phase 1(1st eigval), phi_n = phi_0')
+#    plt.plot(k_x, phase2_T_asc_list,  'o', label='phase 2(2nd eigval), phi_n = phi_1')
+
     
-plot_edge_vs_kx(k_x_list, Ny_plot_yOBC_edge)
-#plt.xlim(1.7, 1.8)
-plt.ylim(-np.pi, np.pi)
-#plt.ylim(-1.75, -0.8)
-plt.xlabel('$k_x a_0$')
-plt.ylabel('Phase at time T ($\epsilon(k, T)T$)')
-plt.grid()
-plt.title(rf'Bulk and Edge Phases vs $k_x a_0$, y direction unit cell number $Ly  = {Ny_plot_yOBC_edge}$')
-#plt.legend()
-plt.tight_layout()
-plt.show()
+#for i in range (len(k_y_list)):
+    
+
+#    plot_phase_vs_kx(k_x_list, k_y_list[i])
+
+#CHIRAL EDGE STATE PLOT
+    
+
 
 #%%
 #now try eigen vectors --
@@ -876,6 +843,11 @@ def find_epsilon_n_vs_kx(k_x, N_y): # here k_x is a list  N is number of y I gue
 epsilon_n_list = find_epsilon_n_vs_kx(k_x_list, Ny_plot_yOBC_edge) # here 10 is for N, which is Ly, which is 10 for 2N x2N  = 20x 20 matrix 
 
 
+#%% print the list of eigvecs for 2N by 2N U_full, find the density amp of each y
+
+
+# this return the first and second kx (kx[0] and kx[1])'s 20 eigen vec!!
+#(roughly checked out)
 
 #%% checking about the edge state density
 
@@ -902,13 +874,13 @@ for i in range(len(k_x_list)):  # Here number of i range corresponding to k_x_li
         Phi_vec_n2 = Phi_specific_kx [:, 2*j + 1] #the next vec(array(3, )) with 20 components
         
         comp_wise_modulus_sqr_1 = np.abs(Phi_vec_n1)
-#        print(comp_wise_modulus_sqr_1, 'COM SQR 1')
+      
         comp_sum_for_1 = np.sum(comp_wise_modulus_sqr_1)
-#        print(comp_sum_for_1, 'COM SQR 1 SUM')
+       
         
         Rho_specific_y = np.sum(np.abs(Phi_vec_n1)) + np.sum(np.abs(Phi_vec_n2))  # Q: what does this actually do? 
             # this corresponding to modulus square for each Phi_n pair in sublattices, which is Rho_n
-#        print(Rho_specific_y, 'rho for each of 10 y')
+  
         Rho_y_listed_by_y. append(Rho_specific_y)
         
 #        for k in range(len(vec_y_alpha1)): #(actually this is just j)
@@ -945,9 +917,7 @@ for i in range(len(k_x_list)):  # Here number of i range corresponding to k_x_li
             
             Rho_comp_Phi_eigvec_specific_n_list.append(Rho_component_y)
             
-        
-#        print('n = ', n, 'density of state(Rho) for each y = ', Rho_comp_Phi_eigvec_specific_n_list)
-              # for check 1
+          # for check 1
               # or go to the var explorer, see Phi_eigvecs_n_list_Rho_each_y_list, this list is for the dos for each y and - next line 
               #each n, should be len(n[len(Ly)])
               
@@ -957,17 +927,14 @@ for i in range(len(k_x_list)):  # Here number of i range corresponding to k_x_li
         #total density of edege state #  From those components(1,...y_some, Ny) of each eigenvec_n(also 2Ny num of),
                                       #  identify that of edges; or that of [any position's] -- we adjust here
         #total density of edege state
-#        print('n = ', n, 'edge density(Rho) for all y =', Rho_edge_Phi_eigvec_n)
-        # for check 2 
+    # for check 2 
         
         Phi_eigvecs_n_Rho_edge_list.append(Rho_edge_Phi_eigvec_n ) # ****here append all these position identified Rho to all eigenvec n
         
         Phi_eigvecs_n_list_Rho_comp_y_list.append(Rho_comp_Phi_eigvec_specific_n_list) # When finish appending (out of this loop of vec_n)
                                                                                        # This will return a list of all Rho_y=1  -|
                                                                                        #                                 Rho_y=2 -| --Phi_n = 1|
-#    print('BBBBEGIN',Phi_eigvecs_n_list_Rho_comp_y_list,'END')  
-#    print('length here should be same as total number of epsilon_n = 2*Ny,', len(Phi_eigvecs_n_list_Rho_comp_y_list))                      #                                 ...     -|   Phi_n = 2|-total list
-                                                                                       #                                             (eigenvec n leballed as for all quasienergies)
+                                                                              #                                             (eigenvec n leballed as for all quasienergies)
     # here I want to check two things: 1. for each Phi n, among desities labelled by y, is there any edge showed
     #                                     higher probability?
     #                                  Conclusion: Not really??? So what does it mean by localised? (Maybe can ask professor)
@@ -983,10 +950,7 @@ for i in range(len(k_x_list)):  # Here number of i range corresponding to k_x_li
         
         Phi_specific_kx_20_eigvecs.append(Phi_specific_kx[k])
         
-#    print ('i=', Phi_specific_kx_20_eigvecs, '20 eigen vec') #here we have 20 eigen vec, each of it has 20 components
-    
-#    print(' check which order is y and alpha')
-        
+
                                    
    # print('i =', i, Rho_y_listed_by_y, 'rho list for all 10 y, should be len = 10') 
     
@@ -1013,16 +977,11 @@ for i in range(len(k_x_list)):  # Here number of i range corresponding to k_x_li
 
     Rho_edge_listed_by_sta_n_listed_by_kx.append(Phi_eigvecs_n_Rho_edge_list)
     
-#print("len(k_x_list) =", len(k_x_list))
-#print("len(Rho_edge_listed_by_sta_n_listed_by_kx) =",
-#      len(Rho_edge_listed_by_sta_n_listed_by_kx))
-
 
 #%% here in our plot of phase band structure with intensity (labelled by the density of edge)
 
 # which need to be corrected 
-    
-plt.figure()
+ 
 
 kx_temperoally_in_p_loop =[]
 rho_edge_ns_specific_kx = [] 
@@ -1058,20 +1017,6 @@ for p in range(len(k_x_list)):  # Here number of i range corresponding to k_x_li
         
 #        print (epsilon_n, 'epsilon_n;', rho_edge_n, 'rho_edge_n, for state', state)
         
-        
-    plt.scatter([kx_in_p_loop]*len(rho_edge_ns_specific_kx), epsilon_ns_specific_kx, c=rho_edge_ns_specific_kx, cmap='inferno_r', s=1, vmin = 0, vmax = 1)
-
-    #plt.scatter([kx_in_p_loop]*len(rho_edge_ns_specific_kx), epsilon_ns_specific_kx, c=rho_edge_ns_specific_kx, cmap='magma_r', s=1, vmin=vmin, vmax=vmax)
-
-plt.colorbar()
-#plt.xlim(-0.4, 0.17)      # x-axis range if want to see full picture please include 0, coz there is a group of epsi_n at 0
-#plt.ylim(-2.2, -1)     # y-axis range
-plt.xlabel(r'$k_x a_0$')
-plt.ylabel(r'$\epsilon_\alpha(k_x) T$')
-#plt.legend()
-plt.title(rf"Phase bands with edge state density diagnosis, y OBC, $L_y = {Ny_plot_yOBC_edge}$")
-plt.grid()
-plt.show()
 
 
 #%% real basis x, y PBC, check spectrum
@@ -1259,16 +1204,7 @@ spectrum_test_realy = find_spectrum_realy(N_y_TEST, k_x_TEST)
 
 #%%
 spectrum_test_realxy_version2 = find_spectrum_NxNy_version2(N_y_TEST, N_x_TEST, a_0)
-#print('spectrum_test_realxy:', spectrum_test_realxy_version2, 'spectrum_test_realy', spectrum_test_realy)
-import numpy as np
 
-def same_values_ndp_yes_no(a, b, ndp):
-    a_rounded = np.round(a, ndp) #dp as in decimal points
-    b_rounded = np.round(b, ndp)
-    return "yes" if np.allclose(sorted(a_rounded), sorted(b_rounded)) else "no"
-
-if_sepctrum_are_the_same = same_values_ndp_yes_no(spectrum_test_realxy_version2, spectrum_test_realy,3)
-#print('if_sepctrum_are_the_same', if_sepctrum_are_the_same)
 
 
 #%% write function of turn off x and y PBC terms, gain OBCs
@@ -1341,10 +1277,96 @@ HamNxNy_test = H2NyNx_xyOBC(4, 3, T/12, 1) # test both xy OBC ham Ny = 4 Nx = 3
 # 3.18. -- this func got tested out, as in yes, we have xy OBC here, and should start from this point 
 # this cell is correct as in it is xy both OBC
 
-#( HamNxNy_test, 'test see what both OBC hamiltonian we wrote is like'
+#( HamNxNy_test, 'test see what both OBC hamiltonian we wrote is like')
+#%% go through the way did before for H_6 U_full, no time vortex as fast run
+def U2NyNx_xy_OBC(N_y, N_x, a_0): 
+    def H_6_2NyNx_OBC_append(N_y, N_x, a_0): #here this function should have same spectrum(EIGEN_yVALS)as the [K BASIS H2x2]
+                        #6 refers as list of 6 piecewise H 
+        
+        H2NyNx_OBC_6_matrices = []
+        
+        for t_x in range (6): #x refers index for t
+        
+            t_piecewise = T/6 *  t_x + T/(6 * 2)   # here this x is equivalent to i in the 2x2 H list func
+            
+            H2NyNx_OBC_piecewise =  H2NyNx_xyOBC(N_y, N_x, t_piecewise, a_0)
+            
+            H2NyNx_OBC_6_matrices.append(H2NyNx_OBC_piecewise) # generate 6 2N_y real H
+            
+        return H2NyNx_OBC_6_matrices
+
+    U_list_new = []
+    #reference :
+    #    H_list_6_2N_y_edge = H_6_2N_y_OBC(N, k_x)
+    H_6_2NyNx_new_OBC_list =  H_6_2NyNx_OBC_append(N_y, N_x, a_0)
+        
+    for i in range (6):
+
+        U_i = expm(-1j* (H_6_2NyNx_new_OBC_list[i])* (T/6))
+            
+        U_list_new.append(U_i) # append should be in the loop scope, 
+                                # one grid inside the for loop title if you want to append the thing produced once loop (per i)
+        
+    U_reverse_new = np.flip(U_list_new)
+        
+    U_full_new = reduce(np.matmul,  U_reverse_new)
+            
+    
+    return  U_full_new
+    
 
 
+#%% -------- introdce time vortex : J >> H_2x2 >> write new H 2x2 in this function 
+# ---------***** INTRODUCED TIME VORTEX which is original script*****----------
+def H2NyNx_xyOBC_time_vortex_ori(N_y, N_x, t, a_0):  # here this t is the t got sampled, 
+                                                 # within this function we will get t_phase_delay to rewrite t
+    
+# t --- is not the t we stuff in our HxH matrix(which calls J_tilte_a ) anymore
+# where is the centra point of the vortex? Plan A: try at original( read to justify)
+#                                          Plan B: at middle of all unit cells Nx, Ny plane
 
+    
+#    H_generated_both_OBC_no_vor = H2NyNx_xOBC_only(N_y, N_x, t, a_0) # this create an Ham object as input goes into func
+    
+    # begin to write the vortex Ham
+    H_generated_both_OBC_vor = np.zeros((2*N_y*N_x, 2*N_y*N_x), dtype =complex)
+    
+    for i in range(N_x* N_y):
+        for j in range(N_x* N_y):
+            x = (i + 1 )% N_x  #double check later (?) -- x & x' are from 0, to Nx -1
+            x_1 = (j + 1 )% N_x 
+          #  delta_x = (x - x_1) % N_x #this gives [the smallest integer which near the (x-x1) and can be divided by N_x]'s difference with (x-x_1)
+            y = ((i) // N_x) + 1 #double check later (?) -- y & y' are from 0, to Ny -1
+            y_1 =( (j) // N_x ) + 1 # y'
+
+           # print (i, j, 'test ij in time vortex matrix')
+
+            arv_y = (y + y_1)/2 # here is a question: should we do this way from 0 for all x, x', y, y'? Ans: no. We do from 1
+            arv_x = (x + x_1)/2 # 
+#-----------------------------------------------------------    
+            vortex_theta = np.arctan2(arv_y, arv_x)
+            
+    # how should we apply theta belongs to [0, 2pi) if we want 
+            #theta = np.arctan2(y, x)          # (-pi, pi]
+            #theta_0_2pi = np.mod(theta, 2*np.pi)  # [0, 2pi)
+            # continuous (no jump) if points are ordered around the circle:
+            #theta_cont = np.unwrap(theta)
+#------------------------------------------------------------
+            t_phase_delayed = t - vortex_theta * T/(2 * np.pi)
+            
+#            H_generated_both_OBC_vor[2*i:2*i+2, 2*j:2*j+2] = H_generated_both_OBC_no_vor[2*i:2*i+2, 2*j:2*j+2]
+            # lhs extract 2x2 little blocks in zero martix (preparted for writing time vortexed Ham), at each loop*(NxNy)
+            # rhs rewrite as H - worng: H_generated_both_OBC_no_vor is written outside the loop(labels xx' and yy' - time phase)
+            # each loop should assign 2x2 extracted blocks from lhs a different time phase [H_generated_both_OBC_no_vor] with corresponding part of matrix
+            # Problem: here this func[H2NyNx_xOBC_only] is a func of whole matrix, is it fine if it's large we call it again and again? 
+            
+            H_generated_both_OBC_vor[2*i:2*i+2, 2*j:2*j+2] = H2NyNx_xOBC_only(N_y, N_x, t_phase_delayed, a_0)[2*i:2*i+2, 2*j:2*j+2]
+            
+            
+            
+    return H_generated_both_OBC_vor
+
+# dk what we are doing here? ####################### double check even this cell is needed later 
 
 #%% This cell, include xy OBC condition, only changed func as [H2NyNx_xyOBC] at 3.18. - details see notes inside the cell 
 def H2NyNx_xyOBC_time_vor_core(N_y, N_x, t, a_0, x_0, y_0):  # x_0 and y_0 are the position of time vor core adjustable 
@@ -1381,7 +1403,7 @@ def H2NyNx_xyOBC_time_vor_core(N_y, N_x, t, a_0, x_0, y_0):  # x_0 and y_0 are t
             H_generated_both_OBC_vor_core[2*i:2*i+2, 2*j:2*j+2] = H2NyNx_xyOBC(N_y, N_x, t_phase_delayed, a_0)[2*i:2*i+2, 2*j:2*j+2]
             
             ############################################?????????? >>>>  Should we use H2NyNx_xOBC_only 
-            # Now I will change it to: xy OBC - changed 3.18. as H2NyNx_xyOBC -- from H2NyNx_xOBC_only(which is ridiculously wrong)
+            # Now I will change it to: xy OBC - changed 3.18. as H2NyNx_xyOBC -- from H2NyNx_xOBC_only
             
     return H_generated_both_OBC_vor_core
 
@@ -1420,6 +1442,21 @@ def H2NyNx_xyOBC_No_Vor(N_y, N_x, t, a_0): # H for OBC but no timevortex, exact 
 
 # check if this cell is the same as H2NyNx_xyOBC itself?  but firstly you can try plot : by this 
 
+#%%
+
+   
+#try one H see if this work -- still define time at T/12 and Ny = 4 Nx =3
+
+H_TEST_time_vortex =  H2NyNx_xyOBC_time_vor_core(4, 3, T/12, 1, 2.5 , 2)
+# a vague test: test that we did add some shit here: 
+#HamNxNy_test = H2NyNx_xyOBC(4, 3, T/12, 1)   
+
+def Ham_same(a, b, rtol=1e-8, atol=1e-10):
+    a = np.asarray(a)
+    b = np.asarray(b)
+    return a.shape == b.shape and np.allclose(a, b, rtol=rtol, atol=atol, equal_nan=True)
+
+# Here they shouldn't be the same 
 #%% # here insead of U_full operator for time vor core at origin, U is time vor at any point(x_0,y_0) input
     # (also can be 0 :)
     # most important stuff here for time vortex, full time evolution opt(also include time discretisation)
@@ -1440,10 +1477,7 @@ def U_full_time_vor_core(N_x, N_y, num_time_stages, a_0, x_0, y_0): # which mean
         U_i = expm(-1j* H_i* (t_desicretisation)) #!!!!! # here using exponential form construct each of U_1 to U_6
         
         U_list_matrices.append(U_i)
-        
-        print(U_i[1,2]) # why are you doing this bro? 
-        
-    print(np.array(U_list_matrices)[:][1,2])
+
         
     U_full = reduce(np.matmul, U_list_matrices) # here adjoint the full time evolution 
         # here U_list_N_matrices = [e^{-iH(T-dt)}]
@@ -1477,9 +1511,7 @@ def U_full_time_no_vor(N_x, N_y, num_time_stages, a_0): # Recall xyOBC but no vo
         
         U_list_matrices.append(U_i)
         
-        print(U_i[1,2]) # why are you doing this bro? 
-        
-    print(np.array(U_list_matrices)[:][1,2])
+
         
     U_full = reduce(np.matmul, U_list_matrices) # here adjoint the full time evolution 
         # here U_list_N_matrices = [e^{-iH(T-dt)}]
@@ -1503,8 +1535,6 @@ def build_all_sites(N_x, N_y, n_alpha=2):
 
 #all test for above func: 
 test_sites33 = build_all_sites(3, 3, n_alpha=2) #build an array of sites just as in [list_of_sites_around_mid_4](but that was list)
-print (type(test_sites33))
-print (test_sites33.shape) # ( Nx x Ny x 2-- as in all different position labelled sites, 3 -- as in for each one we need 3 index to express it)
 
 
 #%%
@@ -1544,11 +1574,17 @@ def sites_to_comp_indices(sites, N_x, n_alpha=2):  #this function is how we conv
 #%% ###need to be changed !!
 
 def Rho_all_sites_epsilon_vor(N_x, N_y, num_time_stages, a_0 , sigma, list_of_sites_needed=None, n_alpha=2):
- #   sort_by_epsilon=True,
+ #   sort_by_epsilon=True,          #########PROBLEM1#########           **This sigma offset !! Should be exactly include the last 'pi' mode, as in: 
+                                                         # for 6-sites summation, we have no peak at for example 2.95. But we don't know about other sites (especially near bound)
+ 
 #    sum_over_filtered_states=True, -- dk why we are using these? 
 
     U_4 = U_full_time_vor_midpoint(N_x, N_y, num_time_stages, a_0) # real xy OBC matrix with vortex at midpoint
-
+    #############PROBLEM 2################!!!
+    # here this number of time stages dirctly influence how many T discretisation you slicing in U full
+    # just as T sample in your Fig 4a graph!! To use 6 is really not good 
+    
+    
     eigvals_U_4, eigvecs_U_4 = np.linalg.eig(U_4) # get eigenvalue
     epsilon_n = -np.angle(eigvals_U_4) # get epsilon; 
 #    eigvec_copy_backup = eigvecs_U_4[] no backup but eigenvec and epsilons corresponding to each other as in [filtered_eigvec] we used [:, mask]
@@ -1716,9 +1752,8 @@ def Rho_all_sites_epsilon_no_vor(N_x, N_y, num_time_stages, a_0 , sigma, list_of
        #  "filtered_eigvecs": filtered_eigvecs,    # (dim, N_filtered)
      }
  
+#test_produceRho3x3 = Rho_all_sites_epsilon_no_vor(3, 3, 6, 1, 0.5)
 
-#%%
-#test_produceRho8x8 = Rho_all_sites_epsilon_no_vor(8, 8, 6, 1, 0.02) #good news! It runs about 5 min
 #%%
 #****** UNFINISHED !!!! Must finish today
 # here this cell is for plotting the site_used as in real space points on 8x8 plaquette
@@ -1739,7 +1774,7 @@ def site_to_plot_xy(sites, a=1.0):
     x = sites[:, 0]
     y = sites[:, 1]
     alpha = sites[:, 2]
-    print(sites)
+   
     # Example placeholder mapping only (here we assumed each side of hex is 1 - Q: is this same as a0?)
     #there is a coor_x shift term for y doesn't equal 1(y_coor non zero) x_shift = 0.5 *np.sqrt(3) * (y-1)
     coor_x = (x - 1) * np.sqrt(3) + 0.5 * (alpha - 1) * np.sqrt(3) +  0.5 *np.sqrt(3) * (y-1)
@@ -1747,53 +1782,74 @@ def site_to_plot_xy(sites, a=1.0):
 
     return coor_x, coor_y
 
-#%% test: try plot 3x3 
-Plaq_dict_UC3X3 = Rho_all_sites_epsilon_no_vor(3, 3, 6, 1, 0.5) #last value is always offset 
-                                                                #' how far away from pi got included in sum'
 
-print(Plaq_dict_UC3X3["rho_sum"]) 
-print(Plaq_dict_UC3X3["sites_used"])  # the site |x, y, alpha>
-print(Plaq_dict_UC3X3["comp_indices"])# corresponding comp in |Phi_n> 
+#%%
+#recall function construction: Rho_all_sites_epsilon_vor(N_x, N_y, num_time_stages, a_0 , sigma, list_of_sites_needed=None, n_alpha=2)
+#Plaq_dict_UC8X8_vor_mid_offset_12 = Rho_all_sites_epsilon_vor(8, 8, 6, 1, 0.12)
+  
+#print('offset 0.12', Plaq_dict_UC8X8_vor_mid_offset_12)
 
-Rho_near_pi3x3 = Plaq_dict_UC3X3["rho_sum"]
-Xplot, Yplot = site_to_plot_xy(test_sites33) ## here for test, we just use the site plotted as by previous 'build site' function
+
+#Plaq_dict_UC8X8_vor_mid_offset_18 = Rho_all_sites_epsilon_vor(8, 8, 6, 1, 0.18)
+
+#print('offset 0.18', Plaq_dict_UC8X8_vor_mid_offset_18)
+
+
+#Plaq_dict_UC8X8_vor_mid_offset_3 = Rho_all_sites_epsilon_vor(8, 8, 6, 1, 0.3)  
+#print('offset 0.3', Plaq_dict_UC8X8_vor_mid_offset_3)
+#%% FIG 4B CALCULATION
+ #VORTEX, PLAQUETTE 
+#Plaq_dict_UC8X8_vor_mid = Rho_all_sites_epsilon_vor(6, 6, 35, 1, 0.10) #offset need to be setted correctly 
+#good news! It runs about 5 min #the offsetadjustion here is a bit tricky we used 0.25 for 3.15 - 2.9
+#%%
+#VORTEX, PLAQUETTE PLOT
+#Rho_near_pi8x8_vor = Plaq_dict_UC8X8_vor_mid["rho_sum"]
+#Xplot, Yplot = site_to_plot_xy(Plaq_dict_UC8X8_vor_mid["sites_used"]) ## here for test, we just use the site plotted as by previous 'build site' function
 #    colors = result["rho_sum"] results is?
-print(Xplot, Yplot)
 
+#print('offset 0.12', Plaq_dict_UC8X8_vor_mid)
 
-plt.figure(figsize=(6, 6))
+#plt.figure(figsize=(6, 6))
 #plt.scatter(Xplot, Yplot, s=80)
-plt.scatter(Xplot, Yplot, c=Rho_near_pi3x3, s=180, cmap="inferno_r", linewidths=0.6) # , dgecolors="black"
-plt.xlabel("X")
-plt.ylabel("Y")
-plt.colorbar(label="LDOS near pi")
-plt.axis("equal")
-plt.grid(True)
-plt.show()
+#plt.scatter(Xplot, Yplot, c=Rho_near_pi8x8_vor, s=180, cmap="inferno_r", linewidths=0.6) # , dgecolors="black"
+#plt.xlabel("X")
+#plt.ylabel("Y")
+#plt.colorbar(label="LDOS near pi")
+#plt.axis("equal")
+#plt.grid(True)
+#plt.show()
 
-#%% test: try plot 8x8 
+#print('print dict of 8x8 with cor, Rho_comp_corresponding, offset 0.3', Plaq_dict_UC8X8_vor_mid)
+## here for test, we just use the site plotted as by previous 'build site' function
+#    colors = result["rho_sum"] results is?
+
+
+
+#%% NO VORTEX, PLAQUETTE 
 
 # create object: dict created by [Rho_all_sites_epsilon_no_vor] 
-Plaq_dict_UC8X8 = Rho_all_sites_epsilon_no_vor(8, 8, 6, 1, 0.12)
+#Plaq_dict_UC8X8 = Rho_all_sites_epsilon_no_vor(4, 4, 6, 1, 0.18) #here if offset 0.12 will get nothing 
 # Here what I cahnged is literaterally 
 # other reasons check later
 #-- later we will return here about running this; but now we use the produced one for speed 
 
+#%% NO VORTEX, PLAQUETTE PLOT
 #Plaq_dict_UC8X8_DONE = test_produceRho8x8
-Rho_near_pi8x8 = Plaq_dict_UC8X8["rho_sum"]
-Xplot, Yplot = site_to_plot_xy(Plaq_dict_UC8X8["sites_used"]) ## here for test, we just use the site plotted as by previous 'build site' function
-#    colors = result["rho_sum"] results is?
-print(Xplot, Yplot)
 
-plt.figure(figsize=(6, 6))
+#Rho_near_pi8x8 = Plaq_dict_UC8X8["rho_sum"]
+#Xplot, Yplot = site_to_plot_xy(Plaq_dict_UC8X8["sites_used"]) ## here for test, we just use the site plotted as by previous 'build site' function
+#    colors = result["rho_sum"] results is?
+
+
+#plt.figure(figsize=(6, 6))
 #plt.scatter(Xplot, Yplot, s=80)
-plt.scatter(Xplot, Yplot, c=Rho_near_pi8x8, s=10, cmap="inferno_r", linewidths=0.6) # , dgecolors="black"
-plt.xlabel("X")
-plt.ylabel("Y")
-plt.colorbar(label="LDOS near pi")
-plt.axis("equal")
-plt.grid(True)
-plt.show()
+#plt.scatter(Xplot, Yplot, c=Rho_near_pi8x8, s=100, cmap="inferno_r", linewidths=0.6) # , dgecolors="black"
+#plt.xlabel("X")
+#plt.ylabel("Y")
+#plt.colorbar(label="LDOS near pi")
+#plt.axis("equal")
+#plt.grid(True)
+#plt.show()
 
 # problem: why we didn't get x edge but only get y edge? 
 
@@ -1803,7 +1859,8 @@ plt.show()
 
 list_of_sites_around_mid_4 = [[3, 1, 1], [2, 2, 1], [2, 2, 2], [3, 2, 1], [3, 2, 2], [2, 3, 2]] #each site labelled as [x,y,alpha]
 list_of_sites_around_mid_8 = [[5, 3, 1], [4, 4, 1], [4, 4, 2], [5, 4, 1], [5, 4, 2], [4, 5, 2]]                                                                                               # as in alpha is A or B>> 1 or 2
-                                             ###################wrong                                                  # others from 1 to Nx/y
+ 
+list_of_sites_around_mid_6 = [[4, 3, 1], [4, 3, 2], [3, 4, 1], [3, 4, 2], [3, 3, 2], [4, 4, 1]]                                                                                             # others from 1 to Nx/y
 #print(list_of_sites_around_core[1][1])
 
 
@@ -1901,11 +1958,11 @@ def Rho_sites_all_epsilons_noVor(N_x, N_y, num_time_stages, a_0, list_of_sites_n
 
 #%% T sample for time discretisation adjusting portal 
 
-t_sampling = 50
+t_sampling = 35
 
 
 #%% plot try scatter # easier to read --WITH TIME VOR
-Rho, Epsilon = Rho_sites_all_epsilons(8, 8, t_sampling, 1, list_of_sites_around_mid_8) # it seems the more time sampled, the larger the bulk structure(that range of Epsilon)'s Rho
+Rho, Epsilon = Rho_sites_all_epsilons(6, 6, t_sampling, 1, list_of_sites_around_mid_6) # it seems the more time sampled, the larger the bulk structure(that range of Epsilon)'s Rho
 #print (Rho, type(Rho), 'Rho') # Rho is list
 #print (Epsilon, type(Epsilon), 'Epsilon') # Epsilon is array 
 idx = np.argsort(Epsilon) # sorted all against the small/large of Epsilon
@@ -1922,273 +1979,10 @@ plt.ylabel(r'$\rho$')
 plt.title(r'$\rho_n for site around vortex core$ vs $\epsilon_n$ ')
 plt.grid(True)
 plt.show()
+#%% 
 
 
 
-#%% WITH OUT TIME VOR
-Rho_0, Epsilon_0 = Rho_sites_all_epsilons_noVor(8, 8, 6, 1, list_of_sites_around_mid_8) 
-# we run this now only for checking where does epsilon locate ( quasiE near pi ) and set the simga in Rho func 
-
-#%%  #[[2]]
-idx = np.argsort(Epsilon_0)
-
-Eps_sorted_0 = Epsilon_0[idx]
-Rho_sorted_0 = np.array(Rho_0)[idx]
-
-plt.figure()
-plt.plot(Eps_sorted_0, Rho_sorted_0, 'o-', markersize=3)#linestyle='-', linewidth=1)   # or add marker='.'
-plt.xlabel(r'$\epsilon_n T$ ')
-plt.ylabel(r'$\rho$')
-plt.title(r'$\rho_n$  for sites around vortex core vs $\epsilon_n$ ')
-plt.grid(True)
-plt.show()
-
-
-#%% ploy try bin- like (still need to figure out what tthey did here)
-Rho, Epsilon = Rho_sites_all_epsilons(4, 4, 50, 1, list_of_sites_around_mid_4)
-#Epsilon = Epsilon
-Rho = np.array(Rho)
-
-bins = 20
-edges = np.linspace(-np.pi, np.pi, bins+1)
-centers = 0.5*(edges[:-1] + edges[1:])
-
-which = np.digitize(Epsilon, edges) - 1
-rho_binned = np.array([Rho[which == i].mean() if np.any(which == i) else np.nan
-                       for i in range(bins)])
-# -------------------------------------------------------------
-
-plt.figure()
-plt.plot(centers, rho_binned, linestyle='-', linewidth=1)
-plt.xlabel(r'$\epsilon$')
-plt.ylabel(r'$\langle \rho \rangle_{\mathrm{bin}}$')
-plt.title('Binned (DOS-like) curve')
-plt.grid(True)
-plt.show()
-
-
-#%% CHECK IF XPBC Y OBC MAKE SENSE ---- BELOW JUST FOR CHECKING --------
-def H2NyNx_yOBC_for_check(N_y, N_x, t, a_0): 
-    
-    H_PBC_generated_y_OBC = H2NyNx_PBC_version2(N_y, N_x, t,  a_0)
-
-#    rows, cols =H_PBC_generated .shape #rows and cols are just vars - like rows = 15
-    
-    I, J = np.indices(H_PBC_generated_y_OBC.shape)
-
-
-    
-    big_block_top_right_i = (I >= 0) & (I < 2*N_x) 
-    big_block_top_right_j = (J >= 2* N_x * (N_y -1)) & (J < 2* N_x * N_y) #Nx(Ny-1)) to j = NxNy
-    big_block_bottom_left_i = (I >= 2* N_x * (N_y -1)) & (I < 2* N_x * N_y)
-    big_block_bottom_left_j = (J >= 0) &(J < 2*N_x)
-    
-    mask = ((big_block_top_right_i) & ( big_block_top_right_j )) | (big_block_bottom_left_i) & ( big_block_bottom_left_j )   # both i-rule and j-rule must hold
-    
-    H_PBC_generated_y_OBC [mask] = 0    
-       # or whatever values you want
-    print("\nMask (True means 'will be changed'):\n", mask)
-
-    return H_PBC_generated_y_OBC
-
-# for checking spectrum, here is the H_6_2NyNx_OBC
-def H_6_2Ny_yOBC_check(N_y, N_x, a_0): #here this function should have same spectrum(EIGEN_yVALS)as the [K BASIS H2x2]
-                    #6 refers as list of 6 piecewise H 
-    
-    H2NyNx_yOBC_6_matrices = []
-    
-    for t_x in range (6): #x refers index for t
-    
-        t_piecewise = T/6 *  t_x + T/(6 * 2)   # here this x is equivalent to i in the 2x2 H list func
-        
-        H2NyNx_OBC_piecewise =  H2NyNx_yOBC_for_check(N_y, N_x, t_piecewise, a_0)
-        
-        H2NyNx_yOBC_6_matrices.append(H2NyNx_OBC_piecewise) # generate 6 2N_y real H
-        
-    return H2NyNx_yOBC_6_matrices
-
-def Ufull_descending_yOBC_for_check(N_y, N_x, a_0): # this is for whole period T
-# var index: 3
-    U_list_1 = []
-#reference :
-#    H_list_6_2N_y_edge = H_6_2N_y_OBC(N, k_x)
-    H_6_2NyNx_yOBC_list = H_6_2Ny_yOBC_check(N_y, N_x, a_0)
-    
-
-    for i in range (6):
-
-        U_i = expm(-1j* (H_6_2NyNx_yOBC_list[i])* (T/6))
-        
-        U_list_1.append(U_i) # append should be in the loop scope, 
-                            # one grid inside the for loop title if you want to append the thing produced once loop (per i)
-    
-    U_reverse_3 = np.flip(U_list_1)
-    
-    U_full_3 = reduce(np.matmul,  U_reverse_3)
-        
-    return U_full_3
-
-
-def find_spectrum_for_yOBC_check(N_y, N_x, a_0):
-    eigvals, eigvecs = np.linalg.eig(Ufull_descending_yOBC_for_check(N_y, N_x, a_0))
-    epsilon_3 = - np.angle(eigvals) 
-    return  epsilon_3
-
-
-# here the U of y real basis x PBC Ham spectrum needed :
-    
-#H_6_2Ny_OBC(N_y, k_x) is for call y OBC x PBC ham_6
-#U for y OBC x PBC? U_full_ascending_edge(N_y, k_x): # which means along lhs to rhs, from (1) earlier/smaller t to (6) later/larger t
-    
-
-def find_spectrum_realy_OBC (N_y, k_x): # For the spectrum of only y is wirtten in real basis
-    Ufull_edge_kx_list =[]              # Or saying: H_2Ny (fixed kx then append through)
-    epsilon_n_list_of_kx_list = []
-#    U_T = Ufull_descending_PBC(N_y, k_x)
-    for i in range (len(k_x)): # This loop's each round run one specific k_x
-        
-        Ufull_edge_kx_list.append(U_full_ascending_edge(N_y, k_x[i]))
-
-        eigvals, eigvecs = np.linalg.eig(Ufull_edge_kx_list[i]) # will this really return anything? 
-        # YES! YOU CAN EXTRACT THE NEW APPENDED LIST IN SAME SCOPE
-        
-        eigvals_fixed_kx_list = eigvals # just rename
-#        print(len(eigvals_fixed_kx_list), eigvals_fixed_kx_list,'eigvals of fixed k_x of Ufull')
-#        print(eigvals_kx_2Ny_list, 'eigevals')
-        epsilon_n_fixed_kx = [] # phi as phase bands labelled by n
-        
-        for j in range (len(eigvals_fixed_kx_list)): # j labels phase n, epsilon_n(double check at home)
-            
-            epsilon_kx_j = - np.angle(eigvals_fixed_kx_list[j])
-            
-            epsilon_n_fixed_kx. append (epsilon_kx_j) # this is list of phase for specific k_x, length 2N
-            
-#        print(phase_kx_2Ny_list, 'phases')
-       
-        epsilon_n_list_of_kx_list. append(epsilon_n_fixed_kx) # this will be a list of different k_x, for each k_x has j
-                                                     # -- layer one: len(k_x) -- layer two(each k_x), j_phase
-        spectrum_flat = [x for sublist in epsilon_n_list_of_kx_list for x in sublist]
-
-    return  spectrum_flat  
-
-N_y_TEST = 15
-N_x_TEST = 20
-#k_x_TEST = [1 * 2* np.pi/4, 2  *2*  np.pi/4, 3 *2*  np.pi/4, 2*np.pi]
-k_x_TEST = generate_k_x_list(0, 2*np.pi, N_x_TEST)
-#spectrum_test_realxy = find_spectrum_NxNy(N_y_TEST, N_x_TEST, a_0)
-
-#spectrum_test_realxy_rewrite = find_spectrum_NxNy_rewrite(N_y_TEST, N_x_TEST, a_0)
-
-spectrum_test_realy_yOBC =  find_spectrum_realy_OBC(N_y_TEST, k_x_TEST)
-spectrum_yOBC_NyNxCheck = find_spectrum_for_yOBC_check(N_y_TEST, N_x_TEST, a_0) #dim: 2NxNy
-
-print('BEGIN: spectrum_test_realxy:',spectrum_yOBC_NyNxCheck, 'spectrum_test_realy', spectrum_test_realy_yOBC, 'END')
-#%%
-
-
-def same_values_ndp_yes_no(a, b, ndp):
-    a = np.asarray(a).ravel()
-    b = np.asarray(b).ravel()
-
-    a_rounded = np.round(a, ndp)
-    b_rounded = np.round(b, ndp)
-
-    return "yes" if np.allclose(np.sort(a_rounded), np.sort(b_rounded)) else "no"
-
-if_sepctrum_are_the_same_y0BC = same_values_ndp_yes_no(spectrum_test_realy_yOBC, spectrum_yOBC_NyNxCheck,5)
-print('if_sepctrum_are_the_same', if_sepctrum_are_the_same)
-
-
-                           
-                          
-#%%
-# TEST CELL FOR LEARNING MASK
-
-#example of rewrite some entrices in a matrix:
-# 1) Suppose A already exists
-A = np.arange(1, 26).reshape(5, 5)   # a 5x5 matrix with values 1..25
-#print("Original A:\n", A)
-
-# 2) Build index grids I, J (same shape as A)
-I, J = np.indices(A.shape) #I[i, j] = i and J[i, j] = j
-# I contains row indices, J contains column indices
-#print( 'begin', I, J, 'np.indices result')
-# 3) Define a rule on (i, j): here, pick entries where (i + j) is divisible by 3
-mask = (I + J) % 3 == 0
-# -- here for any matrix we can apply this '==' check
-B = np.array([[5, 0],
-              [3, 5]])
-B == 5
-
-#print("\nMask (True means 'will be changed'):\n", mask)
-
-# 4) Assign new values ONLY where mask is True
-# Example value rule: set A[i, j] = 100 + 10*i + j
-A[mask] = 100 + 10*I[mask] + J[mask]
-
-#print("\nUpdated A:\n", A)
-#%%
-
-#Plan : [H2NyNx_xyOBC(N_y, N_x, t, a_0)] >> ***(II)*** Task:  introduce time vortex 
-#         Task: time discretisation   -- meeting 12.05
-#         H_not 6 but discretised time H_(delta t)_list(?)>> U(T)
-#         
-#       ***(III)*** generate spectrum of this U(T), plot their own Rho_[of what?] along them,
-#                   -- meeting 1.09
-#       Q as break points: how can Rho be labelled in positions? 
-#       Q: after we figured this out,
-#       we can try to generate sum of rho in real positions around 0 for a few points 
-#       check with graph on article fig_4_a (**final aim for numerical progress make this weekend)
-#%% -------- introdce time vortex : J >> H_2x2 >> write new H 2x2 in this function 
-# ---------***** INTRODUCED TIME VORTEX which is original script*****----------
-def H2NyNx_xyOBC_time_vortex_ori(N_y, N_x, t, a_0):  # here this t is the t got sampled, 
-                                                 # within this function we will get t_phase_delay to rewrite t
-    
-# t --- is not the t we stuff in our HxH matrix(which calls J_tilte_a ) anymore
-# where is the centra point of the vortex? Plan A: try at original( read to justify)
-#                                          Plan B: at middle of all unit cells Nx, Ny plane
-
-    
-#    H_generated_both_OBC_no_vor = H2NyNx_xOBC_only(N_y, N_x, t, a_0) # this create an Ham object as input goes into func
-    
-    # begin to write the vortex Ham
-    H_generated_both_OBC_vor = np.zeros((2*N_y*N_x, 2*N_y*N_x), dtype =complex)
-    
-    for i in range(N_x* N_y):
-        for j in range(N_x* N_y):
-            x = (i + 1 )% N_x  #double check later (?) -- x & x' are from 0, to Nx -1
-            x_1 = (j + 1 )% N_x 
-          #  delta_x = (x - x_1) % N_x #this gives [the smallest integer which near the (x-x1) and can be divided by N_x]'s difference with (x-x_1)
-            y = ((i) // N_x) + 1 #double check later (?) -- y & y' are from 0, to Ny -1
-            y_1 =( (j) // N_x ) + 1 # y'
-
-           # print (i, j, 'test ij in time vortex matrix')
-
-            arv_y = (y + y_1)/2 # here is a question: should we do this way from 0 for all x, x', y, y'? Ans: no. We do from 1
-            arv_x = (x + x_1)/2 # 
-#-----------------------------------------------------------    
-            vortex_theta = np.arctan2(arv_y, arv_x)
-            
-    # how should we apply theta belongs to [0, 2pi) if we want 
-            #theta = np.arctan2(y, x)          # (-pi, pi]
-            #theta_0_2pi = np.mod(theta, 2*np.pi)  # [0, 2pi)
-            # continuous (no jump) if points are ordered around the circle:
-            #theta_cont = np.unwrap(theta)
-#------------------------------------------------------------
-            t_phase_delayed = t - vortex_theta * T/(2 * np.pi)
-            
-#            H_generated_both_OBC_vor[2*i:2*i+2, 2*j:2*j+2] = H_generated_both_OBC_no_vor[2*i:2*i+2, 2*j:2*j+2]
-            # lhs extract 2x2 little blocks in zero martix (preparted for writing time vortexed Ham), at each loop*(NxNy)
-            # rhs rewrite as H - worng: H_generated_both_OBC_no_vor is written outside the loop(labels xx' and yy' - time phase)
-            # each loop should assign 2x2 extracted blocks from lhs a different time phase [H_generated_both_OBC_no_vor] with corresponding part of matrix
-            # Problem: here this func[H2NyNx_xOBC_only] is a func of whole matrix, is it fine if it's large we call it again and again? 
-            
-            H_generated_both_OBC_vor[2*i:2*i+2, 2*j:2*j+2] = H2NyNx_xOBC_only(N_y, N_x, t_phase_delayed, a_0)[2*i:2*i+2, 2*j:2*j+2]
-            
-            
-            
-    return H_generated_both_OBC_vor
-
-# dk what we are doing here? ####################### double check even this cell is needed later 
+# BELOW ARE THE PLOTS FOR FROM UC IS 8X8 TO UC 10X10 TO UC 12X12 
 
 

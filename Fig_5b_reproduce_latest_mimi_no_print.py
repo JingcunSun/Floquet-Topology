@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Mar 18 21:41:10 2026
-
-@author: DELL
-"""
-
 
 
 # few general summary of the codes for my CV
@@ -86,6 +79,25 @@ J_a = 2* ((0.9 * np.pi ))/ ((T * 0.5) * 4)#  2* ((0.9 * np.pi ))/ ((T * 0.5) * 4
 
 
 
+#J_x = J_a
+#J_y = J_a
+#J_z = J_a
+
+#t_a_array = [t_x, t_y, t_z]
+#adjusted by the caption under fig_1:(we unify the t_a, J_a, l, T, delta_t) 
+#laeve the only parameter adjustable in J_tilte_a is t
+
+
+#%%
+
+#write six different Hamiltonians -- Figure out how to order H1 to H6, U1...U6, then finish writing the U_full
+#H_1 to H_6, here arrange them from latest time to earliest time. 
+
+#J_tilte_x = J_tilte_a(t, t_x, delta_t, l, T, J_x)
+#J_tilte_y = J_tilte_a(t, t_y, delta_t, l, T, J_x)
+#J_tilte_z = J_tilte_a(t, t_z, delta_t, l, T, J_z)
+
+# these J needed to be written at their corresponding time. 
 
 #%% (here change H_test to real H, which is parameterised by k:
 #(firstly try to use the [H] build a list of 6 H; 
@@ -109,24 +121,12 @@ def J_tilte_z(t):
 t_test = np.linspace(-2, 1, 100) 
 # function of J_a need to be adjusted as in that t can be out of range of one period(0,T)
 
-plt.plot(t_test, J_tilte_x(t_test), label='J_tilte_x')
-plt.plot(t_test, J_tilte_y(t_test), label='J_tilte_y')
-plt.plot(t_test, J_tilte_z(t_test), label='J_tilte_z')
-
-plt.xlabel('t')
-plt.ylabel('J_tilte_a')
-plt.title('Plot of J_tilta_a(pulse of hopping amp) vs t')
-plt.legend()
-plt.grid(True)
-plt.show()
 
 #%% some test try figure properties of J func
 t_specific_time_point_test = np.pi - 3
 
 call_func_J_tilte_x = J_tilte_z(t_specific_time_point_test)
 
-print (call_func_J_tilte_x, ' see if J_tilte_a = x return a scalar multiply the Pauli matrices')
-#plot succeed
 
 #%%
 
@@ -191,7 +191,9 @@ a_12 = H_test_for_entrices[0][1]
 # here (H_m_n)x(') or y(') denotes the relationship between {the entrices in the Hamiltonian mth row, nth column (which corresponding to x - x' and y- y')}
 # and {the x, y, x', y' unit cells they corresponding to}
 # Or saying in another way H now is corresponding to both x, x', y, y', and the H_kx_ky(2x2) as in terms of summations of kxky 
-#
+#                                                                                      J_tilte denoted by x, y and x' y' 
+
+#'dog'
 #%%
 #time discretisation:
   
@@ -349,20 +351,7 @@ def plot_phase_vs_kx(k_x, k_y):
 
 # -- Does here to use a list A filled in by last i loop, it needed to have another new i loop to distribute A[i]?
 
-    plt.plot(k_x, phase1_T_asc_list,  '.', color='tab:blue', markersize = 3)
-    plt.plot(k_x, phase2_T_asc_list,  '.', color='tab:purple', markersize = 3)
 
-    
-for i in range (len(k_y_list)):
-    
-    plot_phase_vs_kx(k_x_list, k_y_list[i])
-    
-plt.ylim (-np.pi, np.pi)    
-    
-plt.xlabel(r'$k_x a_0\ \mathrm{(PBC)}$', fontsize=13)
-plt.ylabel(r'Phase $\phi_n  = \epsilon_n T$  (T = 1)', fontsize=13)
-
-plt.title(r'Bulk phase band plot vs $k_x$ (PBC in $x,y$)', fontsize=13)
 
 
 from matplotlib.lines import Line2D # This is purely for plot legend 
@@ -375,10 +364,6 @@ legend_elements = [
            linestyle='None', markersize=6,
            label='Phase band 2 (2nd eigenvalue)')
 ]
-
-plt.legend(handles=legend_elements, loc='right', bbox_to_anchor=(1, 0.56))
-plt.grid()
-plt.show()
 
 #%% try U_full_discretisation
 def plot_phase_vs_kx(k_x, k_y):
@@ -407,20 +392,8 @@ def plot_phase_vs_kx(k_x, k_y):
         phase1_T_asc_list.append(- np.angle(eigvals[0])) #these are epsilon_n*T = Phi_n (n here =1, 2) -- which is what we plotted
         phase2_T_asc_list.append(- np.angle(eigvals[1])) # see above; but anyway we setted T = 1 before, so-- 
 
-    plt.plot(k_x, phase1_T_asc_list,  '.', color='tab:blue', markersize = 3)
-    plt.plot(k_x, phase2_T_asc_list,  '.', color='tab:purple', markersize = 3)
 
     
-for i in range (len(k_y_list)):
-    
-    plot_phase_vs_kx(k_x_list, k_y_list[i])
-    
-plt.ylim (-np.pi, np.pi)    
-    
-plt.xlabel(r'$k_x a_0\ \mathrm{(PBC)}$', fontsize=13)
-plt.ylabel(r'Phase $\phi_n  = \epsilon_n T$  (T = 1)', fontsize=13)
-
-plt.title(r'Bulk phase - check U(T) time discretisation', fontsize=13)
 
 #%%
 # The loop(PLOT) below is: 
@@ -433,17 +406,6 @@ plt.title(r'Bulk phase - check U(T) time discretisation', fontsize=13)
     
 #    plot_phase_vs_kx(k_x_list, k_y_test_list_no_including_2pi[i])
     
-plt.xlabel(r'$k_x\ \mathrm{(PBC)}$', fontsize=12)
-plt.ylabel(r'Phase $\phi_n$  (T = 1)', fontsize=12)
-
-plt.title(r'Bulk phase band plot vs $k_x$ (PBC in $x,y$), NO y = 2pi**', fontsize=13)
-
-plt.legend()
-plt.grid()
-plt.close()
-# here if change plt.close to plt.show can get the plot
-
-# well, alright - there's almost no difference here.
 
 
 #%%
@@ -563,7 +525,7 @@ def plot_check_phase_vs_kx(k_x, N): # here in this function you can choose N_y (
         kx_list_for_plot.append([k_x[i] * len(phi_n_fixed_kx)])
 #        print(len(phi_n_fixed_kx))
     
-    plt.plot(kx_list_for_plot, phi_n_list_of_kx_list, '.', markersize=3)
+
 #%%    
 #    print (len(kx_list_for_plot))
 #    print(len(phi_n_list_of_kx_list))
@@ -574,16 +536,7 @@ Ny_check = 10 # this is the Ly = N*a0 before Ly defined
               # this replot (plot_check) of phase band will be same as the initial plotfunc [plot_phase_vs_kx]
 
 test_phi_along_kx = plot_check_phase_vs_kx(k_x_list, Ny_check)
-#plt.xlim(1.7, 1.8)
-plt.ylim(-np.pi, np.pi)
-#plt.ylim(-1.75, -0.8)
-plt.xlabel('$k_x a_0$')
-plt.ylabel('Phase at time T ($\epsilon(k, T)T$)')
-plt.grid()
-plt.title('Bulk band double check for real basis H2Nx2N, N = 10')
-#plt.legend()
-plt.tight_layout()
-plt.show()
+
 #%%
 
 #Followed by: def real_basis_H2N_fix_k_x(N, k_x, t): # t can be any from [  t_i = T/N * i + T/(N * 2)  ]
@@ -615,7 +568,7 @@ def H_6_2Ny_OBC(N_y, k_x): # here num of stages are fixed to be 6; lattice lengt
         top_right = [(i, j ) for i in range(rows) for j in range(cols) if i < 2 and j >= cols - 2]
         top_right_indices = top_right[:4]
         
-        print(top_right, x)
+ 
 
 # Bottom-left 4 entries
         bottom_left = [(i, j) for i in range(rows) for j in range(cols) if i >= rows - 2 and j < 2]
@@ -736,21 +689,35 @@ def plot_edge_vs_kx(k_x, N_y): # here k_x is a list(taken from  # here the plot 
 #    plt.figure(figsize=(8, 5))
 #    print (len(kx_list_for_plot))
 #    print(len( phase_list_of_list))
-    plt.plot(kx_list_for_plot, phase_list_of_list, '.', markersize=3)
+
+            
+  #  plt.plot(k_x, phase_list_of_list,  'o', label='edge phase')
             
 
+        
+ #   for y in range (len(eigval_kx_2N_list)):
+        
+        
+        
+#        phase_kx_2Ny_list. append (phase_kx_2N)
+        
+#        phase1_T_asc_list.append(- np.angle(eigvals[0]))
+#        phase2_T_asc_list.append(- np.angle(eigvals[1]))
+
+# -- Does here to use a list A filled in by last i loop, it needed to have another new i loop to distribute A[i]?
+
+#    plt.plot(k_x, phase1_T_asc_list,  'o', label='phase 1(1st eigval), phi_n = phi_0')
+#    plt.plot(k_x, phase2_T_asc_list,  'o', label='phase 2(2nd eigval), phi_n = phi_1')
+
     
-plot_edge_vs_kx(k_x_list, Ny_plot_yOBC_edge)
-#plt.xlim(1.7, 1.8)
-plt.ylim(-np.pi, np.pi)
-#plt.ylim(-1.75, -0.8)
-plt.xlabel('$k_x a_0$')
-plt.ylabel('Phase at time T ($\epsilon(k, T)T$)')
-plt.grid()
-plt.title(rf'Bulk and Edge Phases vs $k_x a_0$, y direction unit cell number $Ly  = {Ny_plot_yOBC_edge}$')
-#plt.legend()
-plt.tight_layout()
-plt.show()
+#for i in range (len(k_y_list)):
+    
+
+#    plot_phase_vs_kx(k_x_list, k_y_list[i])
+
+#CHIRAL EDGE STATE PLOT
+    
+
 
 #%%
 #now try eigen vectors --
@@ -876,6 +843,11 @@ def find_epsilon_n_vs_kx(k_x, N_y): # here k_x is a list  N is number of y I gue
 epsilon_n_list = find_epsilon_n_vs_kx(k_x_list, Ny_plot_yOBC_edge) # here 10 is for N, which is Ly, which is 10 for 2N x2N  = 20x 20 matrix 
 
 
+#%% print the list of eigvecs for 2N by 2N U_full, find the density amp of each y
+
+
+# this return the first and second kx (kx[0] and kx[1])'s 20 eigen vec!!
+#(roughly checked out)
 
 #%% checking about the edge state density
 
@@ -902,13 +874,13 @@ for i in range(len(k_x_list)):  # Here number of i range corresponding to k_x_li
         Phi_vec_n2 = Phi_specific_kx [:, 2*j + 1] #the next vec(array(3, )) with 20 components
         
         comp_wise_modulus_sqr_1 = np.abs(Phi_vec_n1)
-#        print(comp_wise_modulus_sqr_1, 'COM SQR 1')
+      
         comp_sum_for_1 = np.sum(comp_wise_modulus_sqr_1)
-#        print(comp_sum_for_1, 'COM SQR 1 SUM')
+       
         
         Rho_specific_y = np.sum(np.abs(Phi_vec_n1)) + np.sum(np.abs(Phi_vec_n2))  # Q: what does this actually do? 
             # this corresponding to modulus square for each Phi_n pair in sublattices, which is Rho_n
-#        print(Rho_specific_y, 'rho for each of 10 y')
+  
         Rho_y_listed_by_y. append(Rho_specific_y)
         
 #        for k in range(len(vec_y_alpha1)): #(actually this is just j)
@@ -945,9 +917,7 @@ for i in range(len(k_x_list)):  # Here number of i range corresponding to k_x_li
             
             Rho_comp_Phi_eigvec_specific_n_list.append(Rho_component_y)
             
-        
-#        print('n = ', n, 'density of state(Rho) for each y = ', Rho_comp_Phi_eigvec_specific_n_list)
-              # for check 1
+          # for check 1
               # or go to the var explorer, see Phi_eigvecs_n_list_Rho_each_y_list, this list is for the dos for each y and - next line 
               #each n, should be len(n[len(Ly)])
               
@@ -957,17 +927,14 @@ for i in range(len(k_x_list)):  # Here number of i range corresponding to k_x_li
         #total density of edege state #  From those components(1,...y_some, Ny) of each eigenvec_n(also 2Ny num of),
                                       #  identify that of edges; or that of [any position's] -- we adjust here
         #total density of edege state
-#        print('n = ', n, 'edge density(Rho) for all y =', Rho_edge_Phi_eigvec_n)
-        # for check 2 
+    # for check 2 
         
         Phi_eigvecs_n_Rho_edge_list.append(Rho_edge_Phi_eigvec_n ) # ****here append all these position identified Rho to all eigenvec n
         
         Phi_eigvecs_n_list_Rho_comp_y_list.append(Rho_comp_Phi_eigvec_specific_n_list) # When finish appending (out of this loop of vec_n)
                                                                                        # This will return a list of all Rho_y=1  -|
                                                                                        #                                 Rho_y=2 -| --Phi_n = 1|
-#    print('BBBBEGIN',Phi_eigvecs_n_list_Rho_comp_y_list,'END')  
-#    print('length here should be same as total number of epsilon_n = 2*Ny,', len(Phi_eigvecs_n_list_Rho_comp_y_list))                      #                                 ...     -|   Phi_n = 2|-total list
-                                                                                       #                                             (eigenvec n leballed as for all quasienergies)
+                                                                              #                                             (eigenvec n leballed as for all quasienergies)
     # here I want to check two things: 1. for each Phi n, among desities labelled by y, is there any edge showed
     #                                     higher probability?
     #                                  Conclusion: Not really??? So what does it mean by localised? (Maybe can ask professor)
@@ -983,10 +950,7 @@ for i in range(len(k_x_list)):  # Here number of i range corresponding to k_x_li
         
         Phi_specific_kx_20_eigvecs.append(Phi_specific_kx[k])
         
-#    print ('i=', Phi_specific_kx_20_eigvecs, '20 eigen vec') #here we have 20 eigen vec, each of it has 20 components
-    
-#    print(' check which order is y and alpha')
-        
+
                                    
    # print('i =', i, Rho_y_listed_by_y, 'rho list for all 10 y, should be len = 10') 
     
@@ -1013,16 +977,11 @@ for i in range(len(k_x_list)):  # Here number of i range corresponding to k_x_li
 
     Rho_edge_listed_by_sta_n_listed_by_kx.append(Phi_eigvecs_n_Rho_edge_list)
     
-#print("len(k_x_list) =", len(k_x_list))
-#print("len(Rho_edge_listed_by_sta_n_listed_by_kx) =",
-#      len(Rho_edge_listed_by_sta_n_listed_by_kx))
-
 
 #%% here in our plot of phase band structure with intensity (labelled by the density of edge)
 
 # which need to be corrected 
-    
-plt.figure()
+ 
 
 kx_temperoally_in_p_loop =[]
 rho_edge_ns_specific_kx = [] 
@@ -1058,20 +1017,6 @@ for p in range(len(k_x_list)):  # Here number of i range corresponding to k_x_li
         
 #        print (epsilon_n, 'epsilon_n;', rho_edge_n, 'rho_edge_n, for state', state)
         
-        
-    plt.scatter([kx_in_p_loop]*len(rho_edge_ns_specific_kx), epsilon_ns_specific_kx, c=rho_edge_ns_specific_kx, cmap='inferno_r', s=1, vmin = 0, vmax = 1)
-
-    #plt.scatter([kx_in_p_loop]*len(rho_edge_ns_specific_kx), epsilon_ns_specific_kx, c=rho_edge_ns_specific_kx, cmap='magma_r', s=1, vmin=vmin, vmax=vmax)
-
-plt.colorbar()
-#plt.xlim(-0.4, 0.17)      # x-axis range if want to see full picture please include 0, coz there is a group of epsi_n at 0
-#plt.ylim(-2.2, -1)     # y-axis range
-plt.xlabel(r'$k_x a_0$')
-plt.ylabel(r'$\epsilon_\alpha(k_x) T$')
-#plt.legend()
-plt.title(rf"Phase bands with edge state density diagnosis, y OBC, $L_y = {Ny_plot_yOBC_edge}$")
-plt.grid()
-plt.show()
 
 
 #%% real basis x, y PBC, check spectrum
@@ -1259,16 +1204,7 @@ spectrum_test_realy = find_spectrum_realy(N_y_TEST, k_x_TEST)
 
 #%%
 spectrum_test_realxy_version2 = find_spectrum_NxNy_version2(N_y_TEST, N_x_TEST, a_0)
-#print('spectrum_test_realxy:', spectrum_test_realxy_version2, 'spectrum_test_realy', spectrum_test_realy)
-import numpy as np
 
-def same_values_ndp_yes_no(a, b, ndp):
-    a_rounded = np.round(a, ndp) #dp as in decimal points
-    b_rounded = np.round(b, ndp)
-    return "yes" if np.allclose(sorted(a_rounded), sorted(b_rounded)) else "no"
-
-if_sepctrum_are_the_same = same_values_ndp_yes_no(spectrum_test_realxy_version2, spectrum_test_realy,3)
-#print('if_sepctrum_are_the_same', if_sepctrum_are_the_same)
 
 
 #%% write function of turn off x and y PBC terms, gain OBCs
@@ -1341,10 +1277,96 @@ HamNxNy_test = H2NyNx_xyOBC(4, 3, T/12, 1) # test both xy OBC ham Ny = 4 Nx = 3
 # 3.18. -- this func got tested out, as in yes, we have xy OBC here, and should start from this point 
 # this cell is correct as in it is xy both OBC
 
-#( HamNxNy_test, 'test see what both OBC hamiltonian we wrote is like'
+#( HamNxNy_test, 'test see what both OBC hamiltonian we wrote is like')
+#%% go through the way did before for H_6 U_full, no time vortex as fast run
+def U2NyNx_xy_OBC(N_y, N_x, a_0): 
+    def H_6_2NyNx_OBC_append(N_y, N_x, a_0): #here this function should have same spectrum(EIGEN_yVALS)as the [K BASIS H2x2]
+                        #6 refers as list of 6 piecewise H 
+        
+        H2NyNx_OBC_6_matrices = []
+        
+        for t_x in range (6): #x refers index for t
+        
+            t_piecewise = T/6 *  t_x + T/(6 * 2)   # here this x is equivalent to i in the 2x2 H list func
+            
+            H2NyNx_OBC_piecewise =  H2NyNx_xyOBC(N_y, N_x, t_piecewise, a_0)
+            
+            H2NyNx_OBC_6_matrices.append(H2NyNx_OBC_piecewise) # generate 6 2N_y real H
+            
+        return H2NyNx_OBC_6_matrices
+
+    U_list_new = []
+    #reference :
+    #    H_list_6_2N_y_edge = H_6_2N_y_OBC(N, k_x)
+    H_6_2NyNx_new_OBC_list =  H_6_2NyNx_OBC_append(N_y, N_x, a_0)
+        
+    for i in range (6):
+
+        U_i = expm(-1j* (H_6_2NyNx_new_OBC_list[i])* (T/6))
+            
+        U_list_new.append(U_i) # append should be in the loop scope, 
+                                # one grid inside the for loop title if you want to append the thing produced once loop (per i)
+        
+    U_reverse_new = np.flip(U_list_new)
+        
+    U_full_new = reduce(np.matmul,  U_reverse_new)
+            
+    
+    return  U_full_new
+    
 
 
+#%% -------- introdce time vortex : J >> H_2x2 >> write new H 2x2 in this function 
+# ---------***** INTRODUCED TIME VORTEX which is original script*****----------
+def H2NyNx_xyOBC_time_vortex_ori(N_y, N_x, t, a_0):  # here this t is the t got sampled, 
+                                                 # within this function we will get t_phase_delay to rewrite t
+    
+# t --- is not the t we stuff in our HxH matrix(which calls J_tilte_a ) anymore
+# where is the centra point of the vortex? Plan A: try at original( read to justify)
+#                                          Plan B: at middle of all unit cells Nx, Ny plane
 
+    
+#    H_generated_both_OBC_no_vor = H2NyNx_xOBC_only(N_y, N_x, t, a_0) # this create an Ham object as input goes into func
+    
+    # begin to write the vortex Ham
+    H_generated_both_OBC_vor = np.zeros((2*N_y*N_x, 2*N_y*N_x), dtype =complex)
+    
+    for i in range(N_x* N_y):
+        for j in range(N_x* N_y):
+            x = (i + 1 )% N_x  #double check later (?) -- x & x' are from 0, to Nx -1
+            x_1 = (j + 1 )% N_x 
+          #  delta_x = (x - x_1) % N_x #this gives [the smallest integer which near the (x-x1) and can be divided by N_x]'s difference with (x-x_1)
+            y = ((i) // N_x) + 1 #double check later (?) -- y & y' are from 0, to Ny -1
+            y_1 =( (j) // N_x ) + 1 # y'
+
+           # print (i, j, 'test ij in time vortex matrix')
+
+            arv_y = (y + y_1)/2 # here is a question: should we do this way from 0 for all x, x', y, y'? Ans: no. We do from 1
+            arv_x = (x + x_1)/2 # 
+#-----------------------------------------------------------    
+            vortex_theta = np.arctan2(arv_y, arv_x)
+            
+    # how should we apply theta belongs to [0, 2pi) if we want 
+            #theta = np.arctan2(y, x)          # (-pi, pi]
+            #theta_0_2pi = np.mod(theta, 2*np.pi)  # [0, 2pi)
+            # continuous (no jump) if points are ordered around the circle:
+            #theta_cont = np.unwrap(theta)
+#------------------------------------------------------------
+            t_phase_delayed = t - vortex_theta * T/(2 * np.pi)
+            
+#            H_generated_both_OBC_vor[2*i:2*i+2, 2*j:2*j+2] = H_generated_both_OBC_no_vor[2*i:2*i+2, 2*j:2*j+2]
+            # lhs extract 2x2 little blocks in zero martix (preparted for writing time vortexed Ham), at each loop*(NxNy)
+            # rhs rewrite as H - worng: H_generated_both_OBC_no_vor is written outside the loop(labels xx' and yy' - time phase)
+            # each loop should assign 2x2 extracted blocks from lhs a different time phase [H_generated_both_OBC_no_vor] with corresponding part of matrix
+            # Problem: here this func[H2NyNx_xOBC_only] is a func of whole matrix, is it fine if it's large we call it again and again? 
+            
+            H_generated_both_OBC_vor[2*i:2*i+2, 2*j:2*j+2] = H2NyNx_xOBC_only(N_y, N_x, t_phase_delayed, a_0)[2*i:2*i+2, 2*j:2*j+2]
+            
+            
+            
+    return H_generated_both_OBC_vor
+
+# dk what we are doing here? ####################### double check even this cell is needed later 
 
 #%% This cell, include xy OBC condition, only changed func as [H2NyNx_xyOBC] at 3.18. - details see notes inside the cell 
 def H2NyNx_xyOBC_time_vor_core(N_y, N_x, t, a_0, x_0, y_0):  # x_0 and y_0 are the position of time vor core adjustable 
@@ -1381,7 +1403,7 @@ def H2NyNx_xyOBC_time_vor_core(N_y, N_x, t, a_0, x_0, y_0):  # x_0 and y_0 are t
             H_generated_both_OBC_vor_core[2*i:2*i+2, 2*j:2*j+2] = H2NyNx_xyOBC(N_y, N_x, t_phase_delayed, a_0)[2*i:2*i+2, 2*j:2*j+2]
             
             ############################################?????????? >>>>  Should we use H2NyNx_xOBC_only 
-            # Now I will change it to: xy OBC - changed 3.18. as H2NyNx_xyOBC -- from H2NyNx_xOBC_only(which is ridiculously wrong)
+            # Now I will change it to: xy OBC - changed 3.18. as H2NyNx_xyOBC -- from H2NyNx_xOBC_only
             
     return H_generated_both_OBC_vor_core
 
@@ -1420,6 +1442,21 @@ def H2NyNx_xyOBC_No_Vor(N_y, N_x, t, a_0): # H for OBC but no timevortex, exact 
 
 # check if this cell is the same as H2NyNx_xyOBC itself?  but firstly you can try plot : by this 
 
+#%%
+
+   
+#try one H see if this work -- still define time at T/12 and Ny = 4 Nx =3
+
+H_TEST_time_vortex =  H2NyNx_xyOBC_time_vor_core(4, 3, T/12, 1, 2.5 , 2)
+# a vague test: test that we did add some shit here: 
+#HamNxNy_test = H2NyNx_xyOBC(4, 3, T/12, 1)   
+
+def Ham_same(a, b, rtol=1e-8, atol=1e-10):
+    a = np.asarray(a)
+    b = np.asarray(b)
+    return a.shape == b.shape and np.allclose(a, b, rtol=rtol, atol=atol, equal_nan=True)
+
+# Here they shouldn't be the same 
 #%% # here insead of U_full operator for time vor core at origin, U is time vor at any point(x_0,y_0) input
     # (also can be 0 :)
     # most important stuff here for time vortex, full time evolution opt(also include time discretisation)
@@ -1440,10 +1477,7 @@ def U_full_time_vor_core(N_x, N_y, num_time_stages, a_0, x_0, y_0): # which mean
         U_i = expm(-1j* H_i* (t_desicretisation)) #!!!!! # here using exponential form construct each of U_1 to U_6
         
         U_list_matrices.append(U_i)
-        
-        print(U_i[1,2]) # why are you doing this bro? 
-        
-    print(np.array(U_list_matrices)[:][1,2])
+
         
     U_full = reduce(np.matmul, U_list_matrices) # here adjoint the full time evolution 
         # here U_list_N_matrices = [e^{-iH(T-dt)}]
@@ -1477,9 +1511,7 @@ def U_full_time_no_vor(N_x, N_y, num_time_stages, a_0): # Recall xyOBC but no vo
         
         U_list_matrices.append(U_i)
         
-        print(U_i[1,2]) # why are you doing this bro? 
-        
-    print(np.array(U_list_matrices)[:][1,2])
+
         
     U_full = reduce(np.matmul, U_list_matrices) # here adjoint the full time evolution 
         # here U_list_N_matrices = [e^{-iH(T-dt)}]
@@ -1503,8 +1535,6 @@ def build_all_sites(N_x, N_y, n_alpha=2):
 
 #all test for above func: 
 test_sites33 = build_all_sites(3, 3, n_alpha=2) #build an array of sites just as in [list_of_sites_around_mid_4](but that was list)
-print (type(test_sites33))
-print (test_sites33.shape) # ( Nx x Ny x 2-- as in all different position labelled sites, 3 -- as in for each one we need 3 index to express it)
 
 
 #%%
@@ -1544,11 +1574,17 @@ def sites_to_comp_indices(sites, N_x, n_alpha=2):  #this function is how we conv
 #%% ###need to be changed !!
 
 def Rho_all_sites_epsilon_vor(N_x, N_y, num_time_stages, a_0 , sigma, list_of_sites_needed=None, n_alpha=2):
- #   sort_by_epsilon=True,
+ #   sort_by_epsilon=True,          #########PROBLEM1#########           **This sigma offset !! Should be exactly include the last 'pi' mode, as in: 
+                                                         # for 6-sites summation, we have no peak at for example 2.95. But we don't know about other sites (especially near bound)
+ 
 #    sum_over_filtered_states=True, -- dk why we are using these? 
 
     U_4 = U_full_time_vor_midpoint(N_x, N_y, num_time_stages, a_0) # real xy OBC matrix with vortex at midpoint
-
+    #############PROBLEM 2################!!!
+    # here this number of time stages dirctly influence how many T discretisation you slicing in U full
+    # just as T sample in your Fig 4a graph!! To use 6 is really not good 
+    
+    
     eigvals_U_4, eigvecs_U_4 = np.linalg.eig(U_4) # get eigenvalue
     epsilon_n = -np.angle(eigvals_U_4) # get epsilon; 
 #    eigvec_copy_backup = eigvecs_U_4[] no backup but eigenvec and epsilons corresponding to each other as in [filtered_eigvec] we used [:, mask]
@@ -1716,9 +1752,8 @@ def Rho_all_sites_epsilon_no_vor(N_x, N_y, num_time_stages, a_0 , sigma, list_of
        #  "filtered_eigvecs": filtered_eigvecs,    # (dim, N_filtered)
      }
  
+#test_produceRho3x3 = Rho_all_sites_epsilon_no_vor(3, 3, 6, 1, 0.5)
 
-#%%
-#test_produceRho8x8 = Rho_all_sites_epsilon_no_vor(8, 8, 6, 1, 0.02) #good news! It runs about 5 min
 #%%
 #****** UNFINISHED !!!! Must finish today
 # here this cell is for plotting the site_used as in real space points on 8x8 plaquette
@@ -1739,7 +1774,7 @@ def site_to_plot_xy(sites, a=1.0):
     x = sites[:, 0]
     y = sites[:, 1]
     alpha = sites[:, 2]
-    print(sites)
+   
     # Example placeholder mapping only (here we assumed each side of hex is 1 - Q: is this same as a0?)
     #there is a coor_x shift term for y doesn't equal 1(y_coor non zero) x_shift = 0.5 *np.sqrt(3) * (y-1)
     coor_x = (x - 1) * np.sqrt(3) + 0.5 * (alpha - 1) * np.sqrt(3) +  0.5 *np.sqrt(3) * (y-1)
@@ -1747,23 +1782,36 @@ def site_to_plot_xy(sites, a=1.0):
 
     return coor_x, coor_y
 
-#%% test: try plot 3x3 
-Plaq_dict_UC3X3 = Rho_all_sites_epsilon_no_vor(3, 3, 6, 1, 0.5) #last value is always offset 
-                                                                #' how far away from pi got included in sum'
 
-print(Plaq_dict_UC3X3["rho_sum"]) 
-print(Plaq_dict_UC3X3["sites_used"])  # the site |x, y, alpha>
-print(Plaq_dict_UC3X3["comp_indices"])# corresponding comp in |Phi_n> 
+#%%
+#recall function construction: Rho_all_sites_epsilon_vor(N_x, N_y, num_time_stages, a_0 , sigma, list_of_sites_needed=None, n_alpha=2)
+#Plaq_dict_UC8X8_vor_mid_offset_12 = Rho_all_sites_epsilon_vor(8, 8, 6, 1, 0.12)
+  
+#print('offset 0.12', Plaq_dict_UC8X8_vor_mid_offset_12)
 
-Rho_near_pi3x3 = Plaq_dict_UC3X3["rho_sum"]
-Xplot, Yplot = site_to_plot_xy(test_sites33) ## here for test, we just use the site plotted as by previous 'build site' function
+
+#Plaq_dict_UC8X8_vor_mid_offset_18 = Rho_all_sites_epsilon_vor(8, 8, 6, 1, 0.18)
+
+#print('offset 0.18', Plaq_dict_UC8X8_vor_mid_offset_18)
+
+
+#Plaq_dict_UC8X8_vor_mid_offset_3 = Rho_all_sites_epsilon_vor(8, 8, 6, 1, 0.3)  
+#print('offset 0.3', Plaq_dict_UC8X8_vor_mid_offset_3)
+#%%
+ #VORTEX, PLAQUETTE 
+Plaq_dict_UC8X8_vor_mid = Rho_all_sites_epsilon_vor(6, 6, 35, 1, 0.14) #offset need to be setted correctly 
+#good news! It runs about 5 min #the offsetadjustion here is a bit tricky we used 0.25 for 3.15 - 2.9
+#%%
+#WITH VORTEX, PLAQUETTE PLOT
+Rho_near_pi8x8_vor = Plaq_dict_UC8X8_vor_mid["rho_sum"]
+Xplot, Yplot = site_to_plot_xy(Plaq_dict_UC8X8_vor_mid["sites_used"]) ## here for test, we just use the site plotted as by previous 'build site' function
 #    colors = result["rho_sum"] results is?
-print(Xplot, Yplot)
 
+print('offset 0.12', Plaq_dict_UC8X8_vor_mid)
 
 plt.figure(figsize=(6, 6))
 #plt.scatter(Xplot, Yplot, s=80)
-plt.scatter(Xplot, Yplot, c=Rho_near_pi3x3, s=180, cmap="inferno_r", linewidths=0.6) # , dgecolors="black"
+plt.scatter(Xplot, Yplot, c=Rho_near_pi8x8_vor, s=180, cmap="inferno_r", linewidths=0.6) # , dgecolors="black"
 plt.xlabel("X")
 plt.ylabel("Y")
 plt.colorbar(label="LDOS near pi")
@@ -1771,23 +1819,32 @@ plt.axis("equal")
 plt.grid(True)
 plt.show()
 
-#%% test: try plot 8x8 
+#print('print dict of 8x8 with cor, Rho_comp_corresponding, offset 0.3', Plaq_dict_UC8X8_vor_mid)
+## here for test, we just use the site plotted as by previous 'build site' function
+#    colors = result["rho_sum"] results is?
+
+# YOU CAN ALSO TRY SUMMED OVER THE SITES FOR EACH UNIT CELLS ! BECAUSE IT MIGHT NOT NECESSARILY TO BE SAME FOR 'SITE LOCALISATION' AND 'CELL LOCALISATION'
+
+
+#%% NO VORTEX, PLAQUETTE 
 
 # create object: dict created by [Rho_all_sites_epsilon_no_vor] 
-Plaq_dict_UC8X8 = Rho_all_sites_epsilon_no_vor(8, 8, 6, 1, 0.12)
+Plaq_dict_UC8X8 = Rho_all_sites_epsilon_no_vor(6, 6, 35, 1, 0.085) #here if offset 0.12 will get nothing 
 # Here what I cahnged is literaterally 
 # other reasons check later
 #-- later we will return here about running this; but now we use the produced one for speed 
 
+#%% NO VORTEX, PLAQUETTE PLOT
 #Plaq_dict_UC8X8_DONE = test_produceRho8x8
+
 Rho_near_pi8x8 = Plaq_dict_UC8X8["rho_sum"]
 Xplot, Yplot = site_to_plot_xy(Plaq_dict_UC8X8["sites_used"]) ## here for test, we just use the site plotted as by previous 'build site' function
 #    colors = result["rho_sum"] results is?
-print(Xplot, Yplot)
+
 
 plt.figure(figsize=(6, 6))
 #plt.scatter(Xplot, Yplot, s=80)
-plt.scatter(Xplot, Yplot, c=Rho_near_pi8x8, s=10, cmap="inferno_r", linewidths=0.6) # , dgecolors="black"
+plt.scatter(Xplot, Yplot, c=Rho_near_pi8x8, s=100, cmap="inferno_r", linewidths=0.6) # , dgecolors="black"
 plt.xlabel("X")
 plt.ylabel("Y")
 plt.colorbar(label="LDOS near pi")
@@ -1797,13 +1854,52 @@ plt.show()
 
 # problem: why we didn't get x edge but only get y edge? 
 
+#%% a test for peace of mind: 
 
+# np.sort and np.argsort:
+
+array_being_sorted = np.array([4, 2, 3, 7])
+Index_small_to_large = np.argsort(array_being_sorted)
+print(Index_small_to_large, 'prediction: 1, 2, 0, 3')  #checks out; also, this output is a list
+
+print(np.sort(array_being_sorted)) # returns the values themselves as from smallest to largest 
+
+
+# test can we use a list of index to reorder an array?
+array_reordered = array_being_sorted[Index_small_to_large] # if put this index list munually, need to be [[]]
+print(array_reordered)
+
+# check why this works?
+# vector object setting: eig1 = [1, 2, 3, 4] - 1st column as in 0th index; eig2 = [5, 6, 7, 8] - 2nd column, idx:1 ; eig3 = [9, 10, 11, 12] 3rd c, idx 2
+column_combined_vec = np.array([[1, 5, 9], [2, 6, 10], [3, 7, 11], [4, 8, 12]]) 
+
+test_order_index = [0, 2, 1]
+reorder_combined_vec = column_combined_vec[:, test_order_index ] # here I expec to be eig 1, eig3, eig2 ---
+#IMPORTANT : as long as the matrix you are reordering is an array, this works 
+#IMPORTANT ** : for matrices, A[:, list] = reorder column of A, but don't touch inside of columns ; A[list, :] reorder rows of A, but don't touch inside of rows  
+print(reorder_combined_vec) # ???
+
+# test matrix in np.abs:
+test_matrix  = np.array([[1+1j, 3, 5], [2 + 1j, 4, 6]])
+abs_matrix = np.abs(test_matrix)**2
+print(abs_matrix) #works
+
+# test: sum by axis:
+sum_over_row = test_matrix .sum(axis=1) # axis=1: sum down the rows for each row
+sum_over_axis = test_matrix .sum(axis=0) # axis=0: sum down the rows for each column
+
+#test if 
+A_if_not = 4
+print( A_if_not)
+if A_if_not> 0:
+    A_if_not = 5
+print (A_if_not)
 #%% MY 'INTENSITY' plot
 # -------which sites got summed over --------
 
 list_of_sites_around_mid_4 = [[3, 1, 1], [2, 2, 1], [2, 2, 2], [3, 2, 1], [3, 2, 2], [2, 3, 2]] #each site labelled as [x,y,alpha]
 list_of_sites_around_mid_8 = [[5, 3, 1], [4, 4, 1], [4, 4, 2], [5, 4, 1], [5, 4, 2], [4, 5, 2]]                                                                                               # as in alpha is A or B>> 1 or 2
-                                             ###################wrong                                                  # others from 1 to Nx/y
+                                                                                               # others from 1 to Nx/y
 #print(list_of_sites_around_core[1][1])
 
 
@@ -1901,7 +1997,7 @@ def Rho_sites_all_epsilons_noVor(N_x, N_y, num_time_stages, a_0, list_of_sites_n
 
 #%% T sample for time discretisation adjusting portal 
 
-t_sampling = 50
+t_sampling = 70
 
 
 #%% plot try scatter # easier to read --WITH TIME VOR
@@ -1920,6 +2016,211 @@ plt.plot(Eps_sorted, Rho_sorted, 'o-', markersize=3)#linestyle='-', linewidth=1)
 plt.xlabel(r'$\epsilon_n T$')
 plt.ylabel(r'$\rho$')
 plt.title(r'$\rho_n for site around vortex core$ vs $\epsilon_n$ ')
+plt.grid(True)
+plt.show()
+#%% 
+
+
+
+# BELOW ARE THE PLOTS FOR FROM UC IS 8X8 TO UC 10X10 TO UC 12X12 
+
+
+
+#%% read out from excel file and PLOT -- UC:[ 8x8 ]; TS: 50(?); vor core: Ny+1;Nx+1
+
+df = pd.read_excel(r"D:\OneDrive - Imperial College London\Desktop\master project\if I am lucky\Next-step work\Rho_Eps_more_or_lessdetail.xlsx", header=None, skiprows=1)
+#this file with less detail of rho and eps, is used to be substracted by [UC:8x8; no vor; TS: 50(?); vor core: Ny+1;Nx+1] so we assume this file is under same condition with t vor
+Rho_readout = df.iloc[:, 0]
+Epsilon_readout = df.iloc[:, 1]
+
+peak_extraction = np.asarray(Rho_readout)
+i_max = np.argmax(peak_extraction)
+x_peak, y_peak = Epsilon_readout[i_max], Rho_readout[i_max]
+print('found by old way', x_peak, 'pi mode specific quasienergy', y_peak, 'pi mode specific quasienergy') #**PEAK OF PI MODE LOCATION(extracted by highest peak)**
+
+print(np.array(Epsilon_readout)[-2], 'pi mode specific quasienergy', np.array(Rho_readout)[-2], 'DLOS height')  #**PEAK OF PI MODE LOCATION(extracted by identify near pi epsilon)**
+
+
+plt.figure()
+plt.scatter(x_peak, y_peak, marker='x', color='red')
+plt.plot(Epsilon_readout, Rho_readout, 'o-', markersize=3)#linestyle='-', linewidth=1)   # or add marker='.'
+plt.xlabel(r'$\epsilon_n T$ ')
+plt.ylabel(r'$\rho$')
+plt.title(r'$\rho_n$ for site around vortex core vs $\epsilon_n$ ')
+plt.grid(True)
+plt.show()
+
+
+#%% convert txt file to excel -- with vor; UC: [10x10]; TS: 60; vor core: Ny;Nx (which is a bit off)
+
+import re
+
+file_path = Path(r"D:\OneDrive - Imperial College London\Desktop\master project\if I am lucky\Next-step work\Mimi_op_before_inter.txt")
+text = file_path.read_text(encoding="utf-8")
+
+# match: [eps block] Eps_sorted [rho block] Rho_sorted
+m = re.search(
+    r'(\[[^\[\]]*?\])\s*Eps_sorted\s*(\[[^\[\]]*?\])\s*Rho_sorted',
+    text,
+    re.S
+)
+
+if not m:
+    raise ValueError("Could not find the Eps_sorted / Rho_sorted blocks in the txt file.")
+
+eps_block = m.group(1)
+rho_block = m.group(2)
+
+Eps_readouttxt_10 = np.fromstring(eps_block.strip("[]"), sep=' ')
+Rho_readouttxt_10 = np.fromstring(rho_block.strip("[]"), sep=' ')
+
+print("len(Eps_sorted) =", len(Eps_readouttxt_10))
+print("len(Rho_sorted) =", len(Rho_readouttxt_10))
+
+print("first 5 eps:", Eps_readouttxt_10[:5])
+print("first 5 rho:", Rho_readouttxt_10[:5])
+
+if len(Eps_readouttxt_10) != len(Rho_readouttxt_10):
+    raise ValueError("Eps_sorted and Rho_sorted have different lengths.")
+
+df = pd.DataFrame({
+    "Eps_sorted": Eps_readouttxt_10,
+    "Rho_sorted": Rho_readouttxt_10
+})
+
+out_path = r"D:\OneDrive - Imperial College London\Desktop\master project\if I am lucky\Next-step work\T_sampleunknow_10x10_new_Ny_add_1_or_not.xlsx"
+df.to_excel(out_path, index=False)
+
+print("Saved to:", out_path)
+
+#%% read out above(excel)file and PLOT -- with vor; UC: [10x10]; TS: 60; vor core: Ny;Nx (which is a bit off)
+
+df = pd.read_excel(r"D:\OneDrive - Imperial College London\Desktop\master project\if I am lucky\Next-step work\T_sampleunknow_10x10_new_Ny_add_1_or_not.xlsx", header=None, skiprows=1)
+
+Epsilon_readout_10uc = df.iloc[:, 0]
+Rho_readout_10uc = df.iloc[:, 1]
+
+#E_cut_edge = Epsilon_readout_12uc[1:287]
+#R_cut_edge = Rho_readout_12uc[1:287]
+E_arry_10 = np.array(Epsilon_readout_10uc)
+R_arry_10 = np.array(Rho_readout_10uc)
+
+print(E_arry_10[-2], 'pi mode specific quasienergy', R_arry_10[-2], 'DLOS height')  #**PEAK OF PI MODE LOCATION** 
+#print('is last mode after pi', E_arry_10[-1], 'pi mode specific quasienergy', R_arry_10[-1], 'DLOS height') -- still smaller than pi;
+# Q: why always the second nearest value before pi get Rho peak, as more likely to be 'pi mode'?  -- leave to future 
+
+plt.figure()
+plt.scatter(E_arry_10[-2], R_arry_10[-2], marker='x', color='red') #**PEAK OF (+)PI MODE LOCATION** 
+plt.scatter(E_arry_10[1], R_arry_10[1], marker='x', color='red')   #**PEAK OF (-)PI MODE LOCATION**
+plt.plot(Epsilon_readout_10uc, Rho_readout_10uc, 'o-', markersize=3)#linestyle='-', linewidth=1)   # or add marker='.'
+plt.xlabel(r'$\epsilon_n T$ ')
+plt.ylabel(r'$\rho$')
+plt.title(r'$\rho_n$ for site around vortex core vs $\epsilon_n$ ')
+plt.grid(True)
+plt.show()
+
+#%%
+# read txt peak (2.299454260001524, 0.33087090065525415)
+
+# --- Eps ---
+text_Eps_readout = Path(r"D:\OneDrive - Imperial College London\Desktop\master project\if I am lucky\Next-step work\T_sample50_12x12.txt").read_text(encoding="utf-8")
+text_Eps_readout = text_Eps_readout.replace("Eps_sorted", "")
+text_Eps_readout = text_Eps_readout.replace("[", " ").replace("]", " ")
+Eps_readouttxt = np.fromstring(text_Eps_readout, sep=' ')
+
+# --- Rho ---
+text_Rho_readout = Path(r"D:\OneDrive - Imperial College London\Desktop\master project\if I am lucky\Next-step work\T_sample50_12x12_Rho.txt").read_text(encoding="utf-8")
+text_Rho_readout = text_Rho_readout.replace("Rho_sorted", "")
+text_Rho_readout = text_Rho_readout.replace("[", " ").replace("]", " ")
+Rho_readouttxt = np.fromstring(text_Rho_readout, sep=' ')
+
+# check lengths
+print(len(Eps_readouttxt))
+print(len(Rho_readouttxt))
+
+# make one dataframe with two columns
+df = pd.DataFrame({
+    "Eps_sorted": Eps_readouttxt,
+    "Rho_sorted": Rho_readouttxt
+})
+
+# save once
+df.to_excel(r"T_sample50_12x12_new.xlsx", index=False)
+
+#%% read out above(excel)file and PLOT -- with vor; UC: [12x12]; TS: 50; vor core: Ny+1;Nx+1
+
+df = pd.read_excel(r"D:\OneDrive - Imperial College London\Desktop\master project\if I am lucky\Next-step work\T_sample50_12x12_new.xlsx", header=None, skiprows=1)
+
+Epsilon_readout_12uc = df.iloc[:, 0]
+Rho_readout_12uc = df.iloc[:, 1]
+
+#E_cut_edge = Epsilon_readout_12uc[1:287]
+#R_cut_edge = Rho_readout_12uc[1:287]
+E_arry = np.array(Epsilon_readout_12uc)
+R_arry = np.array(Rho_readout_12uc)
+
+print(E_arry[-2], 'pi mode specific quasienergy', R_arry[-2], 'DLOS height')  #**PEAK OF PI MODE LOCATION**
+
+plt.figure()
+plt.scatter(E_arry[-2], R_arry[-2], marker='x', color='red') #**PEAK OF (+)PI MODE LOCATION** 
+plt.scatter(E_arry[1], R_arry[1], marker='x', color='red')   #**PEAK OF (-)PI MODE LOCATION**
+plt.plot(Epsilon_readout_12uc, Rho_readout_12uc, 'o-', markersize=3)#linestyle='-', linewidth=1)   # or add marker='.'
+plt.xlabel(r'$\epsilon_n T$ ')
+plt.ylabel(r'$\rho$')
+plt.title(r'$\rho_n$ for site around vortex core vs $\epsilon_n$ ')
+plt.grid(True)
+plt.show()
+
+
+#%%
+# read txt peak (2.299454260001524, 0.33087090065525415)
+
+# --- Eps ---
+text_Eps_readout_12_58 = Path(r"D:\OneDrive - Imperial College London\Desktop\master project\if I am lucky\Next-step work\T_sample58_12x12_Eps.txt").read_text(encoding="utf-8")
+text_Eps_readout_12_58 = text_Eps_readout_12_58.replace("Eps_sorted", "")
+text_Eps_readout_12_58 = text_Eps_readout_12_58.replace("[", " ").replace("]", " ")
+Eps_readouttxt_12_58 = np.fromstring(text_Eps_readout_12_58, sep=' ')
+
+# --- Rho ---
+text_Rho_readout_12_58 = Path(r"D:\OneDrive - Imperial College London\Desktop\master project\if I am lucky\Next-step work\T_sample58_12x12_Rho.txt").read_text(encoding="utf-8")
+text_Rho_readout_12_58 = text_Rho_readout_12_58.replace("Rho_sorted", "")
+text_Rho_readout_12_58 = text_Rho_readout_12_58.replace("[", " ").replace("]", " ")
+Rho_readouttxt_12_58 = np.fromstring(text_Rho_readout_12_58, sep=' ')
+
+# check lengths
+print(len(Eps_readouttxt_12_58))
+print(len(Rho_readouttxt_12_58))
+
+# make one dataframe with two columns
+df = pd.DataFrame({
+    "Eps_sorted": Eps_readouttxt_12_58,
+    "Rho_sorted": Rho_readouttxt_12_58
+})
+
+# save once
+df.to_excel(r"T_sample58_12x12.xlsx", index=False)
+
+#%% read out above(excel)file and PLOT -- with vor; UC: [12x12]; TS: 58; vor core: Ny+1;Nx+1
+
+df = pd.read_excel(r"D:\OneDrive - Imperial College London\Desktop\master project\if I am lucky\Next-step work\T_sample58_12x12.xlsx", header=None, skiprows=1)
+
+Epsilon_readout_12uc_58 = df.iloc[:, 0]
+Rho_readout_12uc_58 = df.iloc[:, 1]
+
+#E_cut_edge = Epsilon_readout_12uc[1:287]
+#R_cut_edge = Rho_readout_12uc[1:287]
+E_arry_1258 = np.array(Epsilon_readout_12uc_58)
+R_arry_1258 = np.array(Rho_readout_12uc_58)
+
+print(E_arry_1258[-2], 'pi mode specific quasienergy', R_arry_1258[-2], 'DLOS height')  #**PEAK OF PI MODE LOCATION**
+
+plt.figure()
+plt.scatter(E_arry_1258[-2], R_arry_1258[-2], marker='x', color='red') #**PEAK OF (+)PI MODE LOCATION** 
+plt.scatter(E_arry_1258[1], R_arry_1258[1], marker='x', color='red')   #**PEAK OF (-)PI MODE LOCATION**
+plt.plot(Epsilon_readout_12uc_58, Rho_readout_12uc_58, 'o-', markersize=3)#linestyle='-', linewidth=1)   # or add marker='.'
+plt.xlabel(r'$\epsilon_n T$ ')
+plt.ylabel(r'$\rho$')
+plt.title(r'$\rho_n$ for site around vortex core vs $\epsilon_n$ ')
 plt.grid(True)
 plt.show()
 
@@ -1943,6 +2244,55 @@ plt.title(r'$\rho_n$  for sites around vortex core vs $\epsilon_n$ ')
 plt.grid(True)
 plt.show()
 
+#%% plot difference between Rho_0 & Rho [[2]] T dis 50
+
+Rho_difference = Rho_readout - Rho_sorted_0 # as in Rho with vortex minus Rho without vortex #readout file has T discretisation 50 
+
+peak_extraction = np.asarray(Rho_difference)
+i_max = np.argmax(peak_extraction)
+x_peak, y_peak = Epsilon_readout[i_max], Rho_difference[i_max]
+
+print('peak', (x_peak, y_peak))
+
+
+plt.figure()
+
+plt.plot(Epsilon_readout, Rho_difference, 'o-', markersize=3, color = 'tab:blue')#linestyle='-', linewidth=1)   # or add marker='.'
+plt.plot(x_peak, y_peak, marker='x', markersize=10, mew=2,
+         color='tab:red', label='peak')
+plt.xlabel(r'$\epsilon_n T$ ')
+plt.ylabel(r'$\rho$') 
+plt.title(r'$\rho_n$ difference for sites around vortex core  vs $\epsilon_n$ ')
+plt.grid(True)
+plt.show()
+#%%[[3]] T dis 70 --------------final plot -------------------
+Rho_difference_adjusting = Rho_sorted - Rho_sorted_0 # as in Rho with vortex minus Rho without vortex 
+
+peak_extraction = np.asarray(Rho_difference_adjusting)
+i_max = np.argmax(peak_extraction)
+x_peak, y_peak = Epsilon_readout[i_max], Rho_difference_adjusting[i_max]
+
+print('peak', (x_peak, y_peak))
+
+
+plt.figure()
+
+plt.plot(Eps_sorted, Rho_difference_adjusting, 'o-', markersize=3, color = 'tab:blue')#linestyle='-', linewidth=1)   # or add marker='.'
+plt.plot(x_peak, y_peak, marker='x', markersize=10, mew=2,
+         color='tab:red', label='peak')
+plt.xlabel(r'$\epsilon_n T$ ')
+plt.ylabel(r'$\rho$') 
+plt.title(rf'$\rho_n$ difference for sites around vortex core vs $\epsilon_n$, $T discretisation = {t_sampling}$') #rf"Phase bands with edge state density diagnosis, y OBC, $L_y = {Ny_plot_yOBC_edge}$
+plt.grid(True)
+plt.show()
+
+#%% test np.argsort
+x_tail = [6,2,3,4]
+y_tail = np.array([7,3,4,5])
+dog_tail = np.argsort(y_tail) # returns [in terms of index of elements] smallest to largest; in terms of array  
+print(dog_tail, type(dog_tail), 'dog tail')
+test_tail = y_tail [np.array([0,  3,  2,  1])]
+print(test_tail) #[3] and [1] switched 
 
 #%% ploy try bin- like (still need to figure out what tthey did here)
 Rho, Epsilon = Rho_sites_all_epsilons(4, 4, 50, 1, list_of_sites_around_mid_4)
@@ -1966,6 +2316,29 @@ plt.title('Binned (DOS-like) curve')
 plt.grid(True)
 plt.show()
 
+
+#%% test loop append:
+hog_list = []
+x_test = [1,2,3]
+for x_dog in x_test:
+     x_hog = x_dog + 3
+     hog_list.append(x_hog)  
+#print(hog_list) #----- append is in order of the list 
+    
+            
+            
+
+    
+
+
+
+
+
+
+
+
+
+#%% generate spectrum(?) epsilon_n --- calcualte xx density -- xx refer to density at a certain position range
 
 #%% CHECK IF XPBC Y OBC MAKE SENSE ---- BELOW JUST FOR CHECKING --------
 def H2NyNx_yOBC_for_check(N_y, N_x, t, a_0): 
@@ -2139,56 +2512,6 @@ A[mask] = 100 + 10*I[mask] + J[mask]
 #       Q: after we figured this out,
 #       we can try to generate sum of rho in real positions around 0 for a few points 
 #       check with graph on article fig_4_a (**final aim for numerical progress make this weekend)
-#%% -------- introdce time vortex : J >> H_2x2 >> write new H 2x2 in this function 
-# ---------***** INTRODUCED TIME VORTEX which is original script*****----------
-def H2NyNx_xyOBC_time_vortex_ori(N_y, N_x, t, a_0):  # here this t is the t got sampled, 
-                                                 # within this function we will get t_phase_delay to rewrite t
-    
-# t --- is not the t we stuff in our HxH matrix(which calls J_tilte_a ) anymore
-# where is the centra point of the vortex? Plan A: try at original( read to justify)
-#                                          Plan B: at middle of all unit cells Nx, Ny plane
 
-    
-#    H_generated_both_OBC_no_vor = H2NyNx_xOBC_only(N_y, N_x, t, a_0) # this create an Ham object as input goes into func
-    
-    # begin to write the vortex Ham
-    H_generated_both_OBC_vor = np.zeros((2*N_y*N_x, 2*N_y*N_x), dtype =complex)
-    
-    for i in range(N_x* N_y):
-        for j in range(N_x* N_y):
-            x = (i + 1 )% N_x  #double check later (?) -- x & x' are from 0, to Nx -1
-            x_1 = (j + 1 )% N_x 
-          #  delta_x = (x - x_1) % N_x #this gives [the smallest integer which near the (x-x1) and can be divided by N_x]'s difference with (x-x_1)
-            y = ((i) // N_x) + 1 #double check later (?) -- y & y' are from 0, to Ny -1
-            y_1 =( (j) // N_x ) + 1 # y'
-
-           # print (i, j, 'test ij in time vortex matrix')
-
-            arv_y = (y + y_1)/2 # here is a question: should we do this way from 0 for all x, x', y, y'? Ans: no. We do from 1
-            arv_x = (x + x_1)/2 # 
-#-----------------------------------------------------------    
-            vortex_theta = np.arctan2(arv_y, arv_x)
-            
-    # how should we apply theta belongs to [0, 2pi) if we want 
-            #theta = np.arctan2(y, x)          # (-pi, pi]
-            #theta_0_2pi = np.mod(theta, 2*np.pi)  # [0, 2pi)
-            # continuous (no jump) if points are ordered around the circle:
-            #theta_cont = np.unwrap(theta)
-#------------------------------------------------------------
-            t_phase_delayed = t - vortex_theta * T/(2 * np.pi)
-            
-#            H_generated_both_OBC_vor[2*i:2*i+2, 2*j:2*j+2] = H_generated_both_OBC_no_vor[2*i:2*i+2, 2*j:2*j+2]
-            # lhs extract 2x2 little blocks in zero martix (preparted for writing time vortexed Ham), at each loop*(NxNy)
-            # rhs rewrite as H - worng: H_generated_both_OBC_no_vor is written outside the loop(labels xx' and yy' - time phase)
-            # each loop should assign 2x2 extracted blocks from lhs a different time phase [H_generated_both_OBC_no_vor] with corresponding part of matrix
-            # Problem: here this func[H2NyNx_xOBC_only] is a func of whole matrix, is it fine if it's large we call it again and again? 
-            
-            H_generated_both_OBC_vor[2*i:2*i+2, 2*j:2*j+2] = H2NyNx_xOBC_only(N_y, N_x, t_phase_delayed, a_0)[2*i:2*i+2, 2*j:2*j+2]
-            
-            
-            
-    return H_generated_both_OBC_vor
-
-# dk what we are doing here? ####################### double check even this cell is needed later 
 
 

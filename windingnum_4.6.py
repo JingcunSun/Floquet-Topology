@@ -331,8 +331,165 @@ def Calculate_Heff_from_Ufull (U_full_bulk, epsilon):
     
     phi_newbranch_array = np.array(phi_0_adjusted) # this array has same order with U_diag (as in the arg's corresponding elements, or saying: eigval)
     # this is the branchcut
-    H_eff = (1j * (np.diag(phi_newbranch_array)))/T
+    H_eff_diag = (1j * (np.diag(phi_newbranch_array)))/T
     
+    H_eff = np.linalg.inv(V) * H_eff_diag * V  # but if something failed, can be checked later that if the matrix is reversable or contain zero det V
     return H_eff
+
+#%% Rewrite the function above: 
+#   INPUT: U_full_bulk = U(k, T) epislon -- which is used to define the branchcut
+
+def Heff_from_Ufull (U_full_bulk, epsilon): # U_full_bulk = U(k, T)
+    
+    eigvals_Ufull, eigvecs_Ufull = np.linalg.eig(U_full_bulk)  #Each eigval_alpha corresponding to each eigenvector |phi_alpha>
+    
+    U_dia_full = np.diag(eigvals_Ufull) # diagonalised U, now each element on the diagonal is lamda_alpha = eigval_alpha corresponding to eigenvector |phi_alpha>
+    
+    V = eigvecs_Ufull # need to be checked that if they are natrually returned in columns  # ***VERIFICATION 1
+    
+    PHI_dia = np.angle(U_dia_full) #np.angle works elementwise on each entry and returns the phase angle of each complex number, in the range (-pi, pi]
+    #take angle as an array maintian the order of alpha(s) perfectly
+    #**VERIFICATION2**: U_diag = np.exp(1j*PHI_diag) instead of **elementwise** definition of phi_alpha = - PHI_alpha
+
+    #Q: expm(1j*M) is matrix exponential -- how does it work diffrently from elementwise exp? 
+    PHI_alpha_array = np.digonal(PHI_dia) # branch range: (-pi, pi]
+
+
+
+    PHI_modified_list = []
+    
+    # possible modified branchrange: 
+        #epsilonT range: [-pi, pi] PHI_modified_min > -epsilonT_min - 2pi = -3pi; PHI_modified_max <= -espilonT_max = -(-pi) = pi 
+    # hence (rough) PHI_modified range (with above information): (-3pi, pi]
+    # we only test PHI_alpha minus 2npi, because only the smallest PHI, (-pi), + 2pi will be in the range of PHI_modified;
+    # That need epsilon T to be -pi, hence - epsilon * T = -(-pi) = pi; - epsilon * T - 2 * np.pi = -pi, PHI_alpha = -pi is out of range--> modified to pi
+    # but this is a special case, 
+    
+    for PHI_alpha in PHI_alpha_array:
+        
+        if  - epsilon * T - 2 * np.pi < PHI_alpha <= - epsilon * T:   # here used (] for PHI, as we take -epsilonT but not  - epsilonT - 2* pi
+            
+            PHI_modified = PHI_alpha
+        
+        elif  - epsilon * T - 2 * np.pi <  PHI_alpha - 2 * np.pi <=  - epsilon * T:
+            
+            PHI_modified = PHI_alpha - 2 * np.pi
+        
+        elif - epsilon * T - 2 * np.pi <  PHI_alpha - 4 * np.pi <=  - epsilon * T:
+            
+            PHI_modified = PHI_alpha - 4 * np.pi
+        
+        elif - epsilon * T - 2 * np.pi <  PHI_alpha + 2 * np.pi <=  - epsilon * T:
+            
+            PHI_modified  =  PHI_alpha + 2 * np.pi
+            print(PHI_alpha, PHI_modified) # this step is to check if the guess, only case here should be -pi + 2pi = pi, is correct
+            
+        else:
+            raise ValueError(f"No condition matched for PHI_alpha = {PHI_alpha}")
+
+        
+        # also remember: in one branch each PHI_alpha_modified only has one value choice
+        PHI_modified_list.append(PHI_modified)
+        
+    phi_alpha_array = - np.array(PHI_modified_list)
+    
+    H_eff_dia = (1/ T) * np.diag(phi_alpha_array)
+
+    H_eff = np.linalg.inv(V)* H_eff_dia * V
+
+    return H_eff
+#VERIFICATION 2: within the code above 
+#VERIFICATION 3: pen and paper: what if we go from phi_diag = - np.angle (U_dia_full)? Done
+#VERIFICATION 4: input a real matrix Phi to calculate Heff, see if there's any error.Also compare both function Heff_from_Ufull and Heff_from_Ufull 2 output
+#VERIFICATION 5: test if V is as what expected
+
+def VERIFICATION2(U_full_bulk):
+    
+    eigvals_Ufull, eigvecs_Ufull = np.linalg.eig(U_full_bulk)  #Each eigval_alpha corresponding to each eigenvector |phi_alpha>
+    
+    U_dia_full = np.diag(eigvals_Ufull) # diagonalised U, now each element on the diagonal is lamda_alpha = eigval_alpha corresponding to eigenvector |phi_alpha>
+
+    PHI_diag = np.angle(U_dia_full)
+    phi_diag = - np.angle(U_dia_full)
+
+    
+    if np.allclose(expm(1j * PHI_diag), U_dia_full):
+        
+        if np.allclose(expm(1j * phi_diag), U_dia_full):
+            
+            print ('VERIFIED')
+        else:
+            
+            raise ValueError('error TEST2')
+    
+    else:
+        raise ValueError('error TEST1')
+
+#%%
+
+def Heff_from_Ufull_2 (U_full_bulk, epsilon): # Heff_from_Ufull_2 has no PHI, only phi_alpha 
+    
+    eigvals_Ufull, eigvecs_Ufull = np.linalg.eig(U_full_bulk)  #Each eigval_alpha corresponding to each eigenvector |phi_alpha>
+    
+    U_dia_full = np.diag(eigvals_Ufull) # diagonalised U, now each element on the diagonal is lamda_alpha = eigval_alpha corresponding to eigenvector |phi_alpha>
+    
+    V = eigvecs_Ufull # need to be checked that if they are natrually returned in columns  # ***VERIFICATION 1
+    
+    phi_dia = - np.angle(U_dia_full) #[-pi, pi)
+    #take angle as an array maintian the order of alpha(s) perfectly
+
+    phi_alpha_array = np.digonal(phi_dia) # branch range: (-pi, pi]
+    
+    phi_modified_list = []
+    
+    # possible modified branchrange: 
+        #epsilonT range: [-pi, pi] PHI_modified_min > -epsilonT_min - 2pi = -3pi; PHI_modified_max <= -espilonT_max = -(-pi) = pi 
+    # hence (rough) PHI_modified range (with above information): (-3pi, pi]
+    # we only test PHI_alpha minus 2npi, because only the smallest PHI, (-pi), + 2pi will be in the range of PHI_modified;
+    # That need epsilon T to be -pi, hence - epsilon * T = -(-pi) = pi; - epsilon * T - 2 * np.pi = -pi, PHI_alpha = -pi is out of range--> modified to pi
+    # but this is a special case, 
+    
+    for phi_alpha in phi_alpha_array:
+        
+        if  epsilon * T <= phi_alpha <  epsilon * T + 2 * np.pi :   # here used (] for PHI, as we take -epsilonT but not  - epsilonT - 2* pi
+            
+            phi_modified = phi_alpha
+        
+        elif  epsilon * T <= phi_alpha + 2 * np.pi <  epsilon * T + 2 * np.pi:
+            
+            phi_modified = phi_alpha + 2 * np.pi
+        
+        elif  epsilon * T <= phi_alpha + 4 * np.pi <  epsilon * T + 2 * np.pi:
+            
+            phi_modified = phi_alpha + 4 * np.pi
+        
+        elif epsilon * T <= phi_alpha - 2 * np.pi <  epsilon * T + 2 * np.pi:
+            
+            phi_modified = phi_alpha - 2 * np.pi
+            print(phi_alpha, phi_modified) # this step is to check if the guess, only case here should be -pi + 2pi = pi, is correct
+            
+        else:
+            raise ValueError(f"No condition matched for phi_alpha = {phi_alpha}")
+
+        
+        # also remember: in one branch each PHI_alpha_modified only has one value choice
+        phi_modified_list.append(phi_modified)
+
+    
+    H_eff_dia = (1/ T) * np.diag(np.array(phi_modified_list))
+
+    H_eff = np.linalg.inv(V)* H_eff_dia * V
+
+    return H_eff
+
+#%%
+
+
+
+
+
+
+
+
 
 

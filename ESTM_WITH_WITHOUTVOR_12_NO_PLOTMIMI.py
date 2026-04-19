@@ -118,16 +118,16 @@ def J_tilte_z(t):
 t_test = np.linspace(-2, 1, 100) 
 # function of J_a need to be adjusted as in that t can be out of range of one period(0,T)
 
-#plt.plot(t_test, J_tilte_x(t_test), label='J_tilte_x')
-#plt.plot(t_test, J_tilte_y(t_test), label='J_tilte_y')
-#plt.plot(t_test, J_tilte_z(t_test), label='J_tilte_z')
+plt.plot(t_test, J_tilte_x(t_test), label='J_tilte_x')
+plt.plot(t_test, J_tilte_y(t_test), label='J_tilte_y')
+plt.plot(t_test, J_tilte_z(t_test), label='J_tilte_z')
 
-#plt.xlabel('t')
-#plt.ylabel('J_tilte_a')
-#plt.title('Plot of J_tilta_a(pulse of hopping amp) vs t')
-#plt.legend()
-#plt.grid(True)
-#plt.show()
+plt.xlabel('t')
+plt.ylabel('J_tilte_a')
+plt.title('Plot of J_tilta_a(pulse of hopping amp) vs t')
+plt.legend()
+plt.grid(True)
+plt.show()
 
 #%% some test try figure properties of J func
 t_specific_time_point_test = np.pi - 3

@@ -77,6 +77,13 @@ def J_tilte_z(t):
 #%%
 # try plot: t is from 0 to 1, J_tilte_x, y, z 
 
+#print (J_tilte_x(0))
+#print (J_tilte_x(0.5))
+
+#print (J_tilte_y(1/3))
+#print (J_tilte_x(5/6))
+# here is clear that each pulse is defined as start point(of driving) = Ja, end point (of driving) = 0
+#%%
 t_test = np.linspace(-2, 4, 100) 
 # function of J_a need to be adjusted as in that t can be out of range of one period(0,T)
 
@@ -181,15 +188,44 @@ def U_full_discretisation(k_x, k_y, num_time_stages): # which means along lhs to
     U_full = reduce(np.matmul, U_list_N_matrices) # here adjoint the full time evolution 
         # here U_list_N_matrices = [e^{-iH(T-dt)}]
     return U_full   
+# this will be for U(k, t)
+
+#%% here is a simple version can be applied to U_full_k as in 6 constant stages
+
+def U_full_descending(k_x, k_y, num_time_stages): # U_full =  U6 U5 U4 U3 U2 U1 as in U1 is from 0 to T/6
+
+# difference from discretisation func: H(t) sample take t in the midpoint of H const stage 
+    U_list_N_matrices = []
+    t_desicretisation= T /num_time_stages
+#    time_stage = num_time_stages
+    
+    for i in range (num_time_stages):
+        
+    
+        t_i = T - t_desicretisation * (i + 1/2) # from last one to first one
+    
+        H_i = H_matrix_2by2(k_x, k_y, t_i, a_0)
+#expm(-1j* H_i_test* delta_t_test)
+        
+        U_i = expm(-1j* H_i* (t_desicretisation)) # H_0 will be H (t = T-(T/6)*1/2), with is 6th stage
+        
+        U_list_N_matrices.append(U_i)
+        
+    U_full = reduce(np.matmul, U_list_N_matrices) # here adjoint the full time evolution 
+        # here U_list_N_matrices = [e^{-iH(T-dt)}]
+    return U_full 
 
 #%%
 #TEST : if U_full is unitary? 
-U_full_6TS =  U_full_discretisation(np.pi/2, np.pi/5, 6) # these kx, ky can be changed 
+U_full_6TS_wrong =  U_full_discretisation(np.pi/2, np.pi/5, 6) # these kx, ky can be changed 
+# shouldn't risk to use discretisation func to calculate the 6 const H partern, for that the start/end point of a pulse 
+# might be defined as 0 or Ja, uncertain
+
 #adjoint of U_full_6TS(U_adgga)
-U_full_6TS_adj = U_full_6TS.conj().T
-print("\nU† =", U_full_6TS_adj)
+U_full_6TS_wrong_adj = U_full_6TS_wrong.conj().T
+print("\nU† =", U_full_6TS_wrong_adj)
 # check if U is really 'unitary'
-check_unitariness = U_full_6TS @ U_full_6TS_adj
+check_unitariness = U_full_6TS_wrong @ U_full_6TS_wrong_adj
 print('unitary?', check_unitariness) # -- we should see this is always identity(U is indeed Unitary)
 #ANS： Yes. U_full (U(k, T)) is unitary
 #But:  It doesn't eqaul to identity at all; so due to RLBL article III-A, it needs to be modified 
@@ -277,64 +313,6 @@ def heff_from_U(U, T, epsilon, tol=1e-10):
 # INPUT will be: kx, ky, num of discritisation(for T/n = delta t, H(t) in expoential of U_n...U_1 is H( T/n * i)); subQ: can we introduce time vortex in bulk k space Hamiltonian? 
 #                                                                                                                        If we cannot, why? 
 
-def Calculate_Heff_from_Ufull (U_full_bulk, epsilon): 
-    
-    eigvals_Ufull, eigvecs_Ufull = np.linalg.eig(U_full_bulk) #this matrix is diagonalised; what is the order of eigenval arrangement on diagonal?
-    # confirm one to one correspondence (somehow? you can write a bit on paper) of the eigvals and eigvecs which compose V 
-    U_dia_full = np.diag(eigvals_Ufull) # the way we define eigval is same as how the eigvals returned from np.linalg.eig 
-    
-    V = eigvecs_Ufull # need to be checked that if they are natrually returned in columns 
-    
-    
-    # Assume V Heff V^-1 from log (with defined branch cut) (U_diag_full) for log with chosen branchcut; now is trying to write branch cut 'into' log
-    #branch cut only kicks in for how we extract Heff from U_diag -- next step is: How? 
-    
-    #Assume the log(matrix) is log(with branchcut) of each of the elements on diag
-    log_U_conv_branchcut =  - np.angle(U_dia_full) # np.angle doesn't return phi, but return minus phi (-phi); we return phi for fitting branchcut change
-    # if  - np.angle = phi_0 ( a specific )
-    # do it eigval-wise 
-    
-    phi_0_adjusted = []
-    for eigval_Ufull in eigvals_Ufull:
-        
-        phi = -np.angle(eigval_Ufull) # range: (-pi, pi]
-        #as 'the angle' in log function that defines the branch cut for the function(which shows together with minus sign in the function )
-#----------------- this is the old way, for only epsilon T larger then 0 (< pi)
-#        if phi < epsilon * T:     #this part is for phi in range(returned by np.angle) 0 to pi
-#            value = phi + 2 * np.pi
-
-#        else:                        #this part is for phi in range(returned by np.angle) -pi to 0
-#            if 0 < phi <= np.pi:
-#                value = phi
-#            elif -np.pi < phi < 0:
-#                value = phi + 2 * np.pi
-#            else:
-#                value = phi
-#------------------ this is the old way, for only epsilon T larger then 0 (< pi)  
-    # generally below:
-        if 0 <= phi <= np.pi:
-            phi_0 = phi
-        else:
-            phi_0 = phi + 2 * np.pi #phi_0 is from 0 to 2pi, including 0 but not 2pi 
-        
-        # here from this line, in the above indentation, will phi_0 keep going to the next if function and return appendable value ? 
-        if  epsilon* T > 0:
-            if phi_0 <= epsilon * T:
-                phi_0_adjusted.append(phi_0 + 2 * np.pi)
-            if phi_0 > epsilon * T :
-                phi_0_adjusted.append(phi_0)
-        elif epsilon * T <= 0:
-            if phi_0 >= epsilon * T + 2 * np.pi :
-                phi_0_adjusted.append(phi_0 - 2 * np.pi)
-            if phi_0 < epsilon * T + 2 * np.pi:
-                phi_0_adjusted.append(phi_0)
-    
-    phi_newbranch_array = np.array(phi_0_adjusted) # this array has same order with U_diag (as in the arg's corresponding elements, or saying: eigval)
-    # this is the branchcut
-    H_eff_diag = (1j * (np.diag(phi_newbranch_array)))/T
-    
-    H_eff = np.linalg.inv(V) * H_eff_diag * V  # but if something failed, can be checked later that if the matrix is reversable or contain zero det V
-    return H_eff
 
 #%% Rewrite the function above: 
 #   INPUT: U_full_bulk = U(k, T) epislon -- which is used to define the branchcut
@@ -352,7 +330,7 @@ def Heff_from_Ufull (U_full_bulk, epsilon): # U_full_bulk = U(k, T)
     #**VERIFICATION2**: U_diag = np.exp(1j*PHI_diag) instead of **elementwise** definition of phi_alpha = - PHI_alpha
 
     #Q: expm(1j*M) is matrix exponential -- how does it work diffrently from elementwise exp? 
-    PHI_alpha_array = np.digonal(PHI_dia) # branch range: (-pi, pi]
+    PHI_alpha_array = np.diagonal(PHI_dia) # branch range: (-pi, pi]
 
 
 
@@ -395,7 +373,7 @@ def Heff_from_Ufull (U_full_bulk, epsilon): # U_full_bulk = U(k, T)
     
     H_eff_dia = (1/ T) * np.diag(phi_alpha_array)
 
-    H_eff = np.linalg.inv(V)* H_eff_dia * V
+    H_eff = V @ H_eff_dia @ np.linalg.inv(V)
 
     return H_eff
 #VERIFICATION 2: within the code above 
@@ -403,6 +381,7 @@ def Heff_from_Ufull (U_full_bulk, epsilon): # U_full_bulk = U(k, T)
 #VERIFICATION 4: input a real matrix Phi to calculate Heff, see if there's any error.Also compare both function Heff_from_Ufull and Heff_from_Ufull 2 output
 #VERIFICATION 5: test if V is as what expected
 
+#%%
 def VERIFICATION2(U_full_bulk):
     
     eigvals_Ufull, eigvecs_Ufull = np.linalg.eig(U_full_bulk)  #Each eigval_alpha corresponding to each eigenvector |phi_alpha>
@@ -415,15 +394,20 @@ def VERIFICATION2(U_full_bulk):
     
     if np.allclose(expm(1j * PHI_diag), U_dia_full):
         
-        if np.allclose(expm(1j * phi_diag), U_dia_full):
+        if np.allclose(expm(-1j * phi_diag), U_dia_full):
             
-            print ('VERIFIED')
+         print ('VERIFIED')
         else:
             
             raise ValueError('error TEST2')
     
     else:
         raise ValueError('error TEST1')
+        
+    return 
+
+F = VERIFICATION2(U_full_descending((2*np.pi)/8, (2*np.pi)/8, 6))
+# VERIFICATION2: verified 
 
 #%%
 
@@ -438,7 +422,7 @@ def Heff_from_Ufull_2 (U_full_bulk, epsilon): # Heff_from_Ufull_2 has no PHI, on
     phi_dia = - np.angle(U_dia_full) #[-pi, pi)
     #take angle as an array maintian the order of alpha(s) perfectly
 
-    phi_alpha_array = np.digonal(phi_dia) # branch range: (-pi, pi]
+    phi_alpha_array = np.diagonal(phi_dia) # branch range: (-pi, pi]
     
     phi_modified_list = []
     
@@ -478,11 +462,72 @@ def Heff_from_Ufull_2 (U_full_bulk, epsilon): # Heff_from_Ufull_2 has no PHI, on
     
     H_eff_dia = (1/ T) * np.diag(np.array(phi_modified_list))
 
-    H_eff = np.linalg.inv(V)* H_eff_dia * V
+    H_eff = V @ H_eff_dia @ np.linalg.inv(V) # A *B is elementwise multiplication but not matrix multiplication 
 
     return H_eff
 
 #%%
+
+def Heff_from_kxky (k_x, k_y, num_time_stages, epsilon):
+    U_kxky = U_full_descending(k_x, k_y, num_time_stages)   # U(k, T)
+    Heff = Heff_from_Ufull (U_kxky, epsilon)
+    return Heff
+
+def Heff_from_kxky_2(k_x, k_y, num_time_stages, epsilon):
+    U_kxky = U_full_descending(k_x, k_y, num_time_stages)   # U(k, T)
+    Heff = Heff_from_Ufull_2 (U_kxky, epsilon)
+    return Heff
+
+# here for bulk as in infinite amount of sites, or infinite length of system, no edge, N --> inf; k_x, k_y spacing -->0
+
+def VERIFICATION_3(k_x, k_y, epsilon):
+    Heff_1 = Heff_from_kxky (k_x, k_y, 6, epsilon)
+    Heff_2 = Heff_from_kxky_2 (k_x, k_y, 6, epsilon)
+    
+    if np.allclose(Heff_1, Heff_2):
+
+         print ('VERIFIED')
+    else:
+            
+        raise ValueError('error TEST')
+        
+    return 
+
+#%% can be commented out
+Heff_test = Heff_from_kxky ((2*np.pi)/8, (2*np.pi)/7, 6, np.pi/2)
+
+U_full_test = U_full_descending((2*np.pi)/8, (2*np.pi)/7, 6)
+
+Heff_test_exp = expm(-1j * Heff_test * T)
+TEST1 = np.allclose(Heff_test_exp, U_full_test)
+print(TEST1)
+
+#%% can be commented out
+Heff_test_2 = Heff_from_kxky_2 ((2*np.pi)/8, (2*np.pi)/7, 6, np.pi/2)
+
+Heff_test_exp_2 = expm(-1j * Heff_test_2 * T)
+TEST2 = np.allclose(Heff_test_exp_2, U_full_test)
+print(TEST2)
+#%% can be commented out
+Heff_verify = VERIFICATION_3((2*np.pi)/8, (2*np.pi)/7, 0)
+    
+#%%
+eigvals_Ufull, eigvecs_Ufull = np.linalg.eig(U_full_test)  #Each eigval_alpha corresponding to each eigenvector |phi_alpha>
+    
+U_dia_full = np.diag(eigvals_Ufull) # diagonalised U, now each element on the diagonal is lamda_alpha = eigval_alpha corresponding to eigenvector |phi_alpha>
+    
+V = eigvecs_Ufull
+
+U_return = V @ U_dia_full @ np.linalg.inv(V) #wrong: U_diagonalised = V U V^-1; true:  A=VDV−1
+TEST3 = np.allclose(U_return, U_full_test)
+print(TEST3)
+
+#%%
+
+#equation 3 as in the definition of U(k, t)
+
+
+
 
 
 

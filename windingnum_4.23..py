@@ -629,7 +629,77 @@ print(U0_double_check) # checks out
 # how to do tr, how to do /dt or /dk for matrices;
 
 #%% 
+#for each kx, ky: compute U(k,t) for all t in [0,T]
 
+import sympy as sp
+
+# Variables
+x, y = sp.symbols('x y', real=True)
+
+# Matrix-valued function U(x,y)
+U = sp.Matrix([
+    [x**2, x*y],
+    [x*y, y**2]
+])
+
+print("U(x,y) =")
+sp.pprint(U)
+print()
+
+# Partial derivatives (entry by entry)
+dU_dx = U.diff(x)
+dU_dy = U.diff(y)
+
+print("∂U/∂x =")
+sp.pprint(dU_dx)
+print()
+
+print("∂U/∂y =")
+sp.pprint(dU_dy)
+print()
+
+# --------------------------------------------------
+# 1. Integrate the matrix itself over 0<=x<=1, 0<=y<=1
+# --------------------------------------------------
+U_int = U.applyfunc(lambda entry: sp.integrate(entry, (x, 0, 1), (y, 0, 1)))
+
+print("∫∫ U(x,y) dx dy over [0,1]x[0,1] =")
+sp.pprint(sp.simplify(U_int))
+print()
+
+# --------------------------------------------------
+# 2. Take trace first, then integrate
+# --------------------------------------------------
+tr_U = sp.trace(U)
+tr_U_int = sp.integrate(tr_U, (x, 0, 1), (y, 0, 1))
+
+print("Tr(U) =")
+sp.pprint(tr_U)
+print()
+
+print("∫∫ Tr(U) dx dy over [0,1]x[0,1] =")
+sp.pprint(sp.simplify(tr_U_int))
+print()
+
+# --------------------------------------------------
+# 3. Toy example closer to the paper:
+#    I = ∫∫ Tr[(∂U/∂x)(∂U/∂y)] dx dy
+# --------------------------------------------------
+integrand_matrix = dU_dx * dU_dy
+integrand_trace = sp.trace(integrand_matrix)
+I = sp.integrate(integrand_trace, (x, 0, 1), (y, 0, 1))
+
+print("(∂U/∂x)(∂U/∂y) =")
+sp.pprint(sp.expand(integrand_matrix))
+print()
+
+print("Tr[(∂U/∂x)(∂U/∂y)] =")
+sp.pprint(sp.expand(integrand_trace))
+print()
+
+print("I = ∫∫ Tr[(∂U/∂x)(∂U/∂y)] dx dy over [0,1]x[0,1] =")
+sp.pprint(sp.simplify(I))
+print()
 
 
 

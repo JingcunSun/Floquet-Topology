@@ -1,4 +1,3 @@
-0
 
 # few general summary of the codes for my CV
 # all these codes are working with the Hamiltonian as well as eigen vectors, eigen values of it.
@@ -1189,6 +1188,13 @@ def H2NyNx_PBC_version2(N_y, N_x, t, a_0):
     
 H_test_version2 = H2NyNx_PBC_version2(10, 15, T/12, a_0)
 
+#%%
+# test meaning: H[i, j] = which is row and which is column result: i is row, j is column 
+H = np.array([[1,2], [3, 4]])
+
+print(H[0,0], H[1, 0] )
+D = (-6) % 7
+print( D)
 #%%
 Dog = 16
 Dog_dong = (Dog % 5)

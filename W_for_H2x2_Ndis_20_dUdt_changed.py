@@ -767,6 +767,7 @@ def Tr_integrated (kx, ky, t, N_dis, epsilon, verbose = True):    # N_dis and ep
 
 #   which is one var ; multiple var:
     dU_dt = matrix_partial_dt(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
+    # here this is still unchanged 
     dU_dkx = matrix_partial_dkx(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
     dU_dky  = matrix_partial_dky(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
 
@@ -795,8 +796,28 @@ def Tr_integrated_real (kx, ky, t, N_dis, epsilon, verbose = True):    # N_dis a
     U_inverse  = np.linalg.inv(U)
 
 
+
 #   which is one var ; multiple var:
-    dU_dt = matrix_partial_dt(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
+    #dU_dt = matrix_partial_dt(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
+    #--------------below defined a func of dU/dt in more symbolic way ----------------------
+    #**if any problem occured, this dU/dt below can be DOUBLE CHECK FOR:
+        
+    #1. t = T/2, t = 0 and t = T, for both U_epsilon def1
+                                #and  U_epsilon def 2
+    #2. if and elif logic 
+    
+    U_full_for_Heff = U_full_discretisation(kx, ky, num_time_stages = 6)
+    # this is for the condition t> T/2, goes to second definition 
+    if 0<= t <= T/2:
+        
+        dU_dt = -2j * H_matrix_2by2(kx, ky, 2*t, a_0) @ U
+        
+    elif T/2 <= t <= T:
+        
+        Heff_for_div = Heff_from_Ufull_2(U_full_for_Heff, epsilon)
+        dU_dt = -1j * Heff_for_div @ U  * (-2)   
+                                                                          
+   #--------------below defined a func of dU/dt in more symbolic way ----------------------
     dU_dkx = matrix_partial_dkx(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
     dU_dky  = matrix_partial_dky(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
 

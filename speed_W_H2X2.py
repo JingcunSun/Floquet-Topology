@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Mar 15 23:35:31 2026
+Created on Mon Apr 27 20:29:49 2026
 
 @author: DELL
 """
+
 
 import numpy as np
 #import sympy as sp
@@ -583,7 +584,8 @@ print(TEST3)
 # only with H(2x2) for kx, ky, without time vor
 # -- otherwise : H_i = H2NyNx_xyOBC_time_vor_core (N_x, N_y, t_i, a_0, x_0, y_0) instead of H_matrix_2by2
 
-def U_epsilon_H2by2 (kx, ky, t, N_dis, epsilon): # N_dis stand for time discretisation we choose to calculate U(k,t) here 
+
+def U_epsilon_H2by2_allt (kx, ky, t, N_dis, epsilon): # N_dis stand for time discretisation we choose to calculate U(k,t) here 
                                  #only_bulk_U_involved will be =True or = False
                                  #Physically 'only_bulk_U_involved' means no time vortices 
 
@@ -597,7 +599,7 @@ def U_epsilon_H2by2 (kx, ky, t, N_dis, epsilon): # N_dis stand for time discreti
         
         t_epsilon = 2 * t
     # alternative way record(little notebook p79): we can just not call any U function before, but classify t_epsilon into 6 stages, for each stage we have a certain parttern of 
-        U_epsilon =  U_t_discretization(kx, ky, N_dis, t_epsilon)
+        U_epsilon =  U_t_discretization(kx, ky, N_dis, t_epsilon) #here the discretization of time is done only in the first half 
                                        # here was set as 6 in the could we send to Mimi intially, wrong!
                     #U_t_discretization(k_x, k_y, num_time_stages, t) - these are meaning of variables 
        #U_e (k, t) = U(k, 2t) = U_latest......U_earliest which should be calculated in numerical(infinitesimal) pieces
@@ -617,297 +619,209 @@ def U_epsilon_H2by2 (kx, ky, t, N_dis, epsilon): # N_dis stand for time discreti
         raise ValueError(f"No condition matched for U(k_vec, t) with time  = {t}")
     return U_epsilon  
 
-# t >T/2 can be considered as diagonalised matrix, if use diagonalised H_eff_epsilon (?)
-# t< T/2 has depends on U_t_discretization = U_N-1 ... U_0
-# if U_n = diagonalised? H_n = H(2x2), check on eqn (28) NO **
-
-
-        # U = e ^-i *Heff*t
-        # Q: which e, expm or e elementwise we should use? 
-        # Ans: expm. expm doesn't equal to e - elementwise for non-diagonalised matrices
-        # Heff calculated in eqn(9) is not necessarily diagonalised. 
-        #We only used the diagonal elements to set branch cut, will log is used elementwised
-        # ** for function of operatorsf(A), power series is f(A) = I+A+2!A2​+3!A3​+; 
-        #U(T) = e ^-i Heff T os f(Heff), Heff = scalar * log (U(T)) = function of U, but practically we used U_diagonal to calculate then transfer back to not diagonal matrix 
-        # For that epsilon_alpha is set to be Heff's eigenval on each phi_alpha with the branchcut definition
-        # ( that's how we 'design' Heff)
-# equation 8 finished 
-#How to refer the function above: 
-#print( U_test_language(only_bulk_U_involved=True))
-#print( U_test_language(only_bulk_U_involved=False))
-#%% calculate integeral - Q: what U we will input in integral?  Ans: W[U_epsilon]
-# Therefore, the number of edge modes of U at quasienergy " must be the same as 
-#the number of edge modes of U" at quasienergy =T. The latter quantity is then given by W[U_epsilon] 
-# double check about U(0) and U(T) for any k = identity? 
-# theoretically 1. 'The first property is that U_epsilon has a trivial Floquet operator:** U(T) = I** all k'
-#               2. Does U(0) = U(T)? yes for U_espilon, no for U original; U_epsilon (0) = U(0,0) = I
-UT_test_I = U_epsilon_H2by2 (np.pi*2, np.pi/3, T, 50, np.pi/15) #only_bulk_U_involved=True
-print(UT_test_I)
-#U0_double_check = U_epsilon(np.pi*2, np.pi/3, 0, 50, np.pi/15, only_bulk_U_involved=True)
-#print(U0_double_check) # checks out
-
-# how to do tr, how to do /dt or /dk for matrices;
-
-#%% 
-def f(x, t, omega = 2.6):
-    return(t * np.sin(x + t * omega))
-
-# Here is an example of how to integrate f w.r.t t at x = -1.0
-
-res = spint.quad(lambda t : f(-1.0, t), 0.0, 1.0)
-print(res)
-
 
 #%%
-#function needed when calculate integral, **'integral function'
-def quad3d(func, a, b, args = (), epsabs = 1.49e-8):
-    # calculates the 3d quad integral of func(x, y, z), where
-    # a = (x_min, y_min, z_min), b = (x_max, y_max, z_max)
-    
-    # args is a tuple of all the remaining arguments of func
-    
-    # Returns value and numerical error
-    
-    x_min, y_min, z_min = a
-    x_max, y_max, z_max = b
-    
-    if not isinstance(args, tuple):
-        # A single argument. We wrap it into a tuple
-        args = (args,)
-    
-    return(spint.tplquad(func, z_min, z_max, y_min, y_max, x_min, x_max, args, epsabs))
+def H_epsilon_H2by2_first (kx, ky, t, epsilon): 
+    # this doesn't produce U, but only produce H(t_[some index])
+    # e^H(t_[some index])*delta_t will be followed, time discretization will depend on index but not how t is input here
+    #Note: here we don't sample t 
 
-def wassup(x, y, z, lol, lmao):
-    return(x+lol*y+lmao*z)
-
-print(quad3d(wassup, (0,0,0), (1,1,1), (2, -3)))
-
-#%%
-# Example so you see how it works
-
-def f3d(t, x, y, omega):
-    return(x * np.sin(y + omega * t))
-
-# We will integrate for t = (-1.0, 1.0), x = (0.0, 1.0), y = (5.0, 10.0), with omega = 3.0
-
-res, err = quad3d(f3d, (-1.0, 0.0, 5.0), (1.0, 1.0, 10.0), (3.0))
-#                       lb t x y          ub t x y 
-print(f"Integral is {res:0.5f} pm {err}")
-
-#%%
-def matrix_derivative(M, t, dt = 1e-6):
-    return((M(t + dt) - M(t - dt)) / (2 * dt))
-
-#matrix derivative: 
-    
-def lol(t):
-    return(np.array([
-            [np.cos(t), -np.sin(t)],
-            [np.sin(t), np.cos(t)]
-        ]))
-
-print(matrix_derivative(lol, 0))
-
-
-#%%
-# construct the thing inside integral 
-# N_dis is just as t_smapling in fig 5ab prodece, = 50
- 
-def Tr_integrated_MOCK(kx, ky, t, N_dis, epsilon):    # only_bulk_U_involved = True -- this will be encoded in U 
-    
-    Mock_m = np.array([[kx, ky],[N_dis * kx, epsilon* ky ]])
-    Mock_trace  = np.trace(Mock_m)
-    return Mock_trace 
-
-#BZ range coherent with before: (k_x_TEST = generate_k_x_list(0, 2*np.pi, N_x_TEST))
-# as the func in RLBL article: against /  t=0, T /kx = 0, 2pi  / ky = 0, 2pi Tr(...) dt dkx dky
-W_res, W_err = quad3d(Tr_integrated_MOCK, ( 0.0, 0.0, 0.0), (2*np.pi, 2*np.pi, 1), (50, np.pi))  # here epsilon = pi
-#                      func           lb  x y t         ub x y t
-print(f"Integral is {res:0.5f} pm {err}")
-
-#Q : _quad
-#    return _quadpack._qagse(func,a,b,args,full_output,epsabs,epsrel,limit)
-
-#TypeError: only size-1 arrays can be converted to Python scalars
-#%% Write out Trace func within: 
-def matrix_partial_dt(M, kx, ky, t, N_dis, epsilon, dt = 1e-6): # after M and before dt are just arg of M
-                                                        # U = U_epsilon_H2by2 (kx, ky, t, N_dis, epsilon) 
-                                                        # for example partial against t: kx, ky, N_dis, epsilon are fixed
-    dM_dt = ((M(kx, ky,t + dt , N_dis, epsilon) - M( kx, ky,  t - dt, N_dis, epsilon)) / (2 * dt))
-    # at kx, ky, t, N_dis, epsilon 
-    return dM_dt
-
-def matrix_partial_dkx(M, kx, ky, t, N_dis, epsilon, dkx = 1e-6): # after M and before dt are just arg of M
-                                                        # U = U_epsilon_H2by2 (kx, ky, t, N_dis, epsilon) 
-                                                        # for example partial against t: kx, ky, N_dis, epsilon are fixed
-    dM_dkx = ((M( kx + dkx, ky, t, N_dis, epsilon) - M( kx - dkx, ky, t,  N_dis, epsilon)) / (2 * dkx))
-    # at kx, ky, t, N_dis, epsilon 
-    return dM_dkx
-
-
-def matrix_partial_dky(M, kx, ky, t, N_dis, epsilon, dky = 1e-6): # after M and before dt are just arg of M
-                                                        # U = U_epsilon_H2by2 (kx, ky, t, N_dis, epsilon) 
-                                                        # for example partial against t: kx, ky, N_dis, epsilon are fixed
-    dM_dky = ((M(kx, ky +dky, t, N_dis, epsilon) - M(kx , ky - dky, t,  N_dis, epsilon)) / (2 * dky))
-    # at kx, ky, t, N_dis, epsilon 
-    return dM_dky
-    # this returns dM/dt at t, but also kept kx, ky, N_dis, epsilon as specific input     
-
-# this returns dM/dt at t, but also kept kx, ky, N_dis, epsilon as specific input 
-
-a = 0
-
-def Tr_integrated (kx, ky, t, N_dis, epsilon, verbose = True):    # N_dis and epsilon will be fixed like rhat in mock
-                                                  # only kx, ky, t are what intergated against
-    global a
-
-    U = U_epsilon_H2by2 (kx, ky, t, N_dis, epsilon)
-    U_inverse  = np.linalg.inv(U)
-
-
-#   which is one var ; multiple var:
-    dU_dt = matrix_partial_dt(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
-    # here this is still unchanged 
-    dU_dkx = matrix_partial_dkx(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
-    dU_dky  = matrix_partial_dky(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
-
-    part_1  = U_inverse @  dU_dt
-    part_comm_1 =  U_inverse @  dU_dkx
-    part_comm_2 =  U_inverse @  dU_dky
-    comm =  part_comm_1 @ part_comm_2 -  part_comm_2 @ part_comm_1
-    Trace  = np.trace(part_1 @ comm)
-    # aim for now: 5:45 : adapt matrix div func to be partial div
-    # anyway finish this script of the trace func which is integrated against
-    # mock func
-
-    if verbose:
-        print(f"Function called for the {a}-th time ({kx:0.5f} {ky:0.5f} {t:0.5f})", end = "\r")
-        a += 1
-
-    return Trace
-
-a_r = 0
-
-def Tr_integrated_real (kx, ky, t, N_dis, epsilon, verbose = True):    # N_dis and epsilon will be fixed like rhat in mock
-                                                  # only kx, ky, t are what intergated against
-    global a_r
-
-    U = U_epsilon_H2by2 (kx, ky, t, N_dis, epsilon)
-    U_inverse  = np.linalg.inv(U)
-
-
-
-#   which is one var ; multiple var:
-    #dU_dt = matrix_partial_dt(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
-    #--------------below defined a func of dU/dt in more symbolic way ----------------------
-    #**if any problem occured, this dU/dt below can be DOUBLE CHECK FOR:
         
-    #1. t = T/2, t = 0 and t = T, for both U_epsilon def1
-                                #and  U_epsilon def 2
-    #2. if and elif logic 
+    t_epsilon = 2 * t
+    H_22_kxkyt =  H_matrix_2by2(kx, ky, t, a_0)
+       
+    return H_22_kxkyt
     
+def U_epsilon_H2by2_second (kx, ky, t, epsilon):
+       
     U_full_for_Heff = U_full_discretisation(kx, ky, num_time_stages = 6)
-    # this is for the condition t> T/2, goes to second definition 
-    if 0<= t <= T/2:
+    t_epsilon = 2 *T - 2 * t # 2nd def
         
-        dU_dt = -2j * H_matrix_2by2(kx, ky, 2*t, a_0) @ U
-        
-    elif T/2 <= t <= T:
-        
-        Heff_for_div = Heff_from_Ufull_2(U_full_for_Heff, epsilon)
-        dU_dt = -1j * Heff_for_div @ U  * (-2)   
-                                                                          
-   #--------------below defined a func of dU/dt in more symbolic way ----------------------
-    dU_dkx = matrix_partial_dkx(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
-    dU_dky  = matrix_partial_dky(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
+    H_eff_epsilon = Heff_from_Ufull_2(U_full_for_Heff, epsilon) 
+    U_epsilon =  expm(-1j* H_eff_epsilon * t_epsilon ) # H_eff_epsilon refer to above, t_epsilon as 2nd def
 
-    part_1  = U_inverse @  dU_dt
-    part_comm_1 =  U_inverse @  dU_dkx
-    part_comm_2 =  U_inverse @  dU_dky
-    comm =  part_comm_1 @ part_comm_2 -  part_comm_2 @ part_comm_1
-    Trace  = np.trace(part_1 @ comm)
-    # aim for now: 5:45 : adapt matrix div func to be partial div
-    # anyway finish this script of the trace func which is integrated against
-    # mock func
-
-    if verbose:
-        print(f"Function called for the {a_r}-th time ({kx:0.5f} {ky:0.5f} {t:0.5f})", end = "\r")
-        a_r += 1
-
-    return Trace.real
-
-a_i = 0
-
-def Tr_integrated_imag (kx, ky, t, N_dis, epsilon, verbose = True):    # N_dis and epsilon will be fixed like rhat in mock
-                                                  # only kx, ky, t are what intergated against
-    global a_i
-
-    U = U_epsilon_H2by2 (kx, ky, t, N_dis, epsilon)
-    U_inverse  = np.linalg.inv(U)
+    return U_epsilon  
 
 
-#   which is one var ; multiple var:
-    #dU_dt = matrix_partial_dt(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
-    #--------------below defined a func of dU/dt in more symbolic way ----------------------
-    #**if any problem occured, this dU/dt below can be DOUBLE CHECK FOR:
-        
-    #1. t = T/2, t = 0 and t = T, for both U_epsilon def1
-                                #and  U_epsilon def 2
-    #2. if and elif logic 
+#%% Enumerate-grid version of W[U_epsilon]
+
+
+def winding_number_enumerate(n_kx, n_ky, n_t, epsilon): # N_dis=20
+
+    #Variables:
+     #   axis 0 -> kx
+     #   axis 1 -> ky
+    #    axis 2 -> t
+
+    CONST = (8 * np.pi**2)
+    # Use endpoint=False to avoid double-counting 0 and 2pi, or 0 and T.
+    kx_list = np.linspace(0, 2*np.pi, n_kx, endpoint=True) #kx_list = np.linspace(0, 2*np.pi, n_kx, endpoint=True)
+    ky_list = np.linspace(0, 2*np.pi, n_ky, endpoint=True)
     
-    U_full_for_Heff = U_full_discretisation(kx, ky, num_time_stages = 6)
-    # this is for the condition t> T/2, goes to second definition 
-    if 0<= t <= T/2:
-        
-        dU_dt = -2j * H_matrix_2by2(kx, ky, 2*t, a_0) @ U
-        
-    elif T/2 <= t <= T:
-        
-        Heff_for_div = Heff_from_Ufull_2(U_full_for_Heff, epsilon)
-        dU_dt = -1j * Heff_for_div @ U  * (-2)   
-                                                                          
-   #--------------below defined a func of dU/dt in more symbolic way ----------------------
-    dU_dkx = matrix_partial_dkx(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
-    dU_dky  = matrix_partial_dky(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
-
-    part_1  = U_inverse @  dU_dt
-    part_comm_1 =  U_inverse @  dU_dkx
-    part_comm_2 =  U_inverse @  dU_dky
-    comm =  part_comm_1 @ part_comm_2 -  part_comm_2 @ part_comm_1
-    Trace  = np.trace(part_1 @ comm)
-    # aim for now: 5:45 : adapt matrix div func to be partial div
-    # anyway finish this script of the trace func which is integrated against
-    # mock func
-
-    if verbose:
-        print(f"Function called for the {a_i}-th time ({kx:0.5f} {ky:0.5f} {t:0.5f})", end = "\r")
-        a_i += 1
-
-    return Trace.imag
-
-
-#def Tr_integrated_MOCK(kx, ky, t, N_dis, epsilon):    # only_bulk_U_involved = True -- this will be encoded in U 
+    times_first_half   = np.linspace(0, T/2, (n_t +1)//2,  endpoint=True) # here only the first half time has discretization t
+    times_second_half = np.linspace(T/2, T, (n_t +1 )//2,  endpoint=True) # from the first point (small t)
+                                              # later to check if endpoint should be true                         # to the second point (large t)
+                                              # and if the n_t should be +1 
+    # example: n_t = 20, take np.linspace(0, T/2=10)                                                           
+    #[0. ,..., 9] endpoint fail, 10 points in total ; spacing 1, spacing = n_t/2, for each space always sample left point
+    # For each time half, spacing = (T/2) / (n_t/2) = T/n_t
     
-#    Mock_m = np.array([[kx, ky],[N_dis * kx, epsilon* ky ]])
-#    Mock_trace  = np.trace(Mock_m)
-#    return Mock_trace 
+    
+    
+    dkx = kx_list[1] - kx_list[0]
+    dky = ky_list[1] - ky_list[0]
+    dt  = times_first_half[1] - times_first_half[0] # no need to calculate second, for all these are same 
 
-W_res_real, W_err_real = quad3d(Tr_integrated_real, ( 0.0, 0.0, 0.0), (2*np.pi, 2*np.pi, 1), (20, np.pi), epsabs = 1e-2)  # here epsilon = pi
-print("\n")
-W_res_imag, W_err_imag = quad3d(Tr_integrated_imag, ( 0.0, 0.0, 0.0), (2*np.pi, 2*np.pi, 1), (20, np.pi), epsabs = 1e-2)  # here epsilon = pi
-print("\n")
-#                      func           lb t x y          ub t x y
-print(f"Integral is {W_res_real} + i . {W_res_imag}")
-print(f"   with err {W_err_real} + i . {W_err_imag}")
-# Q: can we skip the non-digonal matrix U somehow? Heff has a linear version
-# cannot; For that from beginning H2x2 isn't digonal matrix 
+    # All storages place ** IMPORTANT
+    H_1 = np.zeros((len(kx_list), len(ky_list), len(times_first_half), 2, 2), dtype=np.complex128)
+   # expH_piece_store = np.zeros((len(kx_list), len(ky_list), len(times_first_half), 2, 2), dtype=np.complex128)
+    u_1 = np.zeros((len(kx_list), len(ky_list), len(times_first_half), 2, 2), dtype=np.complex128) # first half
+    
+    u_2 = np.zeros((len(kx_list), len(ky_list), len(times_second_half), 2, 2), dtype=np.complex128)
+    # This is the same enumerate idea:
+    # i is the array index; kx is the physical value.
 
-# Q: do we need sympy to calculate the divU? The point is that each U_epsilon_H2by2 (kx, ky, t, N_dis, epsilon) 
-# will call the U_t_discretization which slices U into U_0 ... U_(N-1)
-# is numerical and too complicated to be div (as a series of multiplication of e^)
-# Ans: We do U_div numerically, not symbolically 
+# reference code used np.gradient, after first storing all the unitary matrices in one big array u
+#--------------- here is to store each of the matrix in corresponding kx, ky, t grid -------------------
+    # fill in All storages 
+    
+    for i, kx in enumerate(kx_list):
+        print(f"Building U grid: kx index {i+1}/{len(kx_list)}")
+        
+        for j, ky in enumerate(ky_list):
+            
+            H_midpoint_0_to_halfT_list = []
+            expH_piece_list = []
+            
+          #  U_t_list_from_0_to_halfT = [np.array([[1,0], [0,1]])] # help me double check if this is identity matrix
+            U_current  = np.eye(2, dtype=np.complex128)
+            
+            
+            for m, times1 in enumerate(times_first_half): # m from 0, corresponding t from small(0) to large(T/2)
+                
+                # **m is from 0**
+                #in array time_first_half extract from 0, which is left(smaller)
+                # point at each time grid 
+                                                                 # here is tau = 2t 
+                H_midpoint_time1_m = H_epsilon_H2by2_first(kx, ky, 2*times1, epsilon) # **Calculate 
+                cur_exp = expm(-1j  *H_midpoint_time1_m * (2*(T/n_t))) # **Cal-exp, this is one exp for specific H with midpoint t
+                # cur is firstly from H(t), hence same order form 0 to Thalf, or saying m=0 to m=mmax
+                #each time t increase Delta_t = T/n_t -- this is by the natural of np.linspace, our choice way to divide grids 
+                # U(t, 0) --> U(t+2t, 0)
+                #H_mid_0_to_half_list.append(H_1_midpoint_from_0)
+              #  expH_piece_list_from_0_to_halfT.append(cur_exp) # can be deleted 
+                
+               # U_t_list_from_0_to_halfT.append(cur_exp @ U_t_list_from_0_to_halfT[-1]) #crucial step 
+                #test needed U(t) = U(t, t-delta)....U(1)
+                
+                
+                H_1[i, j, m, :, :] = H_midpoint_time1_m  # storage for H done
+                
+                U_current = cur_exp @ U_current # renewed cucial step 
+                u_1[i, j, m, :, :] = U_current  # storage for U done 
+                # here H(t) take midpoint for each 
+                # U(t) also needed to be from t=0 to t=half T, otherwise the sum in integral will be not from 0 to T 
+           
+                # note : order of appending: for i in range (4) --- i order 0,1,2,3
+                                                 # append in each loop --  append list order[0,1,2,3]
+                #expH_piece_store[i, j, m, :, :] = H_epsilon_H2by2_first(kx, ky, times_first_half, expH_piece_list)
+
+
+#---------------first half u storage done, all in u_1   
+         
+    for i, kx in enumerate(kx_list):
+        print(f"Building U grid: kx index {i+1}/{len(kx_list)}")
+        
+        for j, ky in enumerate(ky_list):
+            
+          #  H_midpoint_0_to_halfT_list = []
+          #  expH_piece_list = []
+            
+          #  U_t_list_from_0_to_halfT = [np.array([[1,0], [0,1]])] # help me double check if this is identity matrix
+          #  U_current  = np.eye(2, dtype=np.complex128)
+            U_full_for_Heff = U_full_discretisation(kx, ky, num_time_stages = 6)
+            H_eff_epsilon = Heff_from_Ufull_2(U_full_for_Heff, epsilon)
+            
+            for m, times2 in enumerate(times_second_half):               
+            # fill in u_2 = np.zeros((len(kx_list), len(ky_list), len(times_second_half), 2, 2), dtype=np.complex128)
+                t_epsilon2 = 2 *T - 2 * times2
+                    
+                u_2[i, j, m, :, :] = expm(-1j * H_eff_epsilon * t_epsilon2 ) # H_eff_epsilon refer to above, t_epsilon as 2nd def
+
+                  
+#----------------------------
+    
+
+#   what's wrong with U entirely? '
+    # U^{-1}
+    u_inv_1 = np.linalg.inv(u_1)
+    # Derivatives of U on the grid.
+    # These replace your matrix_partial_dkx, matrix_partial_dky, matrix_partial_dt.
+    u_inv_du_dkx = np.matmul(u_inv_1, np.gradient(u_1, axis=0))
+    u_inv_du_dky = np.matmul(u_inv_1, np.gradient(u_1, axis=1))
+    #----------adapted line --------------------
+   # u_inv_du_dt_ori = np.matmul(u_inv_1, np.gradient(u_1, axis=2)) #U1-U2 along t U[m+1]−U[m-1]/2 in big matrix u_1 storage  
+    # alternatively, change du_dt = np.gradient(u_1, axis=2) to H @ U
+
+
+    integrand = np.zeros((len(kx_list), len(ky_list), len(times_first_half)), dtype=np.complex128)
+    integrand_2 = np.zeros((len(kx_list), len(ky_list), len(times_first_half)), dtype=np.complex128)
+    # calculate sume for first half 
+    for i, kx in enumerate(kx_list):
+        print(f"Integrand sum: kx index {i+1}/{len(kx_list)}")
+        for j, ky in enumerate(ky_list):
+            for m, time in enumerate(times_first_half):
+                
+                comm = (u_inv_du_dkx[i, j, m] @ u_inv_du_dky[i, j, m]- u_inv_du_dky[i, j, m] @ u_inv_du_dkx[i, j, m])
+                 
+                u_inv_du_dt = np.matmul(u_inv_1[i, j, m], -1j* H_1[i, j, m]@u_1[i, j, m]*2)
+                                                              # here H_1 is calculated from t[m=0] to t[m = max]
+                                                              
+                                                              # 
+                integrand[i, j, m] = np.trace(u_inv_du_dt @ comm)
+
+    # Numerical integral over dkx dky dt.
+    W_raw_1 = np.sum(inand1 := integrand)
+
+
+    # Conventional Rudner winding-number prefactor.
+    # If your convention differs, change this prefactor.
+    u_inv_2 = np.linalg.inv(u_2)
+    # Derivatives of U on the grid.
+    # These replace your matrix_partial_dkx, matrix_partial_dky, matrix_partial_dt.
+    u_inv_du_dkx_2 = np.matmul(u_inv_2, np.gradient(u_2, axis=0))
+    u_inv_du_dky_2= np.matmul(u_inv_2, np.gradient(u_2, axis=1))
+    u_inv_du_dt_2 = np.matmul(u_inv_2, np.gradient(u_2, axis=2))
+   # calculate sum for second half 
+    for i, kx in enumerate(kx_list):
+        print(f"Integrand sum: kx index {i+1}/{len(kx_list)}")
+        for j, ky in enumerate(ky_list):
+            for m, time2 in enumerate(times_second_half):
+                
+                comm_2 = (u_inv_du_dkx_2[i, j, m] @ u_inv_du_dky_2[i, j, m]- u_inv_du_dky_2[i, j, m] @ u_inv_du_dkx_2[i, j, m])
+                                                              
+                integrand_2[i, j, m] = np.trace(u_inv_du_dt_2[i, j, m] @ comm_2)  
+                 
+    W_raw_2 = np.sum(inand2 := integrand_2)
+    
+    W = (1/CONST) * (W_raw_1+ W_raw_2)
+
+    print("\nRaw integral1 =", W_raw_1)
+    print("\nRaw integral2 =", W_raw_2)
+    print("W =", W)
+    print("W.real =", W.real)
+    print("W.imag =", W.imag)
+
+    return W, u_1, u_2, integrand,  integrand_2
+
+
+# Example run:
+W_enum, u_grid_firsthalf, u_grid_secondhalf, integrand_grid_1,  integrand_grid_2= winding_number_enumerate( n_kx=40, n_ky =40, n_t=40, epsilon=np.pi)
+# does the number of k is as same as unit cell's number? 
 
 #%% instead of using quad3d, use loops to evaluate:
-    
+# not only t will be change, all kx, ky, t will be changed. 
 
+times_first_half   = np.linspace(0, T/2, (21 +1 )//2, endpoint=False) # N_dis 20
+print(times_first_half)
 

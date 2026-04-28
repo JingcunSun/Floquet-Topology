@@ -52,7 +52,7 @@ t_z = T * (2/3)
     
 delta_t = T/2
 
-J_a = 2* ((0.9 * np.pi ))/ ((T * 0.5) * 4) #  2* ((0.9 * np.pi ))/ ((T * 0.5) * 4)-- this is 2x the value in paper 
+J_a = 2* ((0.9 * np.pi ))/ ((T * 0.5) * 4)#  2* ((0.9 * np.pi ))/ ((T * 0.5) * 4)-- this is 2x the value in paper 
 
                                        # Q: Can I vary this J_a to perform perturb on Hamiltonian?
                                        # Ans: I don't think so. I think this might work: 1.change the pulse amplitude by 1%
@@ -907,7 +907,6 @@ print(f"   with err {W_err_real} + i . {W_err_imag}")
 # is numerical and too complicated to be div (as a series of multiplication of e^)
 # Ans: We do U_div numerically, not symbolically 
 
-#%% instead of using quad3d, use loops to evaluate:
-    
+
 
 

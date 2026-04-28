@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Mar 15 23:35:31 2026
+Created on Mon Apr 27 20:29:49 2026
 
 @author: DELL
 """
+
 
 import numpy as np
 #import sympy as sp
@@ -641,101 +642,14 @@ def U_epsilon_H2by2 (kx, ky, t, N_dis, epsilon): # N_dis stand for time discreti
 # double check about U(0) and U(T) for any k = identity? 
 # theoretically 1. 'The first property is that U_epsilon has a trivial Floquet operator:** U(T) = I** all k'
 #               2. Does U(0) = U(T)? yes for U_espilon, no for U original; U_epsilon (0) = U(0,0) = I
+#Function get evaluated : 
+    
 UT_test_I = U_epsilon_H2by2 (np.pi*2, np.pi/3, T, 50, np.pi/15) #only_bulk_U_involved=True
 print(UT_test_I)
 #U0_double_check = U_epsilon(np.pi*2, np.pi/3, 0, 50, np.pi/15, only_bulk_U_involved=True)
 #print(U0_double_check) # checks out
 
 # how to do tr, how to do /dt or /dk for matrices;
-
-#%% 
-def f(x, t, omega = 2.6):
-    return(t * np.sin(x + t * omega))
-
-# Here is an example of how to integrate f w.r.t t at x = -1.0
-
-res = spint.quad(lambda t : f(-1.0, t), 0.0, 1.0)
-print(res)
-
-
-#%%
-#function needed when calculate integral, **'integral function'
-def quad3d(func, a, b, args = (), epsabs = 1.49e-8):
-    # calculates the 3d quad integral of func(x, y, z), where
-    # a = (x_min, y_min, z_min), b = (x_max, y_max, z_max)
-    
-    # args is a tuple of all the remaining arguments of func
-    
-    # Returns value and numerical error
-    
-    x_min, y_min, z_min = a
-    x_max, y_max, z_max = b
-    
-    if not isinstance(args, tuple):
-        # A single argument. We wrap it into a tuple
-        args = (args,)
-    
-    return(spint.tplquad(func, z_min, z_max, y_min, y_max, x_min, x_max, args, epsabs))
-
-def wassup(x, y, z, lol, lmao):
-    return(x+lol*y+lmao*z)
-
-print(quad3d(wassup, (0,0,0), (1,1,1), (2, -3)))
-
-#%%
-# Example so you see how it works
-
-def f3d(t, x, y, omega):
-    return(x * np.sin(y + omega * t))
-
-# We will integrate for t = (-1.0, 1.0), x = (0.0, 1.0), y = (5.0, 10.0), with omega = 3.0
-
-res, err = quad3d(f3d, (-1.0, 0.0, 5.0), (1.0, 1.0, 10.0), (3.0))
-#                       lb t x y          ub t x y 
-print(f"Integral is {res:0.5f} pm {err}")
-
-#%%
-def matrix_derivative(M, t, dt = 1e-6):
-    return((M(t + dt) - M(t - dt)) / (2 * dt))
-
-#matrix derivative: 
-    
-def lol(t):
-    return(np.array([
-            [np.cos(t), -np.sin(t)],
-            [np.sin(t), np.cos(t)]
-        ]))
-
-print(matrix_derivative(lol, 0))
-
-
-#%%
-# construct the thing inside integral 
-# N_dis is just as t_smapling in fig 5ab prodece, = 50
- 
-def Tr_integrated_MOCK(kx, ky, t, N_dis, epsilon):    # only_bulk_U_involved = True -- this will be encoded in U 
-    
-    Mock_m = np.array([[kx, ky],[N_dis * kx, epsilon* ky ]])
-    Mock_trace  = np.trace(Mock_m)
-    return Mock_trace 
-
-#BZ range coherent with before: (k_x_TEST = generate_k_x_list(0, 2*np.pi, N_x_TEST))
-# as the func in RLBL article: against /  t=0, T /kx = 0, 2pi  / ky = 0, 2pi Tr(...) dt dkx dky
-W_res, W_err = quad3d(Tr_integrated_MOCK, ( 0.0, 0.0, 0.0), (2*np.pi, 2*np.pi, 1), (50, np.pi))  # here epsilon = pi
-#                      func           lb  x y t         ub x y t
-print(f"Integral is {res:0.5f} pm {err}")
-
-#Q : _quad
-#    return _quadpack._qagse(func,a,b,args,full_output,epsabs,epsrel,limit)
-
-#TypeError: only size-1 arrays can be converted to Python scalars
-#%% Write out Trace func within: 
-def matrix_partial_dt(M, kx, ky, t, N_dis, epsilon, dt = 1e-6): # after M and before dt are just arg of M
-                                                        # U = U_epsilon_H2by2 (kx, ky, t, N_dis, epsilon) 
-                                                        # for example partial against t: kx, ky, N_dis, epsilon are fixed
-    dM_dt = ((M(kx, ky,t + dt , N_dis, epsilon) - M( kx, ky,  t - dt, N_dis, epsilon)) / (2 * dt))
-    # at kx, ky, t, N_dis, epsilon 
-    return dM_dt
 
 def matrix_partial_dkx(M, kx, ky, t, N_dis, epsilon, dkx = 1e-6): # after M and before dt are just arg of M
                                                         # U = U_epsilon_H2by2 (kx, ky, t, N_dis, epsilon) 
@@ -759,18 +673,28 @@ a = 0
 
 def Tr_integrated (kx, ky, t, N_dis, epsilon, verbose = True):    # N_dis and epsilon will be fixed like rhat in mock
                                                   # only kx, ky, t are what intergated against
-    global a
+   # global a
 
     U = U_epsilon_H2by2 (kx, ky, t, N_dis, epsilon)
     U_inverse  = np.linalg.inv(U)
 
 
 #   which is one var ; multiple var:
-    dU_dt = matrix_partial_dt(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
+
     # here this is still unchanged 
     dU_dkx = matrix_partial_dkx(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
     dU_dky  = matrix_partial_dky(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
-
+    U_full_for_Heff = U_full_discretisation(kx, ky, num_time_stages = 6)
+    # this is for the condition t> T/2, goes to second definition 
+    if 0<= t <= T/2:
+        
+        dU_dt = -2j * H_matrix_2by2(kx, ky, 2*t, a_0) @ U_epsilon_H2by2(kx, ky, t, N_dis, epsilon)
+        
+    elif T/2 <= t <= T:
+        
+        Heff_for_div = Heff_from_Ufull_2(U_full_for_Heff, epsilon)
+        dU_dt = -1j * Heff_for_div @ expm(-1j* Heff_for_div * (2*T - 2*t))  * (-2)   
+         
     part_1  = U_inverse @  dU_dt
     part_comm_1 =  U_inverse @  dU_dkx
     part_comm_2 =  U_inverse @  dU_dky
@@ -780,134 +704,111 @@ def Tr_integrated (kx, ky, t, N_dis, epsilon, verbose = True):    # N_dis and ep
     # anyway finish this script of the trace func which is integrated against
     # mock func
 
-    if verbose:
-        print(f"Function called for the {a}-th time ({kx:0.5f} {ky:0.5f} {t:0.5f})", end = "\r")
-        a += 1
+    #if verbose:
+    #    print(f"Function called for the {a}-th time ({kx:0.5f} {ky:0.5f} {t:0.5f})", end = "\r")
+    #    a += 1
 
     return Trace
 
-a_r = 0
+#a_r = 0
+#%%
+#%% Enumerate-grid version of W[U_epsilon]
+# This replaces the quad3d integration part.
 
-def Tr_integrated_real (kx, ky, t, N_dis, epsilon, verbose = True):    # N_dis and epsilon will be fixed like rhat in mock
-                                                  # only kx, ky, t are what intergated against
-    global a_r
-
-    U = U_epsilon_H2by2 (kx, ky, t, N_dis, epsilon)
-    U_inverse  = np.linalg.inv(U)
-
-
-
-#   which is one var ; multiple var:
-    #dU_dt = matrix_partial_dt(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
-    #--------------below defined a func of dU/dt in more symbolic way ----------------------
-    #**if any problem occured, this dU/dt below can be DOUBLE CHECK FOR:
-        
-    #1. t = T/2, t = 0 and t = T, for both U_epsilon def1
-                                #and  U_epsilon def 2
-    #2. if and elif logic 
-    
-    U_full_for_Heff = U_full_discretisation(kx, ky, num_time_stages = 6)
-    # this is for the condition t> T/2, goes to second definition 
-    if 0<= t <= T/2:
-        
-        dU_dt = -2j * H_matrix_2by2(kx, ky, 2*t, a_0) @ U
-        
-    elif T/2 <= t <= T:
-        
-        Heff_for_div = Heff_from_Ufull_2(U_full_for_Heff, epsilon)
-        dU_dt = -1j * Heff_for_div @ U  * (-2)   
-                                                                          
-   #--------------below defined a func of dU/dt in more symbolic way ----------------------
-    dU_dkx = matrix_partial_dkx(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
-    dU_dky  = matrix_partial_dky(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
-
-    part_1  = U_inverse @  dU_dt
-    part_comm_1 =  U_inverse @  dU_dkx
-    part_comm_2 =  U_inverse @  dU_dky
-    comm =  part_comm_1 @ part_comm_2 -  part_comm_2 @ part_comm_1
-    Trace  = np.trace(part_1 @ comm)
-    # aim for now: 5:45 : adapt matrix div func to be partial div
-    # anyway finish this script of the trace func which is integrated against
-    # mock func
-
-    if verbose:
-        print(f"Function called for the {a_r}-th time ({kx:0.5f} {ky:0.5f} {t:0.5f})", end = "\r")
-        a_r += 1
-
-    return Trace.real
-
-a_i = 0
-
-def Tr_integrated_imag (kx, ky, t, N_dis, epsilon, verbose = True):    # N_dis and epsilon will be fixed like rhat in mock
-                                                  # only kx, ky, t are what intergated against
-    global a_i
-
-    U = U_epsilon_H2by2 (kx, ky, t, N_dis, epsilon)
-    U_inverse  = np.linalg.inv(U)
+def periodic_derivative(arr, spacing, axis):
+    """
+    Central finite difference with periodic boundary condition.
+    arr has shape (..., 2, 2).
+    """
+    return (np.roll(arr, -1, axis=axis) - np.roll(arr, 1, axis=axis)) / (2 * spacing)
 
 
-#   which is one var ; multiple var:
-    #dU_dt = matrix_partial_dt(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
-    #--------------below defined a func of dU/dt in more symbolic way ----------------------
-    #**if any problem occured, this dU/dt below can be DOUBLE CHECK FOR:
-        
-    #1. t = T/2, t = 0 and t = T, for both U_epsilon def1
-                                #and  U_epsilon def 2
-    #2. if and elif logic 
-    
-    U_full_for_Heff = U_full_discretisation(kx, ky, num_time_stages = 6)
-    # this is for the condition t> T/2, goes to second definition 
-    if 0<= t <= T/2:
-        
-        dU_dt = -2j * H_matrix_2by2(kx, ky, 2*t, a_0) @ U
-        
-    elif T/2 <= t <= T:
-        
-        Heff_for_div = Heff_from_Ufull_2(U_full_for_Heff, epsilon)
-        dU_dt = -1j * Heff_for_div @ U  * (-2)   
-                                                                          
-   #--------------below defined a func of dU/dt in more symbolic way ----------------------
-    dU_dkx = matrix_partial_dkx(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
-    dU_dky  = matrix_partial_dky(U_epsilon_H2by2, kx, ky, t, N_dis, epsilon)
+def winding_number_enumerate(n_k=21, n_t=51, N_dis=20, epsilon=np.pi):
+    """
+    Compute the 3D winding-number integrand using the same enumerate-array style
+    as test_floquet_defect_invariants.py.
 
-    part_1  = U_inverse @  dU_dt
-    part_comm_1 =  U_inverse @  dU_dkx
-    part_comm_2 =  U_inverse @  dU_dky
-    comm =  part_comm_1 @ part_comm_2 -  part_comm_2 @ part_comm_1
-    Trace  = np.trace(part_1 @ comm)
-    # aim for now: 5:45 : adapt matrix div func to be partial div
-    # anyway finish this script of the trace func which is integrated against
-    # mock func
+    Variables:
+        axis 0 -> kx
+        axis 1 -> ky
+        axis 2 -> t
 
-    if verbose:
-        print(f"Function called for the {a_i}-th time ({kx:0.5f} {ky:0.5f} {t:0.5f})", end = "\r")
-        a_i += 1
+    u[i,j,m,:,:] = U_epsilon_H2by2(kx_i, ky_j, t_m)
+    """
 
-    return Trace.imag
+    # Use endpoint=False to avoid double-counting 0 and 2pi, or 0 and T.
+    kx_list = np.linspace(0, 2*np.pi, n_k, endpoint=False)
+    ky_list = np.linspace(0, 2*np.pi, n_k, endpoint=False)
+    times   = np.linspace(0, T, n_t, endpoint=False)
+
+    dkx = kx_list[1] - kx_list[0]
+    dky = ky_list[1] - ky_list[0]
+    dt  = times[1] - times[0]
+
+    # Store U(kx, ky, t) on the full grid.
+    u = np.zeros((len(kx_list), len(ky_list), len(times), 2, 2), dtype=np.complex128)
+
+    # This is the same enumerate idea:
+    # i is the array index; kx is the physical value.
+    for i, kx in enumerate(kx_list):
+        print(f"Building U grid: kx index {i+1}/{len(kx_list)}")
+        for j, ky in enumerate(ky_list):
+            for m, time in enumerate(times):
+                u[i, j, m, :, :] = U_epsilon_H2by2(kx, ky, time, N_dis, epsilon)
+
+    # U^{-1}
+    u_inv = np.linalg.inv(u)
+
+    # Derivatives of U on the grid.
+    # These replace your matrix_partial_dkx, matrix_partial_dky, matrix_partial_dt.
+    dU_dkx = periodic_derivative(u, dkx, axis=0)
+    dU_dky = periodic_derivative(u, dky, axis=1)
+    dU_dt  = periodic_derivative(u, dt,  axis=2)
+
+    # A_mu = U^{-1} d_mu U
+    A_kx = np.matmul(u_inv, dU_dkx)
+    A_ky = np.matmul(u_inv, dU_dky)
+    A_t  = np.matmul(u_inv, dU_dt)
+
+    integrand = np.zeros((len(kx_list), len(ky_list), len(times)), dtype=np.complex128)
+
+    # Sum the trace integrand using enumerate, like his code.
+    for i, kx in enumerate(kx_list):
+        print(f"Integrand sum: kx index {i+1}/{len(kx_list)}")
+        for j, ky in enumerate(ky_list):
+            for m, time in enumerate(times):
+                comm = (
+                    A_kx[i, j, m] @ A_ky[i, j, m]
+                    - A_ky[i, j, m] @ A_kx[i, j, m]
+                )
+
+                integrand[i, j, m] = np.trace(A_t[i, j, m] @ comm)
+
+    # Numerical integral over dkx dky dt.
+    W_raw = np.sum(inand := integrand) * dkx * dky * dt
+
+    # Conventional Rudner winding-number prefactor.
+    # If your convention differs, change this prefactor.
+    W = W_raw / (8 * np.pi**2)
+
+    print("\nRaw integral =", W_raw)
+    print("W =", W)
+    print("W.real =", W.real)
+    print("W.imag =", W.imag)
+
+    return W, u, integrand
 
 
-#def Tr_integrated_MOCK(kx, ky, t, N_dis, epsilon):    # only_bulk_U_involved = True -- this will be encoded in U 
-    
-#    Mock_m = np.array([[kx, ky],[N_dis * kx, epsilon* ky ]])
-#    Mock_trace  = np.trace(Mock_m)
-#    return Mock_trace 
-
-W_res_real, W_err_real = quad3d(Tr_integrated_real, ( 0.0, 0.0, 0.0), (2*np.pi, 2*np.pi, 1), (20, np.pi), epsabs = 1e-2)  # here epsilon = pi
-print("\n")
-W_res_imag, W_err_imag = quad3d(Tr_integrated_imag, ( 0.0, 0.0, 0.0), (2*np.pi, 2*np.pi, 1), (20, np.pi), epsabs = 1e-2)  # here epsilon = pi
-print("\n")
-#                      func           lb t x y          ub t x y
-print(f"Integral is {W_res_real} + i . {W_res_imag}")
-print(f"   with err {W_err_real} + i . {W_err_imag}")
-# Q: can we skip the non-digonal matrix U somehow? Heff has a linear version
-# cannot; For that from beginning H2x2 isn't digonal matrix 
-
-# Q: do we need sympy to calculate the divU? The point is that each U_epsilon_H2by2 (kx, ky, t, N_dis, epsilon) 
-# will call the U_t_discretization which slices U into U_0 ... U_(N-1)
-# is numerical and too complicated to be div (as a series of multiplication of e^)
-# Ans: We do U_div numerically, not symbolically 
+# Example run:
+W_enum, u_grid, integrand_grid = winding_number_enumerate(
+    n_k=21,
+    n_t=51,
+    N_dis=20,
+    epsilon=np.pi
+)
 
 #%% instead of using quad3d, use loops to evaluate:
-    
+# not only t will be change, all kx, ky, t will be changed. 
+
 
 
